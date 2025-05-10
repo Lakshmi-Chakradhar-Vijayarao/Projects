@@ -1,0 +1,170 @@
+CREATE VIEW VIP_Patient_View AS
+SELECT p.First, p.Last, p.Person_BDate AS Enrollment_Date
+FROM Person p
+JOIN Patient pat ON p.P_ID = pat.P_ID
+JOIN Appointment app ON pat.Patient_ID = app.Patient_ID
+WHERE MONTH(app.Date) = MONTH(CURRENT_DATE()) - 1
+GROUP BY p.First, p.Last, p.Person_BDate
+HAVING COUNT(app.Patient_ID) > 3;
+
+CREATE VIEW Preferred_Healthcare_Professional_View AS
+SELECT p.First, p.Last, he.Specialization, COUNT(app.Patient_ID) AS Patient_Interaction
+FROM Healthcare_Employee he
+JOIN Person p ON he.P_ID = p.P_ID
+JOIN Appointment app ON he.Healthcare_Employee_ID = app.Healthcare_Employee_ID
+WHERE app.Date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 2 MONTH) AND CURRENT_DATE()
+GROUP BY p.First, p.Last, he.Specialization
+ORDER BY Patient_Interaction DESC;
+
+CREATE VIEW Critical_Treatment_View AS
+SELECT t.Treatment_ID, t.Description, COUNT(*) AS Treatment_Count
+FROM Treatment t
+JOIN Gets g ON t.Treatment_ID = g.Treatment_ID
+JOIN Appointment app ON g.Patient_ID = app.Patient_ID
+WHERE app.Date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH) AND CURRENT_DATE()
+GROUP BY t.Treatment_ID, t.Description
+HAVING COUNT(*) > 5;
+
+CREATE VIEW Potential_VIP_Patient_View AS
+SELECT p.First, p.Last, p.P_ID, pat.Contact_Number, COUNT(*) AS Visit_Count
+FROM Person p
+JOIN Patient pat ON p.P_ID = pat.P_ID
+JOIN Appointment app ON pat.Patient_ID = app.Patient_ID
+WHERE app.Date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 2 MONTH) AND CURRENT_DATE()
+GROUP BY p.First, p.Last, p.P_ID, pat.Contact_Number
+HAVING Visit_Count > 3;
+
+CREATE VIEW Top_Staff_View AS
+SELECT p.First, p.Last, he.Specialization, COUNT(*) AS Processed_Count
+FROM Person p
+JOIN Healthcare_Employee he ON p.P_ID = he.P_ID
+JOIN Appointment app ON he.Healthcare_Employee_ID = app.Healthcare_Employee_ID
+WHERE app.Date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH) AND CURRENT_DATE()
+GROUP BY p.First, p.Last, he.Specialization
+ORDER BY Processed_Count DESC
+LIMIT 1;
+
+SELECT Specialization, COUNT(*) AS Total_Count
+FROM Healthcare_Employee
+GROUP BY Specialization;
+
+SELECT p.First, p.Last
+FROM Person p
+JOIN Healthcare_Employee he ON p.P_ID = he.P_ID
+JOIN Patient pat ON p.P_ID = pat.P_ID;
+
+SELECT AVG(Visit_Count) AS Average_Visits
+FROM (
+    SELECT COUNT(*) AS Visit_Count
+    FROM Appointment
+    WHERE Patient_ID IN (
+        SELECT Patient_ID
+        FROM (
+            SELECT Patient_ID, COUNT(*) AS Visit_Count
+            FROM Appointment
+            GROUP BY Patient_ID
+            ORDER BY Visit_Count DESC
+            LIMIT 5
+        ) AS Top_VIP_Patients
+    )
+) AS Top_VIP_Patient_Visits;
+
+SELECT p.First, p.Last, AVG(c.Rating_Score) AS Avg_Rating
+FROM Person p
+JOIN Healthcare_Employee he ON p.P_ID = he.P_ID
+JOIN Appointment app ON he.Healthcare_Employee_ID = app.Healthcare_Employee_ID
+JOIN Comments c ON app.Patient_ID = c.Patient_ID
+GROUP BY p.First, p.Last
+ORDER BY Avg_Rating DESC
+LIMIT 1;
+
+SELECT m.Medication_Name, COUNT(*) AS Prescription_Count
+FROM Medication m
+JOIN Specifies s ON m.Medication_ID = s.Medication_ID
+JOIN Prescription p ON s.Prescription_ID = p.Prescription_ID
+WHERE p.Prescription_Date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH) AND CURRENT_DATE()
+GROUP BY m.Medication_ID
+ORDER BY Prescription_Count DESC
+LIMIT 1;
+
+SELECT he.Department, COUNT(*) AS Total_Treatments
+FROM Healthcare_Employee he
+JOIN Provides pr ON he.Healthcare_Employee_ID = pr.Healthcare_Employee_ID
+GROUP BY he.Department;
+
+SELECT p.First, p.Last, he.Specialization
+FROM Person p
+JOIN Healthcare_Employee he ON p.P_ID = he.P_ID
+JOIN Working_Hours wh ON he.Healthcare_Employee_ID = wh.Healthcare_Employee_ID
+JOIN Schedule s ON wh.Schedule_ID = s.Schedule_ID
+WHERE s.Day IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+  AND TIME_TO_SEC(s.Closing_Time) - TIME_TO_SEC(s.Opening_Time) >= 8 * 3600 -- Assuming working hours per day is 8 hours
+  AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 WEEK) <= CURRENT_DATE()
+GROUP BY p.First, p.Last, he.Specialization
+HAVING COUNT(DISTINCT s.Day) = 7;
+
+SELECT COUNT(*) AS Patient_Count
+FROM Appointment
+WHERE Healthcare_Employee_ID = (
+    SELECT Healthcare_Employee_ID
+    FROM (
+        SELECT Healthcare_Employee_ID, COUNT(*) AS Appointment_Count
+        FROM Appointment
+        GROUP BY Healthcare_Employee_ID
+        ORDER BY Appointment_Count DESC
+        LIMIT 1
+    ) AS Most_Popular_Professional
+);
+
+SELECT *
+FROM Medical_Record
+WHERE Medical_Record_ID IN (
+    SELECT Medical_Record_ID
+    FROM Appointment
+    WHERE Healthcare_Employee_ID = (
+        SELECT Healthcare_Employee_ID
+        FROM Healthcare_Employee
+        ORDER BY Years_of_Experience DESC
+        LIMIT 1
+    )
+);
+
+SELECT p.First, p.Last
+FROM Person p
+JOIN Healthcare_Employee he ON p.P_ID = he.P_ID
+JOIN Patient pat ON p.P_ID = pat.P_ID
+WHERE pat.Patient_ID IN (
+    SELECT Patient_ID
+    FROM Appointment
+    WHERE Date BETWEEN he.Years_of_Experience AND DATE_ADD(he.Years_of_Experience, INTERVAL 1 MONTH)
+)
+GROUP BY p.P_ID;
+
+SELECT he.Department, COUNT(DISTINCT app.Patient_ID) AS Unique_Patient_Visits
+FROM Healthcare_Employee he
+JOIN Appointment app ON he.Healthcare_Employee_ID = app.Healthcare_Employee_ID
+GROUP BY he.Department
+ORDER BY Unique_Patient_Visits DESC
+LIMIT 1;
+
+SELECT p.First, p.Last
+FROM Person p
+JOIN Patient pat ON p.P_ID = pat.P_ID
+WHERE pat.Patient_ID IN (
+    SELECT Patient_ID
+    FROM Appointment
+    GROUP BY Patient_ID
+    HAVING COUNT(*) > 60 -- Assuming there are 12 months in a year, so 5 years = 60 months
+);
+
+SELECT *
+FROM Appointment
+WHERE Patient_ID IN (
+    SELECT Patient_ID
+    FROM Appointment
+    GROUP BY Patient_ID
+    HAVING COUNT(*) > 12 -- Assuming there are 12 months in a year
+)
+AND Date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) AND CURRENT_DATE();
+
+

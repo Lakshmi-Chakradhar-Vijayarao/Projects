@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Travel Bloom</title>
+        <link rel="stylesheet" href="./mystyle.css">
+    </head>
+    <body>
+        <div class="mainheading">
+            <h1><i>Travel Bloom</i></h1>
+            <div class="useroptions">
+                <div id="fontSizes">
+                    <p><b>Font Size:</b></p>
+                    <select id="fontsize" onchange="changeFontSize()">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div id="background">
+                    <p><b>Background:</b></p>
+                    <select id="backgr" onchange="changeBackgroundColor()">
+                        <option value="lb" selected>Light Blue</option>
+                        <option value="black">Black</option>
+                    </select>
+                </div>
+            </div>
+            <nav>
+                <div class="pages">
+                    <a href="./index.html">Home</a>
+                    <a href="./stays.html">Stays</a>
+                    <a href="./flights.html">Flights</a>
+                    <a href="./cars.html">Cars</a>
+                    <a href="./cruises.html">Cruises</a>
+                    <a href="./contact.html">Contact Us</a>
+                    <a href="./cart.html">Cart</a>
+                </div>
+                <div id="datetime"></div>
+            </nav>
+        </div>
+        <div id="mainContent">
+            <div class="cardetails">
+                <form id="formscars">
+                    <fieldset>
+                        <legend>Car Details</legend>
+                        <label for="city">City:</label>
+                        <input type="text" id="city" placeholder="Enter city name" required><br>
+                        <label for="checkIn">Check In Date:</label><br>
+                        <input type="date" id="checkIn" min="2024-09-01" max="2024-12-01" required><br>
+                        <span id="checkinerror"></span><br>
+                        <label for="checkOut">Check Out Date:</label><br>
+                        <input type="date" id="checkOut" min="2024-09-01" max="2024-12-01" required><br>
+                        <span id="checkouterror"></span><br>
+                        <label for="cartype">Car Model:</label><br>
+                        <select name="cars" id="cartype">
+                            <option value="Economy">Economy</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Compact">Compact</option>
+                            <option value="Midsize">Midsize</option>
+                        </select>
+                        <button type="submit" id="finalsubmit">Submit</button>
+                    </fieldset>
+                </form>
+            </div>
+            <hr>
+            <h3><u>Cars Information:</u></h3>
+            <div id="displaycardetails"></div>
+        </div>
+        <footer class="footers">
+            <div id="first">
+                First Name: Pranathi<br>
+                Last Name: Yeleswarapu<br>
+                NET ID: pxy230003<br>
+                Section Number: 0U1
+            </div>
+            <div id="first">
+                First Name: Lakshmi Chakradhar<br>
+                Last Name: Vijayarao<br>
+                NET ID: lxv230000<br>
+                Section Number: 0U1
+            </div>
+        </footer>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="./cars.js"></script>
+    </body>
+</html>

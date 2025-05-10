@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Travel Bloom</title>
+        <link rel="stylesheet" href="./mystyle.css">
+    </head>
+    <body>
+        <div class="mainheading">
+            <h1><i>Travel Bloom</i></h1>
+            <div class="useroptions">
+                <div id="fontSizes">
+                    <p><b>Font Size:</b></p>
+                    <select id="fontsize" onchange="changeFontSize()">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div id="background">
+                    <p><b>Background:</b></p>
+                    <select id="backgr" onchange="changeBackgroundColor()">
+                        <option value="lb" selected>Light Blue</option>
+                        <option value="black">Black</option>
+                    </select>
+                </div>
+            </div>
+            <nav>
+                <div class="pages">
+                    <a href="./index.html">Home</a>
+                    <a href="./stays.html">Stays</a>
+                    <a href="./flights.html">Flights</a>
+                    <a href="./cars.html">Cars</a>
+                    <a href="./cruises.html">Cruises</a>
+                    <a href="./contact.html">Contact Us</a>
+                    <a href="./cart.html">Cart</a>
+                </div>
+                <div id="datetime"></div>
+            </nav>
+        </div>
+        <div id="mainContent">
+            <div class="cruisedetails">
+                <form id="formscruise">
+                    <fieldset>
+                        <legend>Cruise Details</legend>
+                        <label for="dest">Destination:</label>
+                        <input type="text" id="dest" placeholder="Enter destination" required><br>
+                        <span style="text-decoration: underline;">Destination should be Alaska, Bahamas, Europe or Mexico</span><br>
+                        <span id="deserror"></span><br>
+                        <label for="depart">Departing between:</label><br>
+                        <input type="date" id="departMin" min="2024-09-01" max="2024-12-01" required><br>
+                        <input type="date" id="departMax" min="2024-09-01" max="2024-12-01" required><br>
+                        <span id="departerror"></span><br>
+                        <label for="mindur">Minimum Duration of Cruise(in days):</label>
+                        <input type="number" id="mindur" min="3" max="10" required><br>
+                        <span id="mindurerror"></span><br>
+                        <label for="maxdur">Maximum Duration of Cruise(in days):</label>
+                        <input type="number" id="maxdur" min="3" max="10" required><br>
+                        <span id="maxdurerror"></span><br>
+                        <label for="passenger">Passengers:</label><br>
+                        <input type="checkbox" id="adults" name="passengerType" value="adults" checked>
+                        <label for="adults">Adults:</label>
+                        <input type="number" id="adNum" name="adNum" value="1" required><br>
+                        <input type="checkbox" id="children" name="passengerType" value="children">
+                        <label for="children">Children:</label>
+                        <input type="number" id="childNum" name="childNum" value="0" required><br>
+                        <input type="checkbox" id="infants" name="passengerType" value="infants">
+                        <label for="infants">Infants:</label>
+                        <input type="number" id="infNum" name="infNum" value="0" required><br>
+                        <button type="submit" id="finalsubmit">Submit</button>
+                    </fieldset>
+                </form>
+            </div>
+            <hr>
+            <h3><u>Cruises Information</u></h3>
+            <div id="displaycruisedetails"></div>
+        </div>
+        <footer class="footers">
+            <div id="first">
+                First Name: Pranathi<br>
+                Last Name: Yeleswarapu<br>
+                NET ID: pxy230003<br>
+                Section Number: 0U1
+            </div>
+            <div id="first">
+                First Name: Lakshmi Chakradhar<br>
+                Last Name: Vijayarao<br>
+                NET ID: lxv230000<br>
+                Section Number: 0U1
+            </div>
+        </footer>
+        <!-- Include Moment.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <!-- Include Moment Timezone -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+        <script src="./cruises.js"></script>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+S: Student 12 takes a seat. Empty Chairs = 199.
+S: Student 6 takes a seat. Empty Chairs = 198.
+S: Student 8 takes a seat. Empty Chairs = 197.
+C: Student 12 with priority P0 added to the queue. Waiting students now = 1. Total requests = 1
+C: Student 6 with priority P0 added to the queue. Waiting students now = 2. Total requests = 2
+S: Student 11 takes a seat. Empty Chairs = 197.
+S: Student 2 takes a seat. Empty Chairs = 196.
