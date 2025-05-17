@@ -91,6 +91,10 @@ export default {
         'scale-up': {
           '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0px)' },
+        },
+        'subtle-pan': {
+          '0%': { backgroundPosition: '0% center' },
+          '100%': { backgroundPosition: '200% center' }, // Pans twice the width of the image
         }
   		},
   		animation: {
@@ -98,6 +102,7 @@ export default {
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'bg-pan': 'bg-pan 15s ease infinite',
         'scale-up': 'scale-up 0.5s ease-out forwards',
+        'subtle-pan': 'subtle-pan 120s linear infinite alternate', // 120 seconds for a very slow pan, alternating direction
   		}
   	}
   },

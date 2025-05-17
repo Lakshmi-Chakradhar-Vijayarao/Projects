@@ -109,6 +109,15 @@ html {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-image: url('/pixel-art-sky-background.jpg');
+    background-size: cover; /* Or 'auto' if you want pixel perfect and it tiles, or 'contain' */
+    background-position: center center;
+    background-repeat: no-repeat; /* Or 'repeat' if it's a tileable pattern */
+    background-attachment: fixed; /* Makes the background stay in place while scrolling */
+    /* Apply the subtle pan animation */
+    animation: subtle-pan 120s linear infinite alternate;
+    /* Fallback background color if the image doesn't load or while it's loading */
+    background-color: hsl(var(--background));
   }
 }
