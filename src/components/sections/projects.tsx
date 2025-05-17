@@ -8,6 +8,7 @@ const projectsData = [
     technologies: ['Python', 'YOLO', 'Object Detection', 'OpenCV'],
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'agriculture technology',
+    projectUrl: '#',
   },
   {
     title: 'Search Engine for Movie Summaries',
@@ -15,6 +16,7 @@ const projectsData = [
     technologies: ['Python', 'PySpark', 'Databricks', 'Scala', 'Hadoop', 'TF-IDF'],
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'data search',
+    projectUrl: '#',
   },
   {
     title: 'Facial Recognition Attendance System',
@@ -22,6 +24,7 @@ const projectsData = [
     technologies: ['Python', 'OpenCV', 'Machine Learning', 'Face Recognition'],
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'face recognition security',
+    projectUrl: '#',
   },
   {
     title: 'Mushroom Classification using Scikit-Learn',
@@ -29,6 +32,7 @@ const projectsData = [
     technologies: ['Python', 'Scikit-Learn', 'Decision Tree', 'Random Forest', 'KNN'],
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'nature classification',
+    projectUrl: '#',
   },
   {
     title: 'Custom Process Scheduler Development',
@@ -36,6 +40,7 @@ const projectsData = [
     technologies: ['Linux Kernel', 'xv6', 'C', 'C++'],
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'computing programming',
+    projectUrl: '#',
   },
 ];
 
