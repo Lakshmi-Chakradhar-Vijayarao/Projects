@@ -1,6 +1,7 @@
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import Image from 'next/image';
+import AnimatedAvatar from '@/components/animated-avatar'; // Import the new component
 
 export default function Hero() {
   return (
@@ -31,19 +32,11 @@ export default function Hero() {
           </Button>
         </div>
 
-        {/* Right Image Content */}
+        {/* Right Image Content - Replaced with AnimatedAvatar */}
         <div className="lg:w-5/12 flex justify-center lg:justify-end order-1 lg:order-2">
-          <div className="relative group w-[280px] h-[350px] sm:w-[320px] sm:h-[400px] md:w-[360px] md:h-[450px] lg:w-[400px] lg:h-[500px] xl:w-[450px] xl:h-[560px] rounded-xl overflow-hidden shadow-2xl border-4 border-zinc-700/50">
-            <Image
-              src="https://placehold.co/500x600.png"
-              alt="Lakshmi Chakradhar Vijayarao"
-              layout="fill"
-              objectFit="cover"
-              priority
-              className="transform transition-transform duration-300 ease-in-out group-hover:scale-105"
-              data-ai-hint="professional portrait"
-            />
-          </div>
+          {/* The AnimatedAvatar component has its own sizing. 
+              This div centers it within the allocated column space. */}
+          <AnimatedAvatar />
         </div>
       </div>
     </section>
