@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="bg-zinc-900 text-white min-h-[calc(100vh-4rem)] flex items-center py-16 lg:py-20 overflow-hidden"
+      className="bg-gradient-to-br from-neutral-950 via-slate-900 to-neutral-950 text-white min-h-[calc(100vh-4rem)] flex items-center py-16 lg:py-20 overflow-hidden animate-bg-pan bg-[length:200%_200%]"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-12 lg:gap-16">
         {/* Left Text Content */}
