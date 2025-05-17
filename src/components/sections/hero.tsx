@@ -1,33 +1,51 @@
 import { Button } from '@/components/ui/button';
-import { ArrowDown } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
     <section 
       id="hero" 
-      className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center py-20 text-center text-primary-foreground overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, hsl(220, 70%, 50%), hsl(270, 60%, 55%))'
-      }}
+      className="bg-zinc-900 text-white min-h-[calc(100vh-4rem)] flex items-center py-16 lg:py-20 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-black/30 z-0"></div>
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl drop-shadow-md">
-          Lakshmi Chakradhar Vijayarao
-        </h1>
-        <p className="mt-6 max-w-3xl mx-auto text-lg sm:text-xl md:text-2xl text-primary-foreground/90 drop-shadow-sm">
-          Software Engineer | ML Practitioner | Scalable & Secure Systems Engineer
-        </p>
-        <div className="mt-10 flex justify-center">
-          <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 transition-transform hover:scale-105 shadow-lg">
-            <Link href="#about">
-              Discover More <ArrowDown className="ml-2 h-5 w-5" />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-12 lg:gap-16">
+        {/* Left Text Content */}
+        <div className="lg:w-1/2 xl:w-5/12 text-center lg:text-left order-2 lg:order-1">
+          <p className="text-sm sm:text-base text-lime-400 font-semibold tracking-wider uppercase mb-1 sm:mb-2">
+            HELLO I'M
+          </p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4">
+            Lakshmi Chakradhar Vijayarao
+          </h1>
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8">
+            Software Engineer | ML Practitioner | Scalable & Secure Systems Engineer
+          </p>
+          <Button 
+            asChild 
+            size="lg" 
+            className="bg-lime-400 text-zinc-900 hover:bg-lime-500 font-semibold shadow-lg transition-transform hover:scale-105 rounded-lg text-base md:text-lg px-8 py-3"
+          >
+            <Link href="#contact">
+              Get In Touch
             </Link>
           </Button>
         </div>
+
+        {/* Right Image Content */}
+        <div className="lg:w-1/2 xl:w-6/12 flex justify-center lg:justify-end order-1 lg:order-2">
+          <div className="relative group w-[280px] h-[350px] sm:w-[320px] sm:h-[400px] md:w-[360px] md:h-[450px] lg:w-[400px] lg:h-[500px] xl:w-[450px] xl:h-[560px] rounded-xl overflow-hidden shadow-2xl border-4 border-zinc-700/50">
+            <Image
+              src="https://placehold.co/500x600.png" 
+              alt="Lakshmi Chakradhar Vijayarao"
+              layout="fill"
+              objectFit="cover"
+              priority
+              className="transform transition-transform duration-300 ease-in-out group-hover:scale-105"
+              data-ai-hint="professional portrait"
+            />
+          </div>
+        </div>
       </div>
-       <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent z-10"></div>
     </section>
   );
 }
