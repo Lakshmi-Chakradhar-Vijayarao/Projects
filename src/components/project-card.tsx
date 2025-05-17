@@ -1,10 +1,7 @@
-// Ensure this component is a client component if it uses hooks directly or indirectly
-// or if it's part of a tree that needs client-side interactivity from parent.
-// However, in this specific refactor, the direct client logic (useInView) is in the parent.
-// "use client"; // Can be omitted if parent (Projects.tsx) is "use client" and passes all needed props
 
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import { ExternalLink } from 'lucide-react'; // Import the icon
 
 interface ProjectCardProps {
   title: string;
@@ -12,10 +9,10 @@ interface ProjectCardProps {
   description: string;
   technologies: string[];
   image: string;
-  imageHint: string; // Added for data-ai-hint
+  imageHint: string;
   index: number;
   inView: boolean;
-  projectUrl: string; // Added to make the card clickable
+  projectUrl: string;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
@@ -34,13 +31,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       href={projectUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block bg-card/80 backdrop-blur-md border rounded-lg shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl group opacity-0 ${
+      className={`relative block bg-card/80 backdrop-blur-md border rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl group opacity-0 ${ // Added relative for icon positioning
         inView ? 'animate-scale-up' : ''
       }`}
       style={{ animationDelay: `${index * 150}ms` }}
       aria-label={`View project: ${title}`}
     >
-      <div className="relative h-48 overflow-hidden"> {/* Added relative for Next/Image fill */}
+      {/* External Link Icon */}
+      <div className="absolute top-4 right-4 p-1 bg-card/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+        <ExternalLink className="h-5 w-5 text-primary" />
+      </div>
+
+      <div className="relative h-48 overflow-hidden">
         <Image 
           src={image} 
           alt={title} 
@@ -52,7 +54,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
       <div className="p-6">
         <div className="flex justify-between items-start mb-3">
-          <h3 className="text-xl font-semibold text-primary">{title}</h3>
+          {/* Adjust paddingRight if title is too long and collides with icon space, though icon is above content */}
+          <h3 className="text-xl font-semibold text-primary pr-8">{title}</h3> 
           <span className="text-xs text-muted-foreground">{date}</span>
         </div>
         <p className="text-foreground/80 mb-4 text-sm leading-relaxed">{description}</p>
