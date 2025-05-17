@@ -10,7 +10,7 @@ interface ExperienceItemProps {
 
 export default function ExperienceItem({ title, company, duration, descriptionPoints }: ExperienceItemProps) {
   return (
-    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 w-full">
+    <Card className="shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out w-full hover:scale-[1.02]">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
