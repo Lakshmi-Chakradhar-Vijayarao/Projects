@@ -7,8 +7,8 @@ import Link from 'next/link';
 import ContactForm from '@/components/contact-form';
 
 const socialLinks = [
-  { name: 'GitHub', href: 'https://github.com/lakshmicv', icon: Github, text: 'lakshmicv' },
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmicv/', icon: Linkedin, text: 'lakshmicv' },
+  { name: 'GitHub', href: 'https://github.com/Lakshmi-Chakradhar-Vijayarao', icon: Github, text: 'Lakshmi-Chakradhar-Vijayarao' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmichakradharvijayarao/', icon: Linkedin, text: 'lakshmichakradharvijayarao' },
 ];
 
 export default function Contact() {

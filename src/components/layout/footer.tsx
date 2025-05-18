@@ -2,8 +2,8 @@ import { Github, Linkedin, Mail, Phone, Code } from 'lucide-react';
 import Link from 'next/link';
 
 const socialLinks = [
-  { name: 'GitHub', href: 'https://github.com/lakshmicv', icon: Github },
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmicv/', icon: Linkedin },
+  { name: 'GitHub', href: 'https://github.com/Lakshmi-Chakradhar-Vijayarao', icon: Github },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmichakradharvijayarao/', icon: Linkedin },
   { name: 'Email', href: 'mailto:lakshmichakradhar.v@gmail.com', icon: Mail },
 ];
 
