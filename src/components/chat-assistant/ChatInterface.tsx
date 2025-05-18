@@ -7,11 +7,15 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export type ChatMessage = {
+// ChatMessage type is now defined in ResumeChatAssistant.tsx and imported there
+// For this component, we'll use the props directly.
+export type ExtendedChatMessageFromParent = {
   id: string;
   sender: 'user' | 'assistant';
   text: ReactNode;
+  speakableTextOverride?: string; // This makes it compatible
 };
+
 
 export type QuickReplyButton = {
   text: string;
@@ -22,7 +26,7 @@ export type QuickReplyButton = {
 interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
-  messages: ChatMessage[];
+  messages: ExtendedChatMessageFromParent[]; // Use the imported/compatible type
   quickReplies: QuickReplyButton[];
   title?: string;
 }
@@ -66,7 +70,8 @@ export default function ChatInterface({
                   : 'bg-primary text-primary-foreground rounded-bl-none'
               }`}
             >
-              {typeof msg.text === 'string' ? <p>{msg.text}</p> : msg.text}
+              {/* Text is already ReactNode, so it can be JSX or string */}
+              {msg.text}
             </div>
           </div>
         ))}
@@ -81,7 +86,7 @@ export default function ChatInterface({
             <div className="flex flex-wrap justify-center gap-2">
               {quickReplies.map((reply) => (
                 <Button
-                  key={reply.text}
+                  key={reply.text} // Using reply.text as key assuming it's unique per set
                   variant="outline"
                   size="sm"
                   onClick={reply.onClick}
