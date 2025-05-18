@@ -1,20 +1,22 @@
+
 "use client";
 
-import type React from 'react';
-import { X, Send, Download, HelpCircle, CheckCircle } from 'lucide-react';
+import React from 'react'; // Added React import
+import type { ReactNode } from 'react'; // Ensured ReactNode is typed
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export type ChatMessage = {
   id: string;
   sender: 'user' | 'assistant';
-  text: React.ReactNode;
+  text: ReactNode; // Use ReactNode for versatile content
 };
 
 export type QuickReplyButton = {
   text: string;
   onClick: () => void;
-  icon?: React.ReactNode;
+  icon?: ReactNode; // Use ReactNode for icons
 };
 
 interface ChatInterfaceProps {
