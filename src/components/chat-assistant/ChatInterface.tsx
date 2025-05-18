@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react'; // Added React import
+import React from 'react';
 import type { ReactNode } from 'react'; // Ensured ReactNode is typed
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,9 +79,9 @@ export default function ChatInterface({
           <p className="text-xs text-muted-foreground mb-2 text-center">Select an option:</p>
           <ScrollArea className="max-h-32"> {/* Limit height for many buttons */}
             <div className="flex flex-wrap justify-center gap-2">
-              {quickReplies.map((reply, index) => (
+              {quickReplies.map((reply) => (
                 <Button
-                  key={index}
+                  key={reply.text} // Changed key from index to reply.text
                   variant="outline"
                   size="sm"
                   onClick={reply.onClick}
