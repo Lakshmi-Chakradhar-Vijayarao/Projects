@@ -3,8 +3,9 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Square, Volume2, VolumeX } from 'lucide-react';
+import { Play, Square } from 'lucide-react'; // Using Square for stop
 
+// Define sections to read with their IDs and speakable text
 const sectionsToRead = [
   { id: 'hero', speakableText: "Hero section: Introducing Chakradhar, a Software Engineer and ML Practitioner." },
   { id: 'about', speakableText: "About Chakradhar: A passionate software engineer and AI developer specializing in full-stack development and intelligent data processing." },
@@ -28,20 +29,22 @@ const ContentReader: React.FC = () => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       setSpeechSynthInstance(window.speechSynthesis);
     }
-    // Cleanup on unmount
     return () => {
       if (speechSynthInstance && speechSynthInstance.speaking) {
         speechSynthInstance.cancel();
       }
     };
-  }, [speechSynthInstance]); // Rerun if speechSynthInstance changes (though it shouldn't after init)
+  }, []); // speechSynthInstance is set once on mount
 
-  const smoothScrollTo = (id: string) => {
+  const smoothScrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  };
+  }, []);
+
+  // Forward declaration for mutual recursion
+  let playNextSectionCallback: (() => void) | undefined;
 
   const speakText = useCallback((text: string, onEndCallback?: () => void) => {
     if (!speechSynthInstance || !text) {
@@ -50,18 +53,18 @@ const ContentReader: React.FC = () => {
     }
 
     if (speechSynthInstance.speaking) {
-      speechSynthInstance.cancel(); // Cancel any ongoing speech
+      speechSynthInstance.cancel();
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utteranceRef.current = utterance; // Store reference to manage it
+    utteranceRef.current = utterance;
 
     utterance.onend = () => {
       utteranceRef.current = null;
       if (onEndCallback) {
         onEndCallback();
       } else {
-        setIsReading(false); // Default behavior if no specific callback
+        setIsReading(false);
       }
     };
     utterance.onerror = (event) => {
@@ -70,48 +73,57 @@ const ContentReader: React.FC = () => {
       setIsReading(false);
     };
     
-    // Ensure voices are loaded, or use a timeout fallback
-    const voices = speechSynthInstance.getVoices();
-    if (voices.length > 0) {
-      // You could set a preferred voice here if desired
-      // utterance.voice = voices.find(voice => voice.name === 'Google UK English Female');
-      speechSynthInstance.speak(utterance);
+    const speakLogic = () => {
+      if (utteranceRef.current === utterance && speechSynthInstance) {
+         speechSynthInstance.speak(utterance);
+      }
+    };
+
+    if (speechSynthInstance.getVoices().length > 0) {
+        speakLogic();
     } else {
-       // Fallback if voices not immediately ready
-      speechSynthInstance.onvoiceschanged = () => {
-        if(!speechSynthInstance.speaking && utteranceRef.current === utterance){ 
-             speechSynthInstance.speak(utterance);
-        }
-        speechSynthInstance.onvoiceschanged = null; // Remove listener
-      };
-      // Attempt to speak anyway
-       speechSynthInstance.speak(utterance);
+        speechSynthInstance.onvoiceschanged = () => {
+            speechSynthInstance.onvoiceschanged = null; 
+            speakLogic();
+        };
+        // Some browsers might still require an initial speak attempt to trigger onvoiceschanged.
+        // However, to avoid potential double-speak or race conditions, we'll primarily rely on the event.
+        // If issues persist with voices not loading, a direct speak() call here might be re-added carefully.
     }
-  }, [speechSynthInstance]);
+  }, [speechSynthInstance]); // Depends only on speechSynthInstance (and setIsReading which is stable)
 
   const playNextSection = useCallback(() => {
-    const nextIndex = currentSectionIndex + 1;
-    if (nextIndex < sectionsToRead.length) {
-      setCurrentSectionIndex(nextIndex);
-      const section = sectionsToRead[nextIndex];
-      smoothScrollTo(section.id);
-      speakText(section.speakableText, playNextSection);
-    } else {
-      // All sections read
-      speakText("This concludes the overview of Chakradhar's portfolio.", () => {
-        setIsReading(false);
-        setCurrentSectionIndex(0); // Reset for next play
-        setHasSpokenWelcome(true); // Keep welcome spoken
-      });
-    }
-  }, [currentSectionIndex, speakText]);
+    setCurrentSectionIndex(prevIndex => {
+      const newIndex = prevIndex + 1;
+      if (newIndex < sectionsToRead.length) {
+        const nextSection = sectionsToRead[newIndex];
+        smoothScrollTo(nextSection.id);
+        // Pass the stable playNextSection reference itself
+        speakText(nextSection.speakableText, playNextSectionCallback);
+        return newIndex;
+      } else {
+        speakText("This concludes the overview of Chakradhar's portfolio.", () => {
+          setIsReading(false);
+        });
+        return 0; // Reset for next play
+      }
+    });
+  }, [speakText, sectionsToRead, smoothScrollTo, setCurrentSectionIndex, setIsReading]);
 
-  const startReadingSequence = useCallback(() => {
-    setIsReading(true);
-    const section = sectionsToRead[currentSectionIndex];
-    smoothScrollTo(section.id);
-    speakText(section.speakableText, playNextSection);
-  }, [currentSectionIndex, speakText, playNextSection]);
+  playNextSectionCallback = playNextSection; // Assign the memoized function
+
+  const startReadingSequence = useCallback((startIndex: number) => {
+    if (startIndex < sectionsToRead.length) {
+      setIsReading(true);
+      const section = sectionsToRead[startIndex];
+      smoothScrollTo(section.id);
+      // Pass the stable playNextSection reference
+      speakText(section.speakableText, playNextSectionCallback);
+    } else {
+      setIsReading(false); // Should not happen if logic is correct
+    }
+  }, [setIsReading, sectionsToRead, smoothScrollTo, speakText, playNextSectionCallback]);
+
 
   const handlePlayPauseClick = useCallback(() => {
     if (!speechSynthInstance) return;
@@ -119,26 +131,24 @@ const ContentReader: React.FC = () => {
     if (isReading) {
       speechSynthInstance.cancel();
       if (utteranceRef.current) {
-          utteranceRef.current.onend = null; // Prevent onend from firing if manually stopped
+        utteranceRef.current.onend = null; 
       }
       setIsReading(false);
-      // currentSectionIndex remains, so user can resume from this section
     } else {
-      // Start or resume reading
       setIsReading(true);
       if (!hasSpokenWelcome) {
         speakText("Welcome. I will now briefly guide you through Chakradhar's portfolio sections.", () => {
           setHasSpokenWelcome(true);
-          // Reset to first section if starting fresh after welcome
-          if(currentSectionIndex !== 0) setCurrentSectionIndex(0); 
-          // Use a slight delay to ensure state update before starting sequence
-          setTimeout(() => startReadingSequence(), 100); 
+          setCurrentSectionIndex(0); // Ensure we start from the first section after welcome
+          // Use a timeout to allow state update for currentSectionIndex to settle before starting sequence.
+          setTimeout(() => startReadingSequence(0), 100); 
         });
       } else {
-        startReadingSequence();
+        // If welcome already spoken, resume from currentSectionIndex
+        startReadingSequence(currentSectionIndex);
       }
     }
-  }, [isReading, speechSynthInstance, hasSpokenWelcome, currentSectionIndex, speakText, startReadingSequence]);
+  }, [isReading, speechSynthInstance, hasSpokenWelcome, currentSectionIndex, speakText, startReadingSequence, setHasSpokenWelcome, setCurrentSectionIndex]);
   
   if (typeof window === 'undefined' || !window.speechSynthesis || !speechSynthInstance) {
     return null;
@@ -150,7 +160,7 @@ const ContentReader: React.FC = () => {
       size="icon"
       onClick={handlePlayPauseClick}
       className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 shadow-lg bg-background hover:bg-accent/10 transition-all hover:scale-110"
-      aria-label={isReading ? 'Stop reading portfolio overview' : 'Play portfolio overview'}
+      aria-label={isReading ? 'Stop portfolio overview' : 'Play portfolio overview'}
     >
       {isReading ? <Square className="h-6 w-6 text-primary" /> : <Play className="h-6 w-6 text-primary" />}
     </Button>
