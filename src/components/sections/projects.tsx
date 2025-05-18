@@ -1,83 +1,122 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import ProjectCard from '@/components/project-card';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
+import { Button } from '@/components/ui/button';
 
-// Exporting projectsData to be used by the chat assistant
 export const projectsData = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
     date: "2023",
-    description: "Developed an advanced deep learning solution leveraging the YOLO (You Only Look Once) architecture, achieving 90% accuracy in distinguishing crops from weeds in diverse agricultural settings. This system processed over 10,000 images and involved establishing scalable real-time inference pipelines. Its implementation contributes to precision agriculture, potentially reducing herbicide usage by up to 15% and promoting sustainable farming practices.",
-    technologies: ["Python", "YOLO", "Object Detection", "OpenCV", "TensorFlow", "Deep Learning"],
+    description: "Built a YOLO-based object detection model (90% accuracy) for classifying crops and weeds, reducing herbicide usage by 15%.",
+    technologies: ["Python", "YOLO", "Object Detection", "TensorFlow"],
     image: "https://placehold.co/640x400.png",
     imageHint: "agriculture technology",
-    projectUrl: "#", 
+    projectUrl: "#",
+    categories: ["AI/ML"],
   },
   {
     title: "Search Engine for Movie Summaries",
     date: "2022",
-    description: "Built a robust and scalable search engine designed to help users find relevant movies based on intricate plot summaries and thematic elements. This project utilized distributed computing frameworks like PySpark and Databricks to efficiently process and index a large dataset of over 100,000 movie records, achieving a 10% improvement in query relevance and search speed.",
-    technologies: ["Python", "PySpark", "Databricks", "NLP", "Hadoop", "Search Algorithms"],
+    description: "Developed a distributed search engine using TF-IDF and cosine similarity, improving query relevance by 10% on 100k+ records.",
+    technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala"],
     image: "https://placehold.co/640x400.png",
     imageHint: "data search",
     projectUrl: "#",
+    categories: ["Big Data", "AI/ML"],
   },
   {
     title: "Facial Recognition Attendance System",
     date: "2022",
-    description: "Engineered a real-time facial recognition system that attained 99% accuracy for automated attendance tracking across a user base of over 200 individuals. The system was seamlessly integrated with cloud storage solutions for real-time data synchronization and reporting, significantly reducing manual data entry errors by 30% and improving administrative efficiency.",
-    technologies: ["Python", "OpenCV", "Machine Learning", "Face Recognition", "Cloud Storage"],
+    description: "Designed a facial recognition system (99% accuracy for 200+ users) with real-time cloud syncing, reducing tracking errors by 30%.",
+    technologies: ["Python", "OpenCV", "Machine Learning", "Cloud"],
     image: "https://placehold.co/640x400.png",
     imageHint: "security face recognition",
     projectUrl: "#",
+    categories: ["AI/ML"],
   },
   {
     title: "Mushroom Classification using Scikit-Learn",
     date: "2021",
-    description: "Trained, validated, and deployed ensemble machine learning models, including Decision Trees, Random Forests, and K-Nearest Neighbors (KNN), to classify mushroom edibility with a high accuracy of 95%. This project involved significant data preprocessing to enhance data reliability from a dataset with 20% missing values, ensuring robust model performance.",
-    technologies: ["Python", "Scikit-Learn", "Decision Tree", "Random Forest", "KNN", "Data Preprocessing"],
+    description: "Trained ensemble models (Decision Tree, Random Forest, KNN) achieving 95% accuracy using cross-validation and preprocessing for missing data.",
+    technologies: ["Python", "Scikit-Learn", "DT Classifier", "RF Classifier", "KNN"],
     image: "https://placehold.co/640x400.png",
     imageHint: "nature classification",
     projectUrl: "#",
+    categories: ["AI/ML"],
   },
   {
-    title: "Custom Linux Process Scheduler Development",
+    title: "Custom Process Scheduler Development",
     date: "2021",
-    description: "Designed, developed, and implemented custom priority-based and lottery-based process schedulers for the xv6 operating system, a teaching OS based on Sixth Edition Unix. This kernel-level development resulted in an 18% reduction in context switching overhead and improved system responsiveness, validated through comprehensive simulations and performance testing.",
-    technologies: ["C", "C++", "Linux Kernel", "xv6", "OS Development", "Process Scheduling"],
+    description: "Programmed custom priority and lottery schedulers in xv6/Linux kernel, reducing context switching overhead by 18%.",
+    technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
     image: "https://placehold.co/640x400.png",
     imageHint: "computing programming",
     projectUrl: "#",
+    categories: ["Systems"],
+  },
+  // Example of a Web Dev project to test filters
+  {
+    title: "Personal Portfolio Website",
+    date: "2024",
+    description: "Developed a responsive personal portfolio using Next.js, React, and Tailwind CSS to showcase skills and projects.",
+    technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript"],
+    image: "https://placehold.co/640x400.png",
+    imageHint: "web design",
+    projectUrl: "https://github.com/Lakshmi-Chakradhar-Vijayarao/Portfolio", // Example link
+    categories: ["Web Dev"],
   }
 ];
+
+const filterCategories = ["All", "AI/ML", "Web Dev", "Big Data", "Systems"];
 
 const Projects: React.FC = () => {
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
+  const [activeFilter, setActiveFilter] = useState("All");
+
+  const filteredProjects = activeFilter === "All" 
+    ? projectsData 
+    : projectsData.filter(project => project.categories.includes(activeFilter));
 
   return (
     <SectionWrapper id="projects" title="My Projects" className="bg-background/50">
+      <div className="flex flex-wrap justify-center gap-2 mb-10">
+        {filterCategories.map((category) => (
+          <Button
+            key={category}
+            variant={activeFilter === category ? "default" : "outline"}
+            onClick={() => setActiveFilter(category)}
+            className="transition-all duration-200 ease-in-out hover:scale-105"
+          >
+            {category}
+          </Button>
+        ))}
+      </div>
       <div 
         ref={ref}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
-        {projectsData.map((project, index) => (
+        {filteredProjects.map((project, index) => (
           <ProjectCard 
-            key={project.title}
+            key={project.title + index} // Ensure key is unique if titles can repeat
             {...project}
             index={index}
             inView={inView}
           />
         ))}
       </div>
+      {filteredProjects.length === 0 && (
+        <p className="text-center text-muted-foreground mt-8">No projects found for the selected filter.</p>
+      )}
     </SectionWrapper>
   );
 };
 
 export default Projects;
+

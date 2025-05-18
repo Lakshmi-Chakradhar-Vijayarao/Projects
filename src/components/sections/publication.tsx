@@ -10,7 +10,7 @@ const publicationData = {
   details: [
     "Built a handwriting recognition model using MNIST-style data, achieving 98.6% training precision and 96.9% test accuracy."
   ],
-  url: "#" // Placeholder URL for the publication link
+  url: "#" // Placeholder for link to paper or conference
 };
 
 export default function Publication() {
@@ -21,15 +21,15 @@ export default function Publication() {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex items-center mb-2">
-                <BookOpenText className="h-6 w-6 mr-3 text-primary" />
+                <BookOpenText className="h-6 w-6 mr-3 text-primary flex-shrink-0" />
                 <CardTitle className="text-xl font-semibold text-primary group-hover:text-accent transition-colors">{publicationData.title}</CardTitle>
               </div>
-              <ExternalLink className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              <ExternalLink className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
             </div>
             <CardDescription className="text-muted-foreground">{publicationData.conference}</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-foreground/80 leading-relaxed">
+            <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/80 leading-relaxed">
               {publicationData.details.map((point, index) => (
                 <li key={index}>{point}</li>
               ))}
@@ -41,3 +41,4 @@ export default function Publication() {
     </SectionWrapper>
   );
 }
+

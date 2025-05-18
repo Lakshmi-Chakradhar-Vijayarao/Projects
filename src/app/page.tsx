@@ -1,7 +1,7 @@
 
 import Hero from '@/components/sections/hero';
 import AboutMe from '@/components/sections/about-me';
-// import Summary from '@/components/sections/summary'; // Removed
+// Summary component was effectively merged into AboutMe or replaced by it
 import Skills from '@/components/sections/skills';
 import Projects from '@/components/sections/projects';
 import Experience from '@/components/sections/experience';
@@ -14,11 +14,10 @@ export default function Home() {
   return (
     <>
       <Hero />
-      {/* <Summary /> */} {/* Removed */}
-      <AboutMe />
-      <Skills />
+      <AboutMe /> {/* Updated AboutMe replaces/incorporates previous Summary concept */}
       <Experience />
       <Projects />
+      <Skills /> 
       <Education />
       <Certifications />
       <Publication />
@@ -26,3 +25,4 @@ export default function Home() {
     </>
   );
 }
+

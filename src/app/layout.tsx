@@ -1,10 +1,11 @@
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-import ResumeChatAssistant from '@/components/chat-assistant/ResumeChatAssistant'; // Added import
+import ResumeChatAssistant from '@/components/chat-assistant/ResumeChatAssistant';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lakshmi Chakradhar Vijayarao | ML Practitioner & Software Engineer",
-  description: 'Portfolio of Lakshmi Chakradhar Vijayarao, showcasing expertise in Machine Learning, Full Stack Development (React.js, Node.js, Python), and building scalable, secure systems.',
+  title: "Lakshmi Chakradhar Vijayarao | Software Engineer & ML Practitioner",
+  description: "Portfolio of Lakshmi Chakradhar Vijayarao, showcasing expertise in Full-Stack Development (React.js, Node.js, Python, MySQL), Machine Learning, AI-powered solutions, and building scalable, secure systems.",
 };
 
 export default function RootLayout({
@@ -35,8 +36,9 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        <ResumeChatAssistant /> {/* Added Chat Assistant */}
+        <ResumeChatAssistant /> {/* Chat Assistant is available globally */}
       </body>
     </html>
   );
 }
+

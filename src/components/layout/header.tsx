@@ -1,18 +1,23 @@
+
 "use client";
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Briefcase, User, Code, MessageSquare, Brain, HomeIcon } from 'lucide-react';
+import { Menu, Briefcase, User, Code, MessageSquare, Brain, HomeIcon, BookOpen, Award, GraduationCap, Info } from 'lucide-react'; // Added more icons
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 
 const navItems = [
   { href: '#hero', label: 'Home', icon: <HomeIcon className="h-4 w-4" /> },
   { href: '#about', label: 'About', icon: <User className="h-4 w-4" /> },
-  { href: '#projects', label: 'Projects', icon: <Code className="h-4 w-4" /> },
   { href: '#experience', label: 'Experience', icon: <Briefcase className="h-4 w-4" /> },
+  { href: '#projects', label: 'Projects', icon: <Code className="h-4 w-4" /> },
+  { href: '#skills-section', label: 'Skills', icon: <Brain className="h-4 w-4" /> },
+  { href: '#education-section', label: 'Education', icon: <GraduationCap className="h-4 w-4" /> },
+  { href: '#certifications-section', label: 'Certs', icon: <Award className="h-4 w-4" /> }, // Shortened label
+  { href: '#publication-section', label: 'Publication', icon: <BookOpen className="h-4 w-4" /> },
   { href: '#contact', label: 'Contact', icon: <MessageSquare className="h-4 w-4" /> },
-  { href: '/tone-analyzer', label: 'Tone Analyzer', icon: <Brain className="h-4 w-4" />, newTab: false }, // Kept as an example tool
+  // { href: '/tone-analyzer', label: 'Tone Analyzer', icon: <Brain className="h-4 w-4" />, newTab: false }, // Example tool, can be re-added if needed
 ];
 
 export default function Header() {
@@ -32,7 +37,6 @@ export default function Header() {
           <Link href="/" className="text-xl font-bold text-primary hover:text-primary/90 transition-colors">
             {siteTitle}
           </Link>
-          {/* Placeholder for nav items to avoid layout shift, or simple menu icon */}
            <div className="md:hidden">
             <Button variant="outline" size="icon" disabled>
               <Menu className="h-5 w-5" />
@@ -40,10 +44,10 @@ export default function Header() {
           </div>
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
-              <Button key={item.label} variant="ghost" asChild className="text-sm">
+              <Button key={item.label} variant="ghost" asChild className="text-sm px-2 py-1 h-auto md:px-3 md:py-2 md:h-9">
                 <Link href={item.href} target={item.newTab ? '_blank' : '_self'}>
                   {item.icon}
-                  <span className="ml-2">{item.label}</span>
+                  <span className="ml-1.5">{item.label}</span>
                 </Link>
               </Button>
             ))}
@@ -60,12 +64,12 @@ export default function Header() {
           key={item.label}
           variant="ghost"
           asChild
-          className={`justify-start text-sm ${inSheet ? 'w-full text-base py-3' : ''}`}
+          className={`justify-start text-sm ${inSheet ? 'w-full text-base py-3' : 'px-2 py-1 h-auto md:px-3 md:py-2 md:h-9'}`}
           onClick={() => inSheet && setMobileMenuOpen(false)}
         >
           <Link href={item.href} target={item.newTab ? '_blank' : '_self'}>
             {item.icon}
-            <span className="ml-2">{item.label}</span>
+            <span className="ml-1.5">{item.label}</span>
           </Link>
         </Button>
       ))}
@@ -104,3 +108,4 @@ export default function Header() {
     </header>
   );
 }
+

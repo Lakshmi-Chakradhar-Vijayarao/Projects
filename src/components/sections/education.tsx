@@ -1,19 +1,22 @@
+
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { GraduationCap, CalendarDays } from 'lucide-react';
+import { GraduationCap, CalendarDays, MapPin } from 'lucide-react';
 
 const educationData = [
   {
     degree: "Master of Science in Computer Science",
-    institution: "University of Example",
-    duration: "2020 - 2022",
-    details: "Specialized in Machine Learning and Artificial Intelligence. Relevant coursework: Advanced Algorithms, Deep Learning, Natural Language Processing."
+    institution: "The University of Texas at Dallas",
+    duration: "Expected: May 2025",
+    details: "GPA: 3.607 / 4.0",
+    location: "Dallas, USA"
   },
   {
-    degree: "Bachelor of Technology in Information Technology",
-    institution: "Example Institute of Technology",
-    duration: "2016 - 2020",
-    details: "Graduated with honors. Capstone project on a web-based recommendation system."
+    degree: "Bachelor of Engineering in Electronics and Communication Engineering",
+    institution: "R.M.K. Engineering College",
+    duration: "Graduated: Mar 2023", // Assuming based on resume dates, adjust if needed
+    details: "GPA: 9.04 / 10.0",
+    location: "Chennai, India"
   }
 ];
 
@@ -31,9 +34,13 @@ export default function Education() {
               <CardDescription className="text-muted-foreground">{edu.institution}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground mb-3">
+              <div className="flex items-center text-sm text-muted-foreground mb-2">
                 <CalendarDays className="h-4 w-4 mr-2" />
                 <span>{edu.duration}</span>
+              </div>
+              <div className="flex items-center text-sm text-muted-foreground mb-3">
+                <MapPin className="h-4 w-4 mr-2" />
+                <span>{edu.location}</span>
               </div>
               <p className="text-foreground/80">{edu.details}</p>
             </CardContent>
@@ -43,3 +50,4 @@ export default function Education() {
     </SectionWrapper>
   );
 }
+
