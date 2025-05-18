@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,14 +17,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Send } from "lucide-react";
+import { sendContactEmail, type ContactFormInput } from "@/app/actions/send-email";
 
+// Schema for client-side validation (server action will also validate)
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   message: z.string().min(10, { message: "Message must be at least 10 characters." }).max(500, { message: "Message must be less than 500 characters." }),
 });
 
-type ContactFormValues = z.infer<typeof contactFormSchema>;
+type ContactFormValues = ContactFormInput;
 
 export default function ContactForm() {
   const { toast } = useToast();
@@ -36,15 +39,50 @@ export default function ContactForm() {
     },
   });
 
-  // Placeholder onSubmit function
-  function onSubmit(data: ContactFormValues) {
-    console.log("Form submitted:", data);
-    // In a real application, you would send this data to a backend API
-    toast({
-      title: "Message Sent (Simulated)",
-      description: "Thank you for your message! I'll get back to you soon.",
-    });
-    form.reset(); // Reset form after submission
+  async function onSubmit(data: ContactFormValues) {
+    form.clearErrors(); // Clear previous errors
+    try {
+      const result = await sendContactEmail(data);
+
+      if (result.success) {
+        toast({
+          title: "Message Sent!",
+          description: "Thank you for your message! I'll get back to you soon.",
+        });
+        form.reset();
+      } else {
+        let errorDescription = result.message || "An unknown error occurred.";
+        if (result.error && typeof result.error === 'object' && !Array.isArray(result.error)) {
+          // Handle Zod field errors
+          errorDescription = "Please check your input: ";
+          const fieldErrors = Object.entries(result.error as Record<string, string[]>).map(([field, messages]) => {
+            const formattedField = field.charAt(0).toUpperCase() + field.slice(1);
+            // Set error for react-hook-form to display under the field
+            form.setError(field as keyof ContactFormValues, { 
+              type: "server", 
+              message: messages.join(', ') 
+            });
+            return `${formattedField}: ${messages.join(', ')}`;
+          }).join("; ");
+          errorDescription += fieldErrors;
+        } else if (typeof result.error === 'string') {
+          errorDescription = result.error;
+        }
+        
+        toast({
+          variant: "destructive",
+          title: "Message Not Sent",
+          description: errorDescription,
+        });
+      }
+    } catch (error) {
+      console.error("Contact form submission error:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was an unexpected problem. Please try again later.",
+      });
+    }
   }
 
   return (

@@ -29,7 +29,7 @@ const AnimatedAvatar: React.FC = () => {
     // Start main animation trigger
     const timer = setTimeout(() => setAnimate(true), 500);
 
-    // Generate styles for dots and lines client-side
+    // Generate styles for dots and lines client-side to avoid hydration mismatch
     const newDotStyles = Array.from({ length: 8 }).map((_, i) => ({
       width: `${Math.random() * 20 + 10}px`,
       height: `${Math.random() * 20 + 10}px`,
@@ -53,9 +53,9 @@ const AnimatedAvatar: React.FC = () => {
 
   return (
     <div className="relative">
-      {/* Pixel art tech background - circles representing different technologies */}
+      {/* Background elements */}
       <div className="absolute inset-0 -m-4">
-        <div className={`w-full h-full rounded-full bg-gradient-to-br from-primary via-purple-500 to-accent overflow-hidden
+        <div className={`w-full h-full rounded-full bg-gradient-to-br from-primary via-secondary to-accent overflow-hidden
           ${animate ? 'animate-pulse' : ''}`}>
           {/* Technology-themed pixel dots */}
           {dotStyles.map((style, i) => (
