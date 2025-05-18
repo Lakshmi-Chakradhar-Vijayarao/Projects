@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import { MessageSquarePlus } from 'lucide-react';
+import { BotMessageSquare } from 'lucide-react'; // Changed from MessageSquarePlus
 
 interface ChatBubbleProps {
   onClick: () => void;
@@ -18,7 +18,7 @@ export default function ChatBubble({ onClick, isVisible }: ChatBubbleProps) {
       className="fixed bottom-6 right-6 bg-primary text-primary-foreground p-4 rounded-full shadow-xl hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 animate-subtle-pulse z-[9998]"
       aria-label="Open resume chat assistant"
     >
-      <MessageSquarePlus className="h-8 w-8" />
+      <BotMessageSquare className="h-8 w-8" /> {/* Changed icon here */}
     </button>
   );
 }
