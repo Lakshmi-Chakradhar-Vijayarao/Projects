@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
+import ResumeChatAssistant from '@/components/chat-assistant/ResumeChatAssistant'; // Added import
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,6 +35,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
+        <ResumeChatAssistant /> {/* Added Chat Assistant */}
       </body>
     </html>
   );
