@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -7,9 +8,10 @@ import { Play, Square } from 'lucide-react';
 interface SectionToRead {
   id: string;
   speakableText: string;
-  isSpecial?: boolean; // To avoid scrolling for virtual sections like intro/outro
+  isSpecial?: boolean;
 }
 
+// Ensure section IDs match actual IDs on your page.
 const sectionsToReadData: SectionToRead[] = [
   { id: 'welcome', speakableText: "Welcome. I will now briefly guide you through Chakradhar's portfolio sections.", isSpecial: true },
   { id: 'about', speakableText: "About Chakradhar: A passionate software engineer and AI developer specializing in full-stack development and intelligent data processing." },
@@ -30,18 +32,13 @@ const ContentReader: React.FC = () => {
   const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const sectionQueueRef = useRef<SectionToRead[]>([]);
   
-  // This ref helps the onend callback access the current isReading state
-  const isReadingRef = useRef(isReading);
-  useEffect(() => {
-    isReadingRef.current = isReading;
-  }, [isReading]);
-
   useEffect(() => {
     setIsMounted(true);
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       synthRef.current = window.speechSynthesis;
     }
 
+    // Cleanup function: stop speech and clear refs if component unmounts
     return () => {
       if (synthRef.current?.speaking) {
         synthRef.current.cancel();
@@ -49,8 +46,9 @@ const ContentReader: React.FC = () => {
       if (currentUtteranceRef.current) {
         currentUtteranceRef.current.onend = null;
         currentUtteranceRef.current.onerror = null;
-        currentUtteranceRef.current = null;
       }
+      currentUtteranceRef.current = null;
+      sectionQueueRef.current = [];
     };
   }, []);
 
@@ -62,20 +60,15 @@ const ContentReader: React.FC = () => {
   }, []);
 
   const processSpeechQueue = useCallback(() => {
-    if (!isReadingRef.current || sectionQueueRef.current.length === 0 || !synthRef.current) {
-      setIsReading(false); // Ensure state is updated
-      if (currentUtteranceRef.current) {
-        currentUtteranceRef.current.onend = null; // Clean up just in case
-        currentUtteranceRef.current.onerror = null;
-        currentUtteranceRef.current = null;
-      }
+    if (!isReading || sectionQueueRef.current.length === 0 || !synthRef.current) {
+      setIsReading(false); // Ensure correct state if queue empty or should not be reading
       return;
     }
 
-    const section = sectionQueueRef.current.shift(); // Get and remove the next section
-    if (!section) {
-      setIsReading(false);
-      return;
+    const section = sectionQueueRef.current.shift();
+    if (!section) { // Should be caught by length === 0, but good guard
+        setIsReading(false);
+        return;
     }
 
     if (!section.isSpecial) {
@@ -86,14 +79,18 @@ const ContentReader: React.FC = () => {
     currentUtteranceRef.current = utterance;
 
     utterance.onend = () => {
-      if (currentUtteranceRef.current === utterance) { // Ensure it's this utterance
-        currentUtteranceRef.current = null;
+      if (currentUtteranceRef.current === utterance) { // Process only if it's the current utterance
         processSpeechQueue(); // Process next item in queue
       }
     };
 
-    utterance.onerror = (event) => {
-      console.error('SpeechSynthesisUtterance.onerror:', event.error, 'for text:', section.speakableText);
+    utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
+      let errorDetails = "Unknown speech error";
+      if (event && event.error) {
+        errorDetails = event.error;
+      }
+      console.error('SpeechSynthesisUtterance.onerror for text:', `"${section.speakableText}"`, 'Error details:', errorDetails, 'Full event object:', event);
+      
       if (currentUtteranceRef.current === utterance) {
         currentUtteranceRef.current = null;
       }
@@ -101,51 +98,81 @@ const ContentReader: React.FC = () => {
       sectionQueueRef.current = []; // Clear queue on error
     };
     
-    // Simple voice loading check
-    const speakNow = () => {
-      if (synthRef.current) {
-        // synthRef.current.cancel(); // Cancel previous before speaking new one.
-                                   // This is often the source of "interrupted" or complex issues.
-                                   // The queue system should prevent overlaps naturally.
-        synthRef.current.speak(utterance);
-      }
+    const attemptToSpeak = () => {
+        if (synthRef.current) {
+            synthRef.current.speak(utterance);
+        }
     };
 
-    if (synthRef.current.getVoices().length > 0) {
-      speakNow();
+    // Simplified voice loading: try to speak. If voices aren't ready, it might use default or queue.
+    // More complex voice selection/waiting can be added if needed but increases complexity.
+    if (synthRef.current) {
+        if (synthRef.current.getVoices().length > 0) {
+            attemptToSpeak();
+        } else {
+            // Fallback if voices not immediately available
+            const voiceChangeHandler = () => {
+                if(synthRef.current) synthRef.current.onvoiceschanged = null;
+                attemptToSpeak();
+            };
+            synthRef.current.onvoiceschanged = voiceChangeHandler;
+            // Some browsers might still not fire onvoiceschanged quickly or at all
+            // so as a fallback, try speaking after a short delay
+            setTimeout(() => {
+                 if (synthRef.current && synthRef.current.onvoiceschanged === voiceChangeHandler) {
+                    // if handler hasn't fired and been cleared, try to speak
+                    synthRef.current.onvoiceschanged = null;
+                    attemptToSpeak();
+                 } else if (synthRef.current && !synthRef.current.onvoiceschanged) {
+                    // Handler already fired and cleared, or was never set (e.g. voices loaded fast)
+                    // We might have already spoken, or if not, speak now.
+                    // This part is tricky to make idempotent without extra flags per utterance call.
+                    // The primary speak is above. This timeout is a fallback.
+                    if (!synthRef.current.speaking && currentUtteranceRef.current === utterance) {
+                        // attemptToSpeak(); // Can lead to double speak, be cautious
+                    }
+                 }
+            }, 250); // Small delay
+        }
     } else {
-      // Wait for voices to be loaded
-      synthRef.current.onvoiceschanged = () => {
-        if (synthRef.current) synthRef.current.onvoiceschanged = null; // Remove listener
-        speakNow();
-      };
-      // Fallback if onvoiceschanged doesn't fire quickly or voices were already loading
-      if (synthRef.current.getVoices().length > 0) {
-         if (synthRef.current) synthRef.current.onvoiceschanged = null;
-         speakNow();
+        setIsReading(false); // Synth not available
+    }
+
+  }, [isReading, smoothScrollTo, setIsReading]); // Added setIsReading as it's called
+
+
+  // Effect to manage starting and stopping the speech queue
+  useEffect(() => {
+    if (isReading && synthRef.current) {
+      // If we intend to read and synth is ready
+      if (sectionQueueRef.current.length > 0 && !synthRef.current.speaking) {
+        // And there are items in queue, and synth isn't already speaking
+        processSpeechQueue();
+      }
+    } else if (!isReading && synthRef.current) {
+      // If we intend to stop reading (isReading is false)
+      synthRef.current.cancel();
+      sectionQueueRef.current = []; // Clear queue
+      if (currentUtteranceRef.current) { // Clean up handlers of any potentially stuck utterance
+        currentUtteranceRef.current.onend = null;
+        currentUtteranceRef.current.onerror = null;
+        // currentUtteranceRef.current = null; // Do not nullify here, let processSpeechQueue handle if queue becomes empty
       }
     }
-  }, [smoothScrollTo]);
+  }, [isReading, processSpeechQueue]); // processSpeechQueue is a dependency
 
   const handleToggleRead = () => {
-    if (!synthRef.current || !isMounted) return;
+    if (!isMounted || !synthRef.current) return;
 
-    const nextIsReading = !isReading;
-    setIsReading(nextIsReading); // Update React state
+    const nextIsReadingState = !isReading;
 
-    if (nextIsReading) {
-      // Start reading: populate the queue and process the first item
-      sectionQueueRef.current = [...sectionsToReadData]; // Fresh queue
-      processSpeechQueue();
+    if (nextIsReadingState) {
+      // ----- STARTING -----
+      sectionQueueRef.current = [...sectionsToReadData]; // Populate fresh queue
+      setIsReading(true); // This will trigger the useEffect above to start processSpeechQueue
     } else {
-      // Stop reading: clear the queue and cancel any current speech
-      sectionQueueRef.current = [];
-      synthRef.current.cancel();
-      if (currentUtteranceRef.current) {
-        currentUtteranceRef.current.onend = null; // Important to prevent onend from firing after manual stop
-        currentUtteranceRef.current.onerror = null;
-        currentUtteranceRef.current = null;
-      }
+      // ----- STOPPING -----
+      setIsReading(false); // This will trigger the useEffect above to cancel/cleanup
     }
   };
 
@@ -167,3 +194,4 @@ const ContentReader: React.FC = () => {
 };
 
 export default ContentReader;
+
