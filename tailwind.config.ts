@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-    darkMode: ["class"],
+    darkMode: ["class"], // Can remove if default theme is dark and no toggle
     content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -83,26 +83,22 @@ export default {
   					height: '0'
   				}
   			},
-        'bg-pan': {
+        'bg-pan': { // Kept for hero section gradient animation
           '0%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
           '100%': { backgroundPosition: '0% 50%' },
         },
-        'scale-up': {
+        'scale-up': { // For project card animations
           '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0px)' },
         },
-        'subtle-pan': {
-          '0%': { backgroundPosition: '0% center' },
-          '100%': { backgroundPosition: '200% center' }, // Pans twice the width of the image
-        }
+        // Removed 'subtle-pan' as pixel art background is removed
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'bg-pan': 'bg-pan 15s ease infinite',
         'scale-up': 'scale-up 0.5s ease-out forwards',
-        'subtle-pan': 'subtle-pan 120s linear infinite alternate', // 120 seconds for a very slow pan, alternating direction
   		}
   	}
   },

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lakshmi's Launchpad | Software Engineer & ML Practitioner",
-  description: 'Personal portfolio of Lakshmi Chakradhar Vijayarao, showcasing expertise in full stack development, machine learning, and scalable systems.',
+  title: "Lakshmi Chakradhar Vijayarao | ML Practitioner & Software Engineer",
+  description: 'Portfolio of Lakshmi Chakradhar Vijayarao, showcasing expertise in Machine Learning, Full Stack Development (React.js, Node.js, Python), and building scalable, secure systems.',
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-background text-foreground`}>
         <Header />
         <main className="flex-grow">
           {children}

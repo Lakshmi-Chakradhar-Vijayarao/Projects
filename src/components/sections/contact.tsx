@@ -1,48 +1,56 @@
 import { SectionWrapper } from '@/components/ui/section-wrapper';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
 import Link from 'next/link';
+import ContactForm from '@/components/contact-form';
 
-const contactDetails = [
-  { icon: Mail, text: 'lakshmichakradhar.v@gmail.com', href: 'mailto:lakshmichakradhar.v@gmail.com', label: 'Email' },
-  { icon: Phone, text: '+1 (469)-783-4637', href: 'tel:+14697834637', label: 'Phone' },
-  { icon: Linkedin, text: 'LinkedIn Profile', href: 'https://www.linkedin.com/in/lakshmicv/', label: 'LinkedIn' },
-  { icon: Github, text: 'GitHub Profile', href: 'https://github.com/lakshmicv', label: 'GitHub' },
-  { icon: MapPin, text: 'Dallas, TX, USA', href: '#', label: 'Location', noLink: true },
+const socialLinks = [
+  { name: 'GitHub', href: 'https://github.com/lakshmicv', icon: Github, text: 'lakshmicv' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmicv/', icon: Linkedin, text: 'lakshmicv' },
 ];
 
 export default function Contact() {
   return (
-    <SectionWrapper id="contact" title="Get In Touch" className="bg-secondary">
-      <Card className="max-w-2xl mx-auto shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-center text-primary">Let's Connect!</CardTitle>
+    <SectionWrapper id="contact" title="Get In Touch" className="bg-background/50">
+      <Card className="max-w-3xl mx-auto shadow-xl bg-card/80 backdrop-blur-sm border border-border/50">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-semibold text-primary">Let's Connect!</CardTitle>
+          <CardDescription className="text-muted-foreground mt-2">
+            I'm always open to discussing new projects, creative ideas, or opportunities.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <p className="text-center text-foreground/80">
-            I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
-          </p>
-          <div className="space-y-4">
-            {contactDetails.map((item) => (
-              <div key={item.label} className="flex items-center space-x-3">
-                <item.icon className="h-6 w-6 text-primary" />
-                {item.noLink ? (
-                   <span className="text-foreground/90">{item.text}</span>
-                ) : (
-                  <Link href={item.href} target={item.href.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer" className="text-foreground/90 hover:text-primary transition-colors">
-                    {item.text}
-                  </Link>
-                )}
+        <CardContent className="grid md:grid-cols-2 gap-8 md:gap-12 p-8">
+          <div>
+            <h3 className="text-xl font-semibold text-foreground mb-4">Contact Details</h3>
+            <p className="text-muted-foreground mb-6">
+              Feel free to reach out via email or connect with me on social media.
+            </p>
+            <div className="space-y-4 mb-6">
+              <div className="flex items-center space-x-3">
+                <Mail className="h-5 w-5 text-primary" />
+                <a href="mailto:lakshmichakradhar.v@gmail.com" className="text-foreground/90 hover:text-primary transition-colors">
+                  lakshmichakradhar.v@gmail.com
+                </a>
               </div>
-            ))}
-          </div>
-          <div className="pt-4 text-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 transition-transform hover:scale-105 shadow-md" asChild>
+              {socialLinks.map((link) => (
+                <div key={link.name} className="flex items-center space-x-3">
+                  <link.icon className="h-5 w-5 text-primary" />
+                  <Link href={link.href} target="_blank" rel="noopener noreferrer" className="text-foreground/90 hover:text-primary transition-colors">
+                    {link.text}
+                  </Link>
+                </div>
+              ))}
+            </div>
+            <Button size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105 shadow-md" asChild>
               <a href="mailto:lakshmichakradhar.v@gmail.com">
                 Send me an Email <Mail className="ml-2 h-5 w-5" />
               </a>
             </Button>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-foreground mb-4">Send a Message</h3>
+            <ContactForm />
           </div>
         </CardContent>
       </Card>

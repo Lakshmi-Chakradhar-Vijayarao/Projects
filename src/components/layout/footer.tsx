@@ -1,20 +1,24 @@
-import { Github, Linkedin, Mail, Phone } from 'lucide-react';
+import { Github, Linkedin, Mail, Phone, Code } from 'lucide-react';
 import Link from 'next/link';
 
 const socialLinks = [
   { name: 'GitHub', href: 'https://github.com/lakshmicv', icon: Github },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmicv/', icon: Linkedin },
   { name: 'Email', href: 'mailto:lakshmichakradhar.v@gmail.com', icon: Mail },
-  { name: 'Phone', href: 'tel:+14697834637', icon: Phone },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background/80">
-      <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row sm:px-6 lg:px-8">
-        <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Lakshmi Chakradhar Vijayarao. All rights reserved.
-        </p>
+    <footer className="border-t border-border/50 bg-background/80 py-8">
+      <div className="container mx-auto flex flex-col items-center justify-between gap-6 px-4 text-center sm:flex-row sm:text-left lg:px-8">
+        <div>
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Lakshmi Chakradhar Vijayarao.
+          </p>
+          <p className="text-xs text-muted-foreground/70 mt-1">
+            Built with Next.js, Tailwind CSS, and ❤️.
+          </p>
+        </div>
         <div className="flex space-x-4">
           {socialLinks.map((link) => (
             <Link
