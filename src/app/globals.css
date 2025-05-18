@@ -67,6 +67,14 @@ html {
   }
   body {
     @apply bg-background text-foreground;
-    /* Removed pixel-art background, using solid theme background */
+    /* Removed pixel-art background and animation, using solid theme background */
+    /*
+    background-image: url('/pixel-art-sky-background.jpg'); 
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    animation: subtle-pan 120s linear infinite alternate; 
+    background-color: hsl(var(--background)); 
+    */
   }
 }
