@@ -1,3 +1,4 @@
+
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,11 +43,7 @@ export default function Contact() {
                 </div>
               ))}
             </div>
-            <Button size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105 shadow-md" asChild>
-              <a href="mailto:lakshmichakradhar.v@gmail.com">
-                Send me an Email <Mail className="ml-2 h-5 w-5" />
-              </a>
-            </Button>
+            {/* Removed "Send me an Email" button */}
           </div>
           <div>
             <h3 className="text-xl font-semibold text-foreground mb-4">Send a Message</h3>
