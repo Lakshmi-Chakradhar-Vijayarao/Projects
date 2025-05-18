@@ -82,7 +82,7 @@ const AnimatedAvatar: React.FC = () => {
           ${animate ? 'scale-100' : 'scale-95'}`}
       >
         <AvatarImage
-          src="https://placehold.co/200x200.png" // REMEMBER to replace with your actual image in /public
+          src="https://placehold.co/200x200.png" 
           alt="Lakshmi Chakradhar Vijayarao"
           data-ai-hint="professional avatar"
           className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`}

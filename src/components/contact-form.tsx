@@ -40,7 +40,7 @@ export default function ContactForm() {
   });
 
   async function onSubmit(data: ContactFormValues) {
-    form.clearErrors(); // Clear previous errors
+    form.clearErrors(); 
     try {
       const result = await sendContactEmail(data);
 
@@ -53,11 +53,9 @@ export default function ContactForm() {
       } else {
         let errorDescription = result.message || "An unknown error occurred.";
         if (result.error && typeof result.error === 'object' && !Array.isArray(result.error)) {
-          // Handle Zod field errors
           errorDescription = "Please check your input: ";
           const fieldErrors = Object.entries(result.error as Record<string, string[]>).map(([field, messages]) => {
             const formattedField = field.charAt(0).toUpperCase() + field.slice(1);
-            // Set error for react-hook-form to display under the field
             form.setError(field as keyof ContactFormValues, { 
               type: "server", 
               message: messages.join(', ') 

@@ -59,9 +59,6 @@ html {
     --sidebar-border: 240 10% 20%;
     --sidebar-ring: hsl(var(--ring));
   }
-
-  /* Remove .dark specific overrides if default is dark */
-  /* The :root above now defines the default dark theme */
 }
 
 @layer base {

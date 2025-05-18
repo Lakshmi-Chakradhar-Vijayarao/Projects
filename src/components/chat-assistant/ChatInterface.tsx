@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import type { ReactNode } from 'react'; // Ensured ReactNode is typed
+import type { ReactNode } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,13 +10,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export type ChatMessage = {
   id: string;
   sender: 'user' | 'assistant';
-  text: ReactNode; // Use ReactNode for versatile content
+  text: ReactNode; 
 };
 
 export type QuickReplyButton = {
   text: string;
   onClick: () => void;
-  icon?: ReactNode; // Use ReactNode for icons
+  icon?: ReactNode; 
 };
 
 interface ChatInterfaceProps {
@@ -81,7 +81,7 @@ export default function ChatInterface({
             <div className="flex flex-wrap justify-center gap-2">
               {quickReplies.map((reply) => (
                 <Button
-                  key={reply.text} // Changed key from index to reply.text
+                  key={reply.text} 
                   variant="outline"
                   size="sm"
                   onClick={reply.onClick}

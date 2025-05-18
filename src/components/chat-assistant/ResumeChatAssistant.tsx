@@ -39,18 +39,16 @@ export default function ResumeChatAssistant() {
   const [hasBeenGreeted, setHasBeenGreeted] = useState(false);
   const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0);
 
+  const addMessage = useCallback((sender: 'user' | 'assistant', text: React.ReactNode) => {
+    setMessages(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, text }]);
+  }, []);
+
   const speakText = useCallback((textToSpeak: string) => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      // Optional: configure voice, rate, pitch here if needed
-      // e.g., utterance.lang = 'en-US';
-      window.speechSynthesis.cancel(); // Cancel any ongoing speech
+      window.speechSynthesis.cancel(); 
       window.speechSynthesis.speak(utterance);
     }
-  }, []);
-
-  const addMessage = useCallback((sender: 'user' | 'assistant', text: React.ReactNode) => {
-    setMessages(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, text }]);
   }, []);
 
   useEffect(() => {
@@ -211,14 +209,11 @@ export default function ResumeChatAssistant() {
                 { text: "Resume Walkthrough", onClick: () => { addMessage('user', "Let's do the walkthrough."); handleTourStep('summary_intro'); }, icon: <Briefcase className="h-4 w-4"/> },
                 { text: "Just Browsing", onClick: () => { addMessage('user', "Just browsing."); handleTourStep('ended'); }, icon: <XCircle className="h-4 w-4"/> },
             ]);
-            setIsChatOpen(true); 
-            setShowBubble(false);
-        } else {
-             setIsChatOpen(true); 
-             setShowBubble(false);
         }
+        setIsChatOpen(true); 
+        setShowBubble(false);
     } else { 
-        if (window.speechSynthesis) { // Stop speech when closing chat
+        if (window.speechSynthesis) { 
             window.speechSynthesis.cancel();
         }
         setIsChatOpen(false);
@@ -239,4 +234,3 @@ export default function ResumeChatAssistant() {
     </>
   );
 }
-

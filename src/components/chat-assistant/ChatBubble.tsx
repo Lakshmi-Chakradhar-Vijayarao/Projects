@@ -1,6 +1,7 @@
+
 "use client";
 
-import React from 'react'; // Added React import
+import React from 'react';
 import { MessageSquarePlus } from 'lucide-react';
 
 interface ChatBubbleProps {
