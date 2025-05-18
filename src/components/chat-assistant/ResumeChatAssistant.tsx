@@ -1,10 +1,10 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ChatBubble from './ChatBubble';
 import ChatInterface, { type ChatMessage, type QuickReplyButton } from './ChatInterface';
-import { projectsData as pageProjectsData } from '@/components/sections/projects'; // For project titles
+import { projectsData as pageProjectsData } from '@/components/sections/projects'; 
 import { CheckCircle, XCircle, ArrowRight, Briefcase, Code, GraduationCap, Award, Download, MessageCircleQuestion, LogOut, BookOpen, Info, ListChecks, ScrollText, Lightbulb } from 'lucide-react';
 
 type TourStep =
@@ -21,23 +21,22 @@ type TourStep =
   | 'end_tour_prompt'
   | 'ended';
 
-// sectionDetails should align with the IDs of your actual page sections
 const sectionDetails: Record<string, { id: string, name: string, nextStep?: TourStep, nextButtonText?: string, icon?: React.ReactNode }> = {
-  summary: { id: 'summary-section', name: "Lakshmi's Summary", nextStep: 'skills_intro', nextButtonText: "Next: Skills", icon: <ScrollText className="h-4 w-4" /> },
-  skills: { id: 'skills-section', name: "Technical Skills", nextStep: 'experience_intro', nextButtonText: "Next: Experience", icon: <ListChecks className="h-4 w-4" />},
-  experience: { id: 'experience', name: "Work Experience", nextStep: 'projects_list_intro', nextButtonText: "Next: Projects", icon: <Briefcase className="h-4 w-4" /> },
-  projects: { id: 'projects', name: "Projects Showcase" }, // No nextStep defined here, handled by project buttons or "Next Section"
-  education: { id: 'education-section', name: "Education Background", nextStep: 'certifications_intro', nextButtonText: "Next: Certifications", icon: <GraduationCap className="h-4 w-4" />},
-  certifications: { id: 'certifications-section', name: "Certifications", nextStep: 'publication_intro', nextButtonText: "Next: Publication", icon: <Award className="h-4 w-4" /> },
-  publication: {id: 'publication-section', name: "Publication", nextStep: 'additional_info_intro', nextButtonText: "Next: Additional Info", icon: <BookOpen className="h-4 w-4" />},
-  additional_info: {id: 'additional-info-placeholder', name: "Additional Info", nextStep: 'end_tour_prompt', nextButtonText: "Finish Resume Tour 🎉", icon: <Info className="h-4 w-4" />}
+  summary: { id: 'summary-section', name: "Lakshmi's Summary", nextStep: 'skills_intro', icon: <ScrollText className="h-4 w-4" /> },
+  skills: { id: 'skills-section', name: "Technical Skills", nextStep: 'experience_intro', icon: <ListChecks className="h-4 w-4" />},
+  experience: { id: 'experience', name: "Work Experience", nextStep: 'projects_list_intro', icon: <Briefcase className="h-4 w-4" /> },
+  projects: { id: 'projects', name: "Projects Showcase" }, 
+  education: { id: 'education-section', name: "Education Background", nextStep: 'certifications_intro', icon: <GraduationCap className="h-4 w-4" />},
+  certifications: { id: 'certifications-section', name: "Certifications", nextStep: 'publication_intro', icon: <Award className="h-4 w-4" /> },
+  publication: {id: 'publication-section', name: "Publication", nextStep: 'additional_info_intro', icon: <BookOpen className="h-4 w-4" />},
+  additional_info: {id: 'additional-info-placeholder', name: "Additional Info", nextStep: 'end_tour_prompt', icon: <Info className="h-4 w-4" />}
 };
 
 const projectItems = pageProjectsData.map(p => ({ title: p.title, projectUrl: p.projectUrl }));
 
 const projectChatDescriptions: Record<string, string> = {
-  "AI-Powered Smart Detection of Crops and Weeds": "She built a YOLO-based object detection system with 90% accuracy for identifying crops and weeds. This helped reduce herbicide usage by 15%.",
-  "Search Engine for Movie Summaries": "Using PySpark and Hadoop, she developed a search engine that improves query relevance with TF-IDF and cosine similarity across 100K+ records.",
+  "AI-Powered Smart Detection of Crops and Weeds": "He built a YOLO-based object detection system with 90% accuracy for identifying crops and weeds. This helped reduce herbicide usage by 15%.",
+  "Search Engine for Movie Summaries": "Using PySpark and Hadoop, he developed a search engine that improves query relevance with TF-IDF and cosine similarity across 100K+ records.",
   "Facial Recognition Attendance System": "Designed a face-recognition attendance system using OpenCV, achieving 99% accuracy for 200+ users, with real-time cloud syncing.",
   "Mushroom Classification with Scikit-Learn": "Used ensemble models like Decision Tree, Random Forest, and KNN to classify mushrooms with 95% accuracy, even with 20% missing data.",
   "Custom Process Scheduler Development": "Programmed priority and lottery-based schedulers in xv6/Linux kernel, reducing context-switching by 18% and validating fairness with simulations."
@@ -55,12 +54,12 @@ export default function ResumeChatAssistant() {
 
   const addMessage = useCallback((sender: 'user' | 'assistant', text: React.ReactNode) => {
     setMessages(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, text }]);
-  }, []);
+  }, []); 
 
   const speakText = useCallback((textToSpeak: string) => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      window.speechSynthesis.cancel();
+      window.speechSynthesis.cancel(); 
       window.speechSynthesis.speak(utterance);
     }
   }, []);
@@ -84,34 +83,30 @@ export default function ResumeChatAssistant() {
 
   const handleTourStep = useCallback((step: TourStep, payload?: any) => {
     setCurrentTourStep(step);
-    setCurrentQuickReplies([]);
+    // Default to closing chat and showing bubble for presentation steps
+    let openChatInterface = false;
+    let showTheBubble = true;
+    let repliesForInterface: QuickReplyButton[] = [];
 
     switch (step) {
       case 'greeting':
+        openChatInterface = true;
+        showTheBubble = false;
         if (!hasBeenGreeted) {
-          if (!isChatOpen) {
-            setChatInterfaceRenderKey(prevKey => prevKey + 1);
-            setIsChatOpen(true);
-            setShowBubble(false); // Hide bubble when interface opens
-          }
           addMessage('assistant', "Hi there! I’m your assistant. Would you like me to walk you through Lakshmi’s resume?");
-          setCurrentQuickReplies([
+        }
+        repliesForInterface = [
             { text: "Yes, please!", onClick: () => { addMessage('user', "Yes, please!"); handleTourStep('summary_intro'); }, icon: <CheckCircle className="h-4 w-4"/> },
             { text: "No thanks", onClick: () => { addMessage('user', "No thanks"); handleTourStep('ended'); }, icon: <XCircle className="h-4 w-4"/> },
-          ]);
-          setHasBeenGreeted(true);
-        }
+        ];
+        setHasBeenGreeted(true);
         break;
 
       case 'summary_intro': {
         const detail = sectionDetails.summary;
-        addMessage('assistant', "Lakshmi is a versatile Software Engineer and Machine Learning practitioner. She’s built secure, scalable, and user-focused applications using Python, React.js, Node.js, and MySQL. She's strong in Agile practices, backend optimization, and AI-powered solutions.");
+        addMessage('assistant', "Lakshmi is a versatile Software Engineer and Machine Learning practitioner. He’s built secure, scalable, and user-focused applications using Python, React.js, Node.js, and MySQL. He's strong in Agile practices, backend optimization, and AI-powered solutions.");
         smoothScrollTo(detail.id);
-         setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: "Next ➡️", onClick: () => { addMessage('user', `Next`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
@@ -131,11 +126,7 @@ export default function ResumeChatAssistant() {
           </>
         ));
         smoothScrollTo(detail.id);
-        setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: "Next ➡️", onClick: () => { addMessage('user', `Next`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
@@ -160,16 +151,14 @@ export default function ResumeChatAssistant() {
           </>
         ));
         smoothScrollTo(detail.id);
-        setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: "Next ➡️", onClick: () => { addMessage('user', `Next`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
       case 'projects_list_intro': {
         const detail = sectionDetails.projects;
+        openChatInterface = true; 
+        showTheBubble = false;
         addMessage('assistant', "Lakshmi has led and contributed to impactful projects. Here are the titles:");
         smoothScrollTo(detail.id);
 
@@ -183,14 +172,16 @@ export default function ResumeChatAssistant() {
         }));
         projectButtons.push({
             text: "Next Section ➡️",
-            onClick: () => { addMessage('user', "Next Section"); handleTourStep('education_intro'); }, // Fixed target step
+            onClick: () => { addMessage('user', "Next Section"); handleTourStep('education_intro'); },
             icon: <ArrowRight className="h-4 w-4" />
         });
-        setCurrentQuickReplies(projectButtons);
+        repliesForInterface = projectButtons;
         break;
       }
 
       case 'projects_detail':
+        openChatInterface = true;
+        showTheBubble = false;
         const projectTitle = payload as string;
         const description = projectChatDescriptions[projectTitle];
         if (description) {
@@ -208,10 +199,10 @@ export default function ResumeChatAssistant() {
         }));
         projectButtonsAfterDetail.push({
             text: "Next Section ➡️",
-            onClick: () => { addMessage('user', "Next Section"); handleTourStep('education_intro'); }, // Fixed target step
+            onClick: () => { addMessage('user', "Next Section"); handleTourStep('education_intro'); },
             icon: <ArrowRight className="h-4 w-4" />
         });
-        setCurrentQuickReplies(projectButtonsAfterDetail);
+        repliesForInterface = projectButtonsAfterDetail;
         break;
 
       case 'education_intro': {
@@ -223,11 +214,7 @@ export default function ResumeChatAssistant() {
           </>
         ));
         smoothScrollTo(detail.id);
-        setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: "Next ➡️", onClick: () => { addMessage('user', `Next`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
@@ -245,11 +232,7 @@ export default function ResumeChatAssistant() {
           </>
         ));
         smoothScrollTo(detail.id);
-        setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: "Next ➡️", onClick: () => { addMessage('user', `Next`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
@@ -262,16 +245,11 @@ export default function ResumeChatAssistant() {
           </>
         ));
         smoothScrollTo(detail.id);
-        setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: "Next ➡️", onClick: () => { addMessage('user', `Next`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
       case 'additional_info_intro': {
-        const detail = sectionDetails.additional_info;
         addMessage('assistant', (
           <>
             <ul className="list-disc list-inside text-sm space-y-0.5">
@@ -281,26 +259,24 @@ export default function ResumeChatAssistant() {
             </ul>
           </>
         ));
-        setTimeout(() => {
-            setCurrentQuickReplies([
-                { text: detail.nextButtonText || "Finish Resume Tour 🎉", onClick: () => { addMessage('user', `Finish tour`); handleTourStep(detail.nextStep!); }, icon: <CheckCircle className="h-4 w-4"/> }
-            ]);
-        }, 1500);
+        // Chat remains closed, bubble is visible for "Next"
         break;
       }
 
       case 'end_tour_prompt':
+        openChatInterface = true;
+        showTheBubble = false;
         addMessage('assistant', "That’s a complete tour of Lakshmi’s resume. Would you like to explore anything else?");
-        setCurrentQuickReplies([
+        repliesForInterface = [
           { text: "Ask a question", onClick: () => {
             addMessage('user', "I have a question.");
             addMessage('assistant', "Great! While this feature is planned for AI integration, for now, please use the contact form to ask Lakshmi specific questions.");
-            setCurrentQuickReplies([
+            setCurrentQuickReplies([ // Update replies inside the open chat
                 {text: "Download Resume", onClick: () => {
                     addMessage('user', "Download resume");
                     addMessage('assistant', "You got it! The download should start automatically.");
                     const link = document.createElement('a');
-                    link.href = '/lakshmi_resume.pdf';
+                    link.href = '/lakshmi_resume.pdf'; 
                     link.setAttribute('download', 'Lakshmi_Vijayarao_Resume.pdf');
                     document.body.appendChild(link);
                     link.click();
@@ -314,33 +290,102 @@ export default function ResumeChatAssistant() {
             addMessage('user', "I'd like to download the resume.");
             addMessage('assistant', "You got it! The download should start automatically.");
             const link = document.createElement('a');
-            link.href = '/lakshmi_resume.pdf';
+            link.href = '/lakshmi_resume.pdf'; 
             link.setAttribute('download', 'Lakshmi_Vijayarao_Resume.pdf');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setCurrentQuickReplies([
+            setCurrentQuickReplies([ // Update replies inside the open chat
                 {text: "Ask another question", onClick: () => { addMessage('assistant', "What else can I help with?"); handleTourStep('end_tour_prompt');}, icon: <MessageCircleQuestion className="h-4 w-4"/>},
                 {text: "End Chat", onClick: () => { addMessage('user', "End chat."); handleTourStep('ended'); }, icon: <LogOut className="h-4 w-4"/>}
             ]);
           }, icon: <Download className="h-4 w-4"/> },
           { text: "End chat", onClick: () => { addMessage('user', "End chat."); handleTourStep('ended'); }, icon: <LogOut className="h-4 w-4"/> },
-        ]);
+        ];
         break;
 
       case 'ended':
+        openChatInterface = true; // Keep interface open to say goodbye
+        showTheBubble = false;
         addMessage('assistant', "Thanks for stopping by! Have a great day.");
-        setCurrentQuickReplies([]);
-        if (window.speechSynthesis) {
+        repliesForInterface = [];
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
         setTimeout(() => {
-          setIsChatOpen(false);
+          setIsChatOpen(false); // Now close it
           setShowBubble(true);
         }, 2000);
         break;
     }
-  }, [addMessage, hasBeenGreeted, isChatOpen, speakText]);
+    
+    if (openChatInterface && !isChatOpen) {
+        setChatInterfaceRenderKey(prevKey => prevKey + 1); // Remount if opening
+    }
+    setIsChatOpen(openChatInterface);
+    setShowBubble(showTheBubble);
+    setCurrentQuickReplies(repliesForInterface);
+
+  }, [addMessage, speakText, hasBeenGreeted, isChatOpen, setIsChatOpen, setShowBubble, setCurrentQuickReplies, setChatInterfaceRenderKey, currentTourStep]);
+
+  const handleBubbleClickForNext = useCallback(() => {
+    let nextStep: TourStep | undefined;
+    switch (currentTourStep) {
+        case 'summary_intro': nextStep = sectionDetails.summary.nextStep; break;
+        case 'skills_intro': nextStep = sectionDetails.skills.nextStep; break;
+        case 'experience_intro': nextStep = sectionDetails.experience.nextStep; break;
+        // projects_list_intro is handled by buttons in ChatInterface
+        case 'education_intro': nextStep = sectionDetails.education.nextStep; break;
+        case 'certifications_intro': nextStep = sectionDetails.certifications.nextStep; break;
+        case 'publication_intro': nextStep = sectionDetails.publication.nextStep; break;
+        case 'additional_info_intro': nextStep = sectionDetails.additional_info.nextStep; break;
+        default: break;
+    }
+
+    if (nextStep) {
+        // addMessage('user', 'Next'); // Optional: log user clicking "Next" via bubble
+        handleTourStep(nextStep);
+    }
+  }, [currentTourStep, handleTourStep, sectionDetails]);
+
+  const mainBubbleClickHandler = useCallback(() => {
+    const presentationSteps: TourStep[] = ['summary_intro', 'skills_intro', 'experience_intro', 'education_intro', 'certifications_intro', 'publication_intro', 'additional_info_intro'];
+    
+    if (!isChatOpen && presentationSteps.includes(currentTourStep)) {
+        handleBubbleClickForNext();
+    } else {
+      // Default behavior: toggle the chat interface for greeting or re-engagement
+      const newChatOpenState = !isChatOpen;
+      if (newChatOpenState) { 
+          setChatInterfaceRenderKey(prevKey => prevKey + 1);
+          if (!hasBeenGreeted) {
+              handleTourStep('greeting');
+          } else if (currentTourStep === 'ended') {
+              setMessages([]); 
+              handleTourStep('greeting'); // Re-greet or offer main menu
+          } else { 
+               // If mid-tour but somehow chat closed, re-open to current state
+               // This case might need more specific handling based on currentTourStep if interface is complex
+               setIsChatOpen(true);
+               setShowBubble(false);
+          }
+      } else { 
+          if (typeof window !== 'undefined' && window.speechSynthesis) {
+              window.speechSynthesis.cancel();
+          }
+          setIsChatOpen(false);
+          setShowBubble(true);
+          // If user closes initial greeting via X, consider tour ended or offer to restart
+          if (currentTourStep === 'greeting' && messages.length > 0 && messages[messages.length -1].sender === 'user' && messages[messages.length-1].text === 'No thanks') {
+             handleTourStep('ended');
+          } else if (currentTourStep === 'greeting') {
+            // They closed the initial greeting without choosing Yes/No.
+            // Could set to 'ended' or keep 'greeting' for next bubble click.
+            // For now, let's treat it as if they might re-engage with greeting.
+          }
+      }
+    }
+  }, [isChatOpen, currentTourStep, handleBubbleClickForNext, hasBeenGreeted, handleTourStep, setMessages, addMessage, setChatInterfaceRenderKey, setIsChatOpen, setShowBubble]);
 
 
   useEffect(() => {
@@ -353,46 +398,14 @@ export default function ResumeChatAssistant() {
     return () => clearTimeout(greetingTimer);
   }, [currentTourStep, isChatOpen, hasBeenGreeted, handleTourStep]);
 
-  const toggleChat = useCallback(() => {
-    const newChatOpenState = !isChatOpen;
-    if (newChatOpenState) { // Opening the chat
-        setChatInterfaceRenderKey(prevKey => prevKey + 1);
-        if (!hasBeenGreeted) {
-            handleTourStep('greeting');
-        } else if (currentTourStep === 'ended') {
-            setMessages([]);
-            addMessage('assistant', "Welcome back! How can I help you today?");
-            setCurrentQuickReplies([
-                { text: "Resume Walkthrough", onClick: () => { addMessage('user', "Let's do the walkthrough."); handleTourStep('summary_intro'); }, icon: <Briefcase className="h-4 w-4"/> },
-                { text: "Just Browsing", onClick: () => { addMessage('user', "Just browsing."); handleTourStep('ended'); }, icon: <XCircle className="h-4 w-4"/> },
-            ]);
-             setIsChatOpen(true); // Ensure interface opens
-             setShowBubble(false); // Hide bubble
-        } else {
-             // If chat was closed mid-tour and bubble is clicked
-             setIsChatOpen(true);
-             setShowBubble(false);
-        }
-    } else { // Closing the chat
-        if (window.speechSynthesis) {
-            window.speechSynthesis.cancel();
-        }
-        setIsChatOpen(false);
-        setShowBubble(true);
-        // If closing the initial greeting dialog via 'X', and tour hasn't formally ended via "No Thanks"
-        if (currentTourStep === 'greeting' && hasBeenGreeted) {
-          setCurrentTourStep('ended'); // Transition to ended state so bubble logic is consistent
-        }
-    }
-  }, [isChatOpen, hasBeenGreeted, currentTourStep, handleTourStep, addMessage, speakText]);
 
   return (
     <>
-      <ChatBubble onClick={toggleChat} isVisible={showBubble} /> {/* Simplified isVisible prop */}
+      <ChatBubble onClick={mainBubbleClickHandler} isVisible={showBubble} />
       <ChatInterface
         key={chatInterfaceRenderKey}
         isOpen={isChatOpen}
-        onClose={toggleChat}
+        onClose={mainBubbleClickHandler} // Allow closing interface via its own X button
         messages={messages}
         quickReplies={currentQuickReplies}
       />
