@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -22,7 +23,7 @@ const sectionDetails: Record<string, { id: string, name: string, nextStep?: Tour
   summary: { id: 'summary-section', name: "Lakshmi's Professional Summary", nextStep: 'skills_intro', nextButtonText: "Next: Skills" },
   skills: { id: 'skills-section', name: "Technical Skills", nextStep: 'experience_intro', nextButtonText: "Next: Experience"},
   experience: { id: 'experience', name: "Work Experience", nextStep: 'projects_list_intro', nextButtonText: "Next: Projects" },
-  projects: { id: 'projects', name: "Projects Showcase" }, // Special handling
+  projects: { id: 'projects', name: "Projects Showcase" },
   education: { id: 'education-section', name: "Education Background", nextStep: 'certifications_intro', nextButtonText: "Next: Certifications"},
   certifications: { id: 'certifications-section', name: "Certifications", nextStep: 'end_tour_prompt', nextButtonText: "Finish Tour" }
 };
@@ -36,9 +37,10 @@ export default function ResumeChatAssistant() {
   const [currentQuickReplies, setCurrentQuickReplies] = useState<QuickReplyButton[]>([]);
   const [currentTourStep, setCurrentTourStep] = useState<TourStep>('greeting');
   const [hasBeenGreeted, setHasBeenGreeted] = useState(false);
+  const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0); // Key for remounting
 
   const addMessage = useCallback((sender: 'user' | 'assistant', text: React.ReactNode) => {
-    setMessages(prev => [...prev, { id: Date.now().toString(), sender, text }]);
+    setMessages(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, text }]);
   }, []);
 
   const smoothScrollTo = (elementId: string) => {
@@ -50,13 +52,16 @@ export default function ResumeChatAssistant() {
 
   const handleTourStep = useCallback((step: TourStep, payload?: any) => {
     setCurrentTourStep(step);
-    setCurrentQuickReplies([]); // Clear previous replies
+    setCurrentQuickReplies([]); 
 
     switch (step) {
       case 'greeting':
         if (!hasBeenGreeted) {
-          setIsChatOpen(true);
-          setShowBubble(false);
+          if (!isChatOpen) { // Only set if not already open
+            setChatInterfaceRenderKey(prevKey => prevKey + 1);
+            setIsChatOpen(true);
+            setShowBubble(false);
+          }
           addMessage('assistant', "Hi there! 👋 Would you like me to walk you through Lakshmi’s resume?");
           setCurrentQuickReplies([
             { text: "Yes, please!", onClick: () => { addMessage('user', "Yes, please!"); handleTourStep('summary_intro'); }, icon: <CheckCircle className="h-4 w-4"/> },
@@ -77,7 +82,7 @@ export default function ResumeChatAssistant() {
           addMessage('assistant', `Let's take a look at ${detail.name}. I'll scroll you there now.`);
           smoothScrollTo(detail.id);
           if (detail.nextStep && detail.nextButtonText) {
-            setTimeout(() => { // Add a small delay for reading time
+            setTimeout(() => { 
                 setCurrentQuickReplies([
                     { text: detail.nextButtonText!, onClick: () => { addMessage('user', `Show me ${detail.nextButtonText!}`); handleTourStep(detail.nextStep!); }, icon: <ArrowRight className="h-4 w-4"/> }
                 ]);
@@ -115,7 +120,6 @@ export default function ResumeChatAssistant() {
       case 'projects_detail':
         if (payload && payload.title && payload.description) {
           addMessage('assistant', `Sure! Here's a bit about "${payload.title}":\n\n${payload.description}`);
-          // After showing detail, revert to project list quick replies
           const projectButtons: QuickReplyButton[] = projectItems.map(proj => ({
             text: proj.title,
             onClick: () => {
@@ -140,9 +144,8 @@ export default function ResumeChatAssistant() {
           { text: "Download resume", onClick: () => {
             addMessage('user', "I'd like to download the resume.");
             addMessage('assistant', "You got it! The download should start automatically.");
-            // Trigger download
             const link = document.createElement('a');
-            link.href = '/lakshmi_resume.pdf'; // User needs to place this file in /public
+            link.href = '/lakshmi_resume.pdf'; 
             link.setAttribute('download', 'Lakshmi_Vijayarao_Resume.pdf');
             document.body.appendChild(link);
             link.click();
@@ -159,42 +162,44 @@ export default function ResumeChatAssistant() {
         setTimeout(() => {
           setIsChatOpen(false);
           setShowBubble(true);
-          // Optionally reset messages and greeting status if chat is reopened
-          // setMessages([]);
-          // setHasBeenGreeted(false);
-          // setCurrentTourStep('greeting');
         }, 2000);
         break;
     }
-  }, [addMessage, hasBeenGreeted]);
+  }, [addMessage, hasBeenGreeted, isChatOpen, projectItems]); // Added isChatOpen and projectItems, removed currentTourStep from deps as it's being set
 
 
   useEffect(() => {
-    // Auto-greeting on page load
     const greetingTimer = setTimeout(() => {
       if (currentTourStep === 'greeting' && !isChatOpen && !hasBeenGreeted) {
         handleTourStep('greeting');
       }
-    }, 1500); // Delay before auto-popping greeting
+    }, 1500); 
 
     return () => clearTimeout(greetingTimer);
   }, [currentTourStep, isChatOpen, hasBeenGreeted, handleTourStep]);
 
   const toggleChat = useCallback(() => {
-    if (!isChatOpen && !hasBeenGreeted) { // First time opening via bubble
-      handleTourStep('greeting');
-    } else if (!isChatOpen && hasBeenGreeted && currentTourStep === 'ended') { // Re-opening after ending
-      setMessages([]); // Clear old messages
-      addMessage('assistant', "Welcome back! How can I help you today?");
-      setCurrentQuickReplies([ // Offer initial options again, or a new set
-          { text: "Resume Walkthrough", onClick: () => { addMessage('user', "Let's do the walkthrough."); handleTourStep('summary_intro'); }, icon: <Briefcase className="h-4 w-4"/> },
-          { text: "Just Browsing", onClick: () => { addMessage('user', "Just browsing."); handleTourStep('ended'); }, icon: <XCircle className="h-4 w-4"/> },
-      ]);
-      setIsChatOpen(true);
-      setShowBubble(false);
-    } else {
-      setIsChatOpen(!isChatOpen);
-      setShowBubble(isChatOpen); // Show bubble if closing chat
+    const newChatOpenState = !isChatOpen;
+    if (newChatOpenState) { // If opening the chat
+        setChatInterfaceRenderKey(prevKey => prevKey + 1); // Increment key to force remount
+        if (!hasBeenGreeted) { 
+            handleTourStep('greeting'); // This will also set isChatOpen to true
+        } else if (currentTourStep === 'ended') { 
+            setMessages([]); 
+            addMessage('assistant', "Welcome back! How can I help you today?");
+            setCurrentQuickReplies([ 
+                { text: "Resume Walkthrough", onClick: () => { addMessage('user', "Let's do the walkthrough."); handleTourStep('summary_intro'); }, icon: <Briefcase className="h-4 w-4"/> },
+                { text: "Just Browsing", onClick: () => { addMessage('user', "Just browsing."); handleTourStep('ended'); }, icon: <XCircle className="h-4 w-4"/> },
+            ]);
+            setIsChatOpen(true); // Explicitly set open here
+            setShowBubble(false);
+        } else {
+             setIsChatOpen(true); // Ensure it's open if toggled from bubble after tour
+             setShowBubble(false);
+        }
+    } else { // If closing the chat
+        setIsChatOpen(false);
+        setShowBubble(true); 
     }
   }, [isChatOpen, hasBeenGreeted, currentTourStep, handleTourStep, addMessage]);
 
@@ -202,6 +207,7 @@ export default function ResumeChatAssistant() {
     <>
       <ChatBubble onClick={toggleChat} isVisible={showBubble && currentTourStep !== 'greeting'} />
       <ChatInterface
+        key={chatInterfaceRenderKey} // Use the changing key here
         isOpen={isChatOpen}
         onClose={toggleChat}
         messages={messages}
@@ -210,3 +216,5 @@ export default function ResumeChatAssistant() {
     </>
   );
 }
+
+    
