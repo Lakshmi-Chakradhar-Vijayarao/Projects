@@ -28,8 +28,6 @@ const ContentReader: React.FC = () => {
   const [hasSpokenWelcome, setHasSpokenWelcome] = useState(false);
   const [speechSynthInstance, setSpeechSynthInstance] = useState<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  
-  // Ref to hold the latest version of playNextSection callback
   const playNextSectionCallbackRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -46,10 +44,10 @@ const ContentReader: React.FC = () => {
       if (utteranceRef.current) {
         utteranceRef.current.onend = null;
         utteranceRef.current.onerror = null;
-        utteranceRef.current = null;
       }
+      utteranceRef.current = null;
     };
-  }, []); // Runs once on mount, cleanup on unmount
+  }, []);
 
   const smoothScrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
@@ -60,23 +58,27 @@ const ContentReader: React.FC = () => {
 
   const speakText = useCallback((text: string, onEndCallback?: () => void) => {
     if (!speechSynthInstance || !text) {
-      setIsReading(false); // Ensure reading state is false if we can't speak
-      if(onEndCallback) onEndCallback(); // Try to proceed if there's a callback
+      setIsReading(false);
+      if (onEndCallback) onEndCallback();
       return;
     }
 
-    // Detach handlers from any previous utterance
     if (utteranceRef.current) {
-        utteranceRef.current.onend = null;
-        utteranceRef.current.onerror = null;
+      utteranceRef.current.onend = null;
+      utteranceRef.current.onerror = null;
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
     utteranceRef.current = utterance;
+    let spokenOrQueuedThisCall = false;
 
     utterance.onend = () => {
-      if (utteranceRef.current === utterance) { // Check if this is still the active utterance
-        utteranceRef.current = null; // Clear ref *before* callback
+      // Make sure this specific utterance's handlers are cleared
+      utterance.onend = null;
+      utterance.onerror = null;
+
+      if (utteranceRef.current === utterance) {
+        utteranceRef.current = null;
         if (onEndCallback) {
           onEndCallback();
         } else {
@@ -86,30 +88,49 @@ const ContentReader: React.FC = () => {
     };
     
     utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
-      if (utteranceRef.current === utterance) { // Check if this is still the active utterance
+      utterance.onend = null;
+      utterance.onerror = null;
+
+      if (utteranceRef.current === utterance) {
         let errorDetails = 'Unknown error';
         if (event.error) { errorDetails = event.error; }
         console.error('SpeechSynthesisUtterance.onerror for text:', `"${text}"`, 'Error details:', errorDetails, 'Full event object:', event);
         utteranceRef.current = null;
         setIsReading(false);
-        // Optionally, could call onEndCallback here too to try to advance the tour
+        // Optionally call onEndCallback to try to advance if it's a recoverable error or we want to skip
+        // if (onEndCallback) onEndCallback(); 
       }
     };
     
-    const speakLogic = () => {
-      if (speechSynthInstance && utteranceRef.current === utterance) { // Ensure utterance is still current
+    const trySpeak = () => {
+      if (spokenOrQueuedThisCall) return; // Prevent double speak for this instance of speakText call
+
+      if (speechSynthInstance && utteranceRef.current === utterance) {
          speechSynthInstance.speak(utterance);
+         spokenOrQueuedThisCall = true;
+      } else if (speechSynthInstance && utteranceRef.current !== utterance) {
+        // This means the utteranceRef was changed by a subsequent call to speakText
+        // before this one (e.g. from onvoiceschanged) could speak.
+        // This is okay, the newer one takes precedence.
       }
     };
 
     if (speechSynthInstance.getVoices().length > 0) {
-        speakLogic();
+        trySpeak();
     } else {
-        // Wait for voices to be loaded
-        speechSynthInstance.onvoiceschanged = () => {
-            speechSynthInstance.onvoiceschanged = null; 
-            speakLogic();
+        const voiceChangeHandler = () => {
+            if (speechSynthInstance) speechSynthInstance.onvoiceschanged = null;
+            trySpeak();
         };
+        speechSynthInstance.onvoiceschanged = voiceChangeHandler;
+        // It's possible voices loaded between the .length check and setting the handler.
+        // Check again. If already spoken by the main path, this won't do anything.
+        if (speechSynthInstance.getVoices().length > 0) {
+            trySpeak(); // This will be guarded by spokenOrQueuedThisCall
+            if (spokenOrQueuedThisCall && speechSynthInstance) { // If spoken, clean up just in case
+                speechSynthInstance.onvoiceschanged = null;
+            }
+        }
     }
   }, [speechSynthInstance, setIsReading]);
 
@@ -120,66 +141,72 @@ const ContentReader: React.FC = () => {
       if (newIndex < sectionsToRead.length) {
         const nextSection = sectionsToRead[newIndex];
         smoothScrollTo(nextSection.id);
-        // Use the ref to call the latest speakText, ensuring the callback is also the latest playNextSection
         if (playNextSectionCallbackRef.current) {
-             speakText(nextSection.speakableText, playNextSectionCallbackRef.current);
+           speakText(nextSection.speakableText, playNextSectionCallbackRef.current);
         }
         return newIndex;
-      } else { // End of sections
+      } else {
         speakText("This concludes the overview of Chakradhar's portfolio.", () => {
-          setIsReading(false); // Set isReading to false when the final message ends
+          setIsReading(false);
         });
-        return 0; // Reset index or handle end state
+        return 0; 
       }
     });
-  }, [speakText, sectionsToRead, smoothScrollTo, setIsReading]); // Removed setCurrentSectionIndex as it's handled by functional update
+  }, [speakText, sectionsToRead, smoothScrollTo, setIsReading, setCurrentSectionIndex]);
 
-  // Keep the ref updated with the latest version of playNextSection
   useEffect(() => {
     playNextSectionCallbackRef.current = playNextSection;
   }, [playNextSection]);
 
-
   const startReadingSequence = useCallback((startIndex: number) => {
+    if (!speechSynthInstance) {
+        setIsReading(false);
+        return;
+    }
     if (startIndex < sectionsToRead.length) {
-      setIsReading(true);
+      setIsReading(true); // Set reading state true
       const section = sectionsToRead[startIndex];
       smoothScrollTo(section.id);
-      // Use the ref for the callback here
       if (playNextSectionCallbackRef.current) {
          speakText(section.speakableText, playNextSectionCallbackRef.current);
       }
     } else {
-      // This case should ideally be handled by playNextSection's end condition
       setIsReading(false); 
     }
-  }, [setIsReading, sectionsToRead, smoothScrollTo, speakText]);
+  }, [setIsReading, sectionsToRead, smoothScrollTo, speakText, speechSynthInstance]);
 
   const handlePlayPauseClick = useCallback(() => {
     if (!speechSynthInstance) return;
 
-    if (isReading) { // If currently reading, stop it
+    if (isReading) {
       if (speechSynthInstance.speaking) {
-        // Detach handlers *before* cancelling to prevent onend from firing and advancing
-        if (utteranceRef.current) {
-          utteranceRef.current.onend = null;
-          utteranceRef.current.onerror = null;
+        const activeUtterance = utteranceRef.current;
+        // Nullify ref *before* cancel to prevent its onend from triggering next section
+        utteranceRef.current = null; 
+        if (activeUtterance) {
+          activeUtterance.onend = null;
+          activeUtterance.onerror = null;
         }
         speechSynthInstance.cancel();
       }
-      utteranceRef.current = null; // Clear the ref
       setIsReading(false);
-    } else { // If not reading, start or resume
-      setIsReading(true); // Set immediately for UI feedback
+    } else {
+      setIsReading(true); 
       if (!hasSpokenWelcome) {
         speakText("Welcome. I will now briefly guide you through Chakradhar's portfolio sections.", () => {
           setHasSpokenWelcome(true);
           setCurrentSectionIndex(0); 
-          // Short delay to allow welcome message to finish before starting sequence
-          setTimeout(() => startReadingSequence(0), 50); 
+          setTimeout(() => { // Short delay for welcome to finish before first section
+            if (utteranceRef.current === null) { // Ensure not interrupted
+                 startReadingSequence(0);
+            }
+          }, 50); 
         });
       } else {
-        // Resume: If already started, play from currentSectionIndex
+        // If resuming, start from the currentSectionIndex
+        // Ensure any previous utterance is cleared if we are explicitly restarting
+        if (speechSynthInstance.speaking) speechSynthInstance.cancel();
+        utteranceRef.current = null; // Clear ref before starting new sequence
         startReadingSequence(currentSectionIndex);
       }
     }
@@ -203,3 +230,4 @@ const ContentReader: React.FC = () => {
 };
 
 export default ContentReader;
+
