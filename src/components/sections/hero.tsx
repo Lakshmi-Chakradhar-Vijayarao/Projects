@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import AnimatedAvatar from '@/components/animated-avatar'; // Assuming this is your preferred avatar
+import AnimatedAvatar from '@/components/animated-avatar'; 
 import { Download, Send, Linkedin, Github } from 'lucide-react';
 
 export default function Hero() {
@@ -20,7 +20,7 @@ export default function Hero() {
             Software Engineer | ML Practitioner | Full-Stack Developer
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0">
-            Building intelligent, scalable solutions that drive real impact.
+            Building intelligent, scalable solutions that drive real impact for Chakradhar.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
             <Button
@@ -65,4 +65,3 @@ export default function Hero() {
     </section>
   );
 }
-
