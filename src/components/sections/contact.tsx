@@ -7,8 +7,8 @@ import Link from 'next/link';
 import ContactForm from '@/components/contact-form';
 
 const socialLinks = [
-  { name: 'GitHub', href: 'https://github.com/Lakshmi-Chakradhar-Vijayarao', icon: Github, text: 'Lakshmi-Chakradhar-Vijayarao' },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmichakradharvijayarao/', icon: Linkedin, text: 'lakshmichakradharvijayarao' },
+  { name: 'GitHub', href: 'https://github.com/Lakshmi-Chakradhar-Vijayarao', icon: Github, text: 'Lakshmi-Chakradhar-Vijayarao' },
 ];
 
 export default function Contact() {
@@ -54,3 +54,4 @@ export default function Contact() {
     </SectionWrapper>
   );
 }
+
