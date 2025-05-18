@@ -5,7 +5,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-// import ContentReader from '@/components/ai/ContentReader'; // Temporarily removed
+import ContentReader from '@/components/ai/ContentReader'; // Added ContentReader
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,7 +36,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        {/* <ContentReader /> */} {/* Temporarily removed */}
+        <ContentReader /> {/* Added ContentReader instance */}
       </body>
     </html>
   );
