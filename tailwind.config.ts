@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -92,17 +93,14 @@ export default {
           '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0px)' },
         },
-        'subtle-pulse': { // For chat bubble
-          '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 hsl(var(--primary) / 0.7)' },
-          '50%': { transform: 'scale(1.05)', boxShadow: '0 0 0 10px hsl(var(--primary) / 0)' },
-        }
+        // subtle-pulse keyframes removed
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'bg-pan': 'bg-pan 15s ease infinite',
         'scale-up': 'scale-up 0.5s ease-out forwards',
-        'subtle-pulse': 'subtle-pulse 2s infinite ease-in-out',
+        // subtle-pulse animation removed
   		}
   	}
   },
