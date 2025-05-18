@@ -37,7 +37,7 @@ export default function ResumeChatAssistant() {
   const [currentQuickReplies, setCurrentQuickReplies] = useState<QuickReplyButton[]>([]);
   const [currentTourStep, setCurrentTourStep] = useState<TourStep>('greeting');
   const [hasBeenGreeted, setHasBeenGreeted] = useState(false);
-  const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0); // Key for remounting
+  const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0);
 
   const addMessage = useCallback((sender: 'user' | 'assistant', text: React.ReactNode) => {
     setMessages(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, text }]);
@@ -57,7 +57,7 @@ export default function ResumeChatAssistant() {
     switch (step) {
       case 'greeting':
         if (!hasBeenGreeted) {
-          if (!isChatOpen) { // Only set if not already open
+          if (!isChatOpen) { 
             setChatInterfaceRenderKey(prevKey => prevKey + 1);
             setIsChatOpen(true);
             setShowBubble(false);
@@ -165,7 +165,7 @@ export default function ResumeChatAssistant() {
         }, 2000);
         break;
     }
-  }, [addMessage, hasBeenGreeted, isChatOpen, projectItems]); // Added isChatOpen and projectItems, removed currentTourStep from deps as it's being set
+  }, [addMessage, hasBeenGreeted, isChatOpen]); // Removed projectItems from dependencies
 
 
   useEffect(() => {
@@ -180,10 +180,10 @@ export default function ResumeChatAssistant() {
 
   const toggleChat = useCallback(() => {
     const newChatOpenState = !isChatOpen;
-    if (newChatOpenState) { // If opening the chat
-        setChatInterfaceRenderKey(prevKey => prevKey + 1); // Increment key to force remount
+    if (newChatOpenState) { 
+        setChatInterfaceRenderKey(prevKey => prevKey + 1); 
         if (!hasBeenGreeted) { 
-            handleTourStep('greeting'); // This will also set isChatOpen to true
+            handleTourStep('greeting'); 
         } else if (currentTourStep === 'ended') { 
             setMessages([]); 
             addMessage('assistant', "Welcome back! How can I help you today?");
@@ -191,13 +191,13 @@ export default function ResumeChatAssistant() {
                 { text: "Resume Walkthrough", onClick: () => { addMessage('user', "Let's do the walkthrough."); handleTourStep('summary_intro'); }, icon: <Briefcase className="h-4 w-4"/> },
                 { text: "Just Browsing", onClick: () => { addMessage('user', "Just browsing."); handleTourStep('ended'); }, icon: <XCircle className="h-4 w-4"/> },
             ]);
-            setIsChatOpen(true); // Explicitly set open here
+            setIsChatOpen(true); 
             setShowBubble(false);
         } else {
-             setIsChatOpen(true); // Ensure it's open if toggled from bubble after tour
+             setIsChatOpen(true); 
              setShowBubble(false);
         }
-    } else { // If closing the chat
+    } else { 
         setIsChatOpen(false);
         setShowBubble(true); 
     }
@@ -207,7 +207,7 @@ export default function ResumeChatAssistant() {
     <>
       <ChatBubble onClick={toggleChat} isVisible={showBubble && currentTourStep !== 'greeting'} />
       <ChatInterface
-        key={chatInterfaceRenderKey} // Use the changing key here
+        key={chatInterfaceRenderKey} 
         isOpen={isChatOpen}
         onClose={toggleChat}
         messages={messages}
@@ -216,5 +216,3 @@ export default function ResumeChatAssistant() {
     </>
   );
 }
-
-    
