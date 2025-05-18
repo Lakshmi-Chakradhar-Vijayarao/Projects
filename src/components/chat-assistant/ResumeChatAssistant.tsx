@@ -39,9 +39,29 @@ export default function ResumeChatAssistant() {
   const [hasBeenGreeted, setHasBeenGreeted] = useState(false);
   const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0);
 
+  const speakText = useCallback((textToSpeak: string) => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      // Optional: configure voice, rate, pitch here if needed
+      // e.g., utterance.lang = 'en-US';
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
+      window.speechSynthesis.speak(utterance);
+    }
+  }, []);
+
   const addMessage = useCallback((sender: 'user' | 'assistant', text: React.ReactNode) => {
     setMessages(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, text }]);
   }, []);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.sender === 'assistant' && typeof lastMessage.text === 'string') {
+        speakText(lastMessage.text);
+      }
+    }
+  }, [messages, speakText]);
+
 
   const smoothScrollTo = (elementId: string) => {
     const element = document.getElementById(elementId);
@@ -165,7 +185,7 @@ export default function ResumeChatAssistant() {
         }, 2000);
         break;
     }
-  }, [addMessage, hasBeenGreeted, isChatOpen]); // Removed projectItems from dependencies
+  }, [addMessage, hasBeenGreeted, isChatOpen]); 
 
 
   useEffect(() => {
@@ -198,6 +218,9 @@ export default function ResumeChatAssistant() {
              setShowBubble(false);
         }
     } else { 
+        if (window.speechSynthesis) { // Stop speech when closing chat
+            window.speechSynthesis.cancel();
+        }
         setIsChatOpen(false);
         setShowBubble(true); 
     }
@@ -216,3 +239,4 @@ export default function ResumeChatAssistant() {
     </>
   );
 }
+
