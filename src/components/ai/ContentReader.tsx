@@ -28,13 +28,13 @@ const ContentReader: React.FC = () => {
   const [hasSpokenWelcome, setHasSpokenWelcome] = useState(false);
   const [speechSynthInstance, setSpeechSynthInstance] = useState<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  
+  const playNextSectionCallbackRef = useRef<(() => void) | null>(null);
 
-  // Initialize speech synthesis instance
   useEffect(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       setSpeechSynthInstance(window.speechSynthesis);
     }
-    // Cleanup
     return () => {
       if (speechSynthInstance && speechSynthInstance.speaking) {
         speechSynthInstance.cancel();
@@ -44,7 +44,7 @@ const ContentReader: React.FC = () => {
         utteranceRef.current.onerror = null;
       }
     };
-  }, []); // speechSynthInstance is set once on mount
+  }, [speechSynthInstance]);
 
   const smoothScrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
@@ -53,17 +53,23 @@ const ContentReader: React.FC = () => {
     }
   }, []);
 
-  // Forward declaration for mutually recursive callbacks
-  let playNextSectionCallbackRef: React.MutableRefObject<(() => void) | null> = useRef(null);
-
-  const speakText = useCallback((text: string, onEndCallback?: () => void) => {
+  const speakText = useCallback((text: string, onEndCallback?: () => void, isChainedCall?: boolean) => {
     if (!speechSynthInstance || !text) {
       setIsReading(false);
       return;
     }
 
-    if (speechSynthInstance.speaking) {
+    // Only cancel if it's not a chained call and something is actively speaking.
+    // This helps prevent interrupting the natural end of a previous utterance in a sequence.
+    if (!isChainedCall && speechSynthInstance.speaking) {
       speechSynthInstance.cancel();
+    }
+    
+    // If a previous utterance was in progress (even if not actively speaking but registered),
+    // ensure its event handlers are cleared to prevent old callbacks from firing.
+    if (utteranceRef.current) {
+        utteranceRef.current.onend = null;
+        utteranceRef.current.onerror = null;
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -74,14 +80,13 @@ const ContentReader: React.FC = () => {
       if (onEndCallback) {
         onEndCallback();
       } else {
-        setIsReading(false);
+        setIsReading(false); 
       }
     };
     
     utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
-      // Enhanced error logging
       let errorDetails = 'Unknown error';
-      if (event.error) { // event.error is a standard property for SpeechSynthesisErrorEvent
+      if (event.error) {
         errorDetails = event.error;
       }
       console.error('SpeechSynthesisUtterance.onerror for text:', `"${text}"`, 'Error details:', errorDetails, 'Full event object:', event);
@@ -95,27 +100,22 @@ const ContentReader: React.FC = () => {
       }
     };
 
-    // Ensure voices are loaded before speaking
     if (speechSynthInstance.getVoices().length > 0) {
         speakLogic();
     } else {
         speechSynthInstance.onvoiceschanged = () => {
-            speechSynthInstance.onvoiceschanged = null; // Clear the handler
+            speechSynthInstance.onvoiceschanged = null; 
             speakLogic();
         };
-        // Some browsers might need an initial speak to trigger voice loading
         if (speechSynthInstance.getVoices().length === 0 && !speechSynthInstance.speaking) {
-            // Speaking an empty string can sometimes kickstart voice loading if onvoiceschanged doesn't fire.
-            // This should ideally be handled carefully, but it's a common workaround.
-            try {
+             try {
                 speechSynthInstance.speak(new SpeechSynthesisUtterance("")); 
             } catch (e) {
                 console.warn("Empty utterance failed, possibly normal if voices are truly unavailable yet.", e);
             }
         }
     }
-  }, [speechSynthInstance]);
-
+  }, [speechSynthInstance, setIsReading]);
 
   const playNextSection = useCallback(() => {
     setCurrentSectionIndex(prevIndex => {
@@ -123,67 +123,66 @@ const ContentReader: React.FC = () => {
       if (newIndex < sectionsToRead.length) {
         const nextSection = sectionsToRead[newIndex];
         smoothScrollTo(nextSection.id);
+        // Pass true for isChainedCall
         if (playNextSectionCallbackRef.current) {
-          speakText(nextSection.speakableText, playNextSectionCallbackRef.current);
+             speakText(nextSection.speakableText, playNextSectionCallbackRef.current, true);
         }
         return newIndex;
       } else {
         speakText("This concludes the overview of Chakradhar's portfolio.", () => {
           setIsReading(false);
-        });
-        return 0; // Reset for next play
+        }, true); // Also a chained call in a sense
+        return 0; 
       }
     });
-  }, [speakText, sectionsToRead, smoothScrollTo, setCurrentSectionIndex, setIsReading]); // playNextSectionCallbackRef removed as it's self-referential indirectly
+  }, [speakText, sectionsToRead, smoothScrollTo, setCurrentSectionIndex, setIsReading]);
 
-  // Assign the memoized function to the ref *after* playNextSection is defined.
   useEffect(() => {
     playNextSectionCallbackRef.current = playNextSection;
   }, [playNextSection]);
-
 
   const startReadingSequence = useCallback((startIndex: number) => {
     if (startIndex < sectionsToRead.length) {
       setIsReading(true);
       const section = sectionsToRead[startIndex];
       smoothScrollTo(section.id);
+      // Initial call in a sequence is not chained
       if (playNextSectionCallbackRef.current) {
-        speakText(section.speakableText, playNextSectionCallbackRef.current);
+         speakText(section.speakableText, playNextSectionCallbackRef.current, false);
       }
     } else {
       setIsReading(false);
     }
   }, [setIsReading, sectionsToRead, smoothScrollTo, speakText]);
 
-
   const handlePlayPauseClick = useCallback(() => {
     if (!speechSynthInstance) return;
 
     if (isReading) {
-      speechSynthInstance.cancel(); // Stop any current speech
-      if (utteranceRef.current) { // Clean up listeners for the cancelled utterance
+      if (speechSynthInstance.speaking) {
+        speechSynthInstance.cancel();
+      }
+      if (utteranceRef.current) {
         utteranceRef.current.onend = null; 
         utteranceRef.current.onerror = null;
+        utteranceRef.current = null;
       }
       setIsReading(false);
     } else {
       setIsReading(true);
       if (!hasSpokenWelcome) {
+        // Initial welcome message call is not chained
         speakText("Welcome. I will now briefly guide you through Chakradhar's portfolio sections.", () => {
           setHasSpokenWelcome(true);
-          // Ensure currentSectionIndex is 0 before starting the sequence after welcome
           setCurrentSectionIndex(0); 
-          // Use a timeout to ensure state update for currentSectionIndex is processed
           setTimeout(() => startReadingSequence(0), 50); 
-        });
+        }, false);
       } else {
-        // If welcome already spoken, resume from currentSectionIndex
         startReadingSequence(currentSectionIndex);
       }
     }
-  }, [isReading, speechSynthInstance, hasSpokenWelcome, currentSectionIndex, speakText, startReadingSequence, setHasSpokenWelcome, setCurrentSectionIndex]);
+  }, [isReading, speechSynthInstance, hasSpokenWelcome, currentSectionIndex, speakText, startReadingSequence, setHasSpokenWelcome, setCurrentSectionIndex, setIsReading]);
   
-  // Render null on server or if speech synthesis is not supported/initialized
   if (!speechSynthInstance) {
     return null;
   }
@@ -202,5 +201,3 @@ const ContentReader: React.FC = () => {
 };
 
 export default ContentReader;
-
-    
