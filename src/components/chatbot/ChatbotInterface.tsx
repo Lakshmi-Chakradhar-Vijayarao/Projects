@@ -32,6 +32,7 @@ interface ChatbotInterfaceProps {
   onInputChange: (value: string) => void;
   onSendMessage: () => void;
   isLoading: boolean;
+  onQuickReplyAction: (action: string) => void; // Added this prop definition
 }
 
 const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
@@ -43,6 +44,7 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   onInputChange,
   onSendMessage,
   isLoading,
+  onQuickReplyAction, // Destructure the prop
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,12 +52,11 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      // Only focus input if quickReplies are not present (i.e., in QA mode, not greeting/options mode)
       if ((!quickReplies || quickReplies.length === 0) && !isLoading) {
         inputRef.current?.focus();
       }
     }
-  }, [isOpen, messages, quickReplies, isLoading]); // Added isLoading to dependencies
+  }, [isOpen, messages, quickReplies, isLoading]);
 
   if (!isOpen) {
     return null;
@@ -109,12 +110,12 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
             <div className="flex flex-col space-y-2">
               {quickReplies.map((reply) => (
                 <Button
-                  key={reply.text} // Using text as key, assuming it's unique for a given set of replies
+                  key={reply.text} 
                   variant="outline"
                   className="w-full justify-start text-left h-auto py-2.5 px-3 sm:px-4 text-xs sm:text-sm"
                   onClick={() => onQuickReplyAction(reply.action)}
                 >
-                  {reply.icon && React.cloneElement(reply.icon, { className: cn(reply.icon.props.className, "mr-2 h-4 w-4 flex-shrink-0") })}
+                  {reply.icon && React.cloneElement(reply.icon as React.ReactElement, { className: cn((reply.icon as React.ReactElement).props.className, "mr-2 h-4 w-4 flex-shrink-0") })}
                   {reply.text}
                 </Button>
               ))}
