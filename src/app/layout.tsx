@@ -5,8 +5,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-import ContentReader from '@/components/ai/ContentReader';
-import InteractiveChatbot from '@/components/chatbot/InteractiveChatbot'; // Added Chatbot
+// Removed direct imports of ContentReader and InteractiveChatbot as IntegratedAssistantController handles them
+import IntegratedAssistantController from '@/components/ai/IntegratedAssistantController';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lakshmi Chakradhar Vijayarao | ML Practitioner & Software Engineer",
-  description: "Portfolio of Lakshmi Chakradhar Vijayarao, showcasing expertise in Machine Learning, Full Stack Development (React.js, Node.js, Python), and building scalable, secure systems.",
+  title: "Chakradhar Vijayarao | ML Practitioner & Software Engineer",
+  description: "Portfolio of Chakradhar Vijayarao, showcasing expertise in Machine Learning, Full Stack Development (React.js, Node.js, Python), and building scalable, secure systems.",
 };
 
 export default function RootLayout({
@@ -37,8 +37,8 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        <ContentReader />
-        <InteractiveChatbot /> {/* Added Chatbot instance */}
+        {/* Only IntegratedAssistantController should be here to manage both child components */}
+        <IntegratedAssistantController />
       </body>
     </html>
   );
