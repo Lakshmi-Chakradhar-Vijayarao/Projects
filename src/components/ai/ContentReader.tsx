@@ -2,34 +2,40 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Play, Square } from 'lucide-react';
+import type { Icon } from 'lucide-react'; // For QuickReplyButton typing
 
 interface SectionToRead {
   id: string;
   speakableText: string;
-  isSpecial?: boolean; // For sections like intro/outro that don't scroll
+  isSpecial?: boolean;
+  outroMessage?: string;
 }
 
 const sectionsToReadData: SectionToRead[] = [
-  { id: 'welcome', speakableText: "Welcome. I will now briefly guide you through Chakradhar's portfolio sections.", isSpecial: true },
-  { id: 'about', speakableText: "About Chakradhar: A passionate software engineer and AI developer specializing in full-stack development and intelligent data processing." },
+  // Welcome message is now handled by InteractiveChatbot via IntegratedAssistantController
+  { id: 'about', speakableText: "About Chakradhar: He's a passionate software engineer and AI developer specializing in full-stack development and intelligent data processing." },
   { id: 'experience', speakableText: "Experience: Highlighting internships at NSIC Technical Services Centre and Zoho Corporation, focusing on e-commerce, API optimization, and real-time communication." },
   { id: 'projects', speakableText: "Projects: Showcasing impactful work in AI-powered detection, search engines, facial recognition, and system schedulers." },
   { id: 'skills-section', speakableText: "Skills: Detailing Chakradhar's proficiency in programming languages, frameworks, data technologies, and development methodologies." },
   { id: 'education-section', speakableText: "Education: Master's from The University of Texas at Dallas and Bachelor's from R.M.K. Engineering College." },
   { id: 'certifications-section', speakableText: "Certifications: Including IBM DevOps, Microsoft Full-Stack, Meta Back-End, and AWS Certified Cloud Practitioner." },
-  { id: 'publication-section', speakableText: "Publication: Featuring work on Text Detection Based on Deep Learning presented at an IEEE conference." },
-  { id: 'outro', speakableText: "This concludes the overview of Chakradhar's portfolio. Thank you for listening.", isSpecial: true },
+  { id: 'publication-section', speakableText: "Publication: Featuring Chakradhar's work on Text Detection Based on Deep Learning presented at an IEEE conference." },
+  { id: 'outro', speakableText: "This concludes the overview of Chakradhar's portfolio.", isSpecial: true },
 ];
 
+interface ContentReaderProps {
+  startTour: boolean;
+  onTourComplete: () => void;
+  stopTourSignal: boolean; // New prop to signal stop from parent
+}
 
-const ContentReader: React.FC = () => {
+const ContentReader: React.FC<ContentReaderProps> = ({ startTour, onTourComplete, stopTourSignal }) => {
   const [isReading, setIsReading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const synthRef = useRef<SpeechSynthesis | null>(null);
-  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const sectionQueueRef = useRef<SectionToRead[]>([]);
+  const currentSectionIndexRef = useRef(0); // To keep track of the current section
 
   useEffect(() => {
     setIsMounted(true);
@@ -40,12 +46,10 @@ const ContentReader: React.FC = () => {
       if (synthRef.current?.speaking) {
         synthRef.current.cancel();
       }
-      if (currentUtteranceRef.current) {
-        currentUtteranceRef.current.onend = null;
-        currentUtteranceRef.current.onerror = null;
+      if (utteranceRef.current) {
+        utteranceRef.current.onend = null;
+        utteranceRef.current.onerror = null;
       }
-      currentUtteranceRef.current = null;
-      sectionQueueRef.current = [];
     };
   }, []);
 
@@ -57,29 +61,37 @@ const ContentReader: React.FC = () => {
   }, []);
 
   const processSpeechQueue = useCallback(() => {
-    if (!isReading || sectionQueueRef.current.length === 0 || !synthRef.current) {
+    if (!isReading || sectionQueueRef.current.length === 0 || !synthRef.current || !isMounted) {
       setIsReading(false);
+      if (isMounted && sectionQueueRef.current.length === 0 && isReading) { // Ensure tour completion is only called if it was reading
+        onTourComplete();
+      }
       return;
     }
 
     const section = sectionQueueRef.current.shift();
     if (!section) {
-        setIsReading(false);
-        return;
+      setIsReading(false);
+      if (isMounted) onTourComplete();
+      return;
     }
 
-    if (!section.isSpecial) {
+    if (!section.isSpecial && section.id !== 'outro') {
       smoothScrollTo(section.id);
     }
-    
+
     const utterance = new SpeechSynthesisUtterance(section.speakableText);
-    currentUtteranceRef.current = utterance;
+    utteranceRef.current = utterance;
 
     utterance.onend = () => {
-      if (currentUtteranceRef.current === utterance) {
-        currentUtteranceRef.current.onend = null; // Clean up current handler
-        currentUtteranceRef.current.onerror = null;
-        processSpeechQueue(); 
+      if (utteranceRef.current === utterance) { // Ensure it's the current utterance
+        utteranceRef.current = null;
+        if (sectionQueueRef.current.length === 0) { // Last actual section was "outro"
+          setIsReading(false);
+          if (isMounted) onTourComplete();
+        } else {
+          processSpeechQueue();
+        }
       }
     };
 
@@ -89,97 +101,76 @@ const ContentReader: React.FC = () => {
         errorDetails = event.error;
       }
       console.error('SpeechSynthesisUtterance.onerror for text:', `"${section.speakableText}"`, 'Error details:', errorDetails, 'Full event object:', event);
-      
-      if (currentUtteranceRef.current === utterance) {
-        currentUtteranceRef.current.onend = null;
-        currentUtteranceRef.current.onerror = null;
-        currentUtteranceRef.current = null;
+      if (utteranceRef.current === utterance) {
+        utteranceRef.current = null;
       }
       setIsReading(false);
-      sectionQueueRef.current = [];
+      // Optionally call onTourComplete here or allow user to retry? For now, just stops.
+    };
+
+    const trySpeak = () => {
+      if (synthRef.current && utteranceRef.current === utterance && isMounted) {
+        synthRef.current.speak(utterance);
+      }
     };
     
-    const attemptToSpeak = () => {
-        if (synthRef.current && currentUtteranceRef.current === utterance) { // Ensure it's still the current intended utterance
-            synthRef.current.speak(utterance);
+    if (synthRef.current?.getVoices().length > 0) {
+      trySpeak();
+    } else if (synthRef.current) {
+      const voiceChangeHandler = () => {
+        if(synthRef.current) synthRef.current.onvoiceschanged = null; // Detach listener
+        trySpeak();
+      };
+      synthRef.current.onvoiceschanged = voiceChangeHandler;
+      // Fallback timeout in case onvoiceschanged doesn't fire reliably
+      setTimeout(() => {
+        if (synthRef.current && synthRef.current.onvoiceschanged === voiceChangeHandler) {
+           synthRef.current.onvoiceschanged = null;
+           trySpeak();
         }
-    };
-
-    if (synthRef.current) {
-        if (synthRef.current.getVoices().length > 0) {
-            attemptToSpeak();
-        } else {
-            const voiceChangeHandler = () => {
-                if(synthRef.current) synthRef.current.onvoiceschanged = null;
-                attemptToSpeak();
-            };
-            synthRef.current.onvoiceschanged = voiceChangeHandler;
-            setTimeout(() => {
-                 if (synthRef.current && synthRef.current.onvoiceschanged === voiceChangeHandler) {
-                    synthRef.current.onvoiceschanged = null;
-                    attemptToSpeak();
-                 }
-            }, 250);
-        }
-    } else {
-        setIsReading(false);
+      }, 250);
     }
-  }, [isReading, smoothScrollTo, setIsReading]); // Added setIsReading
+
+  }, [isReading, smoothScrollTo, onTourComplete, isMounted, setIsReading]); // Added setIsReading
 
   useEffect(() => {
-    if (isReading && synthRef.current) {
-      if (sectionQueueRef.current.length > 0 && !synthRef.current.speaking && !currentUtteranceRef.current) {
-         processSpeechQueue();
-      }
-    } else if (!isReading && synthRef.current) {
-      synthRef.current.cancel();
-      sectionQueueRef.current = []; 
-      if (currentUtteranceRef.current) { 
-        currentUtteranceRef.current.onend = null;
-        currentUtteranceRef.current.onerror = null;
-        // currentUtteranceRef.current = null; // Let processSpeechQueue handle this when queue is empty naturally
-      }
+    if (startTour && !isReading && isMounted) {
+      setIsReading(true);
+      sectionQueueRef.current = [...sectionsToReadData];
+      currentSectionIndexRef.current = 0; // Reset index
+      // The actual start of speech processing is handled by the effect below
     }
-  }, [isReading, processSpeechQueue]);
+  }, [startTour, isReading, isMounted]);
 
-  const handleToggleRead = () => {
-    if (!isMounted || !synthRef.current) return;
+  useEffect(() => {
+    if (isReading && isMounted && sectionQueueRef.current.length > 0 && !synthRef.current?.speaking) {
+      processSpeechQueue();
+    }
+  }, [isReading, isMounted, processSpeechQueue]);
 
-    const nextIsReadingState = !isReading;
-    setIsReading(nextIsReadingState);
 
-    if (nextIsReadingState) {
-      sectionQueueRef.current = [...sectionsToReadData]; 
-      // processSpeechQueue will be called by the useEffect watching isReading
-    } else {
-      // Stopping logic is handled by the useEffect watching isReading
-      if (synthRef.current.speaking) {
-        synthRef.current.cancel(); // Ensure immediate stop
+  useEffect(() => {
+    if (stopTourSignal && isReading && isMounted) {
+      if (synthRef.current?.speaking) {
+        synthRef.current.cancel();
       }
-       if (currentUtteranceRef.current) {
-        currentUtteranceRef.current.onend = null;
-        currentUtteranceRef.current.onerror = null;
+      if (utteranceRef.current) {
+        utteranceRef.current.onend = null;
+        utteranceRef.current.onerror = null;
+        utteranceRef.current = null;
       }
-      currentUtteranceRef.current = null;
       sectionQueueRef.current = [];
+      setIsReading(false);
+      // onTourComplete is not called here, as this is an interruption
     }
-  };
+  }, [stopTourSignal, isReading, isMounted, setIsReading]);
 
-  if (!isMounted) {
-    return null; 
-  }
 
-  return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={handleToggleRead}
-      className="fixed bottom-6 right-6 z-[1000] rounded-full w-14 h-14 shadow-lg bg-background hover:bg-accent/10 transition-all hover:scale-110"
-      aria-label={isReading ? 'Stop portfolio overview' : 'Play portfolio overview'}
-    >
-      {isReading ? <Square className="h-6 w-6 text-primary" /> : <Play className="h-6 w-6 text-primary" />}
-    </Button>
-  );
+  // This component no longer renders its own UI button.
+  // Control is handled by IntegratedAssistantController.
+  return null; 
 };
 
 export default ContentReader;
+
+    
