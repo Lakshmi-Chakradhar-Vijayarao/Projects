@@ -2,15 +2,17 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import type { Icon } from 'lucide-react'; // For QuickReplyButton typing
+import type { Icon } from 'lucide-react';
 
 interface SectionToRead {
   id: string;
   speakableText: string;
-  isSpecial?: boolean;
+  isSpecial?: boolean; // e.g., for welcome/outro that don't scroll
   outroMessage?: string;
 }
 
+// This data will be driven by IntegratedAssistantController's script in a real scenario
+// For now, using the detailed script structure for Chakradhar
 const sectionsToReadData: SectionToRead[] = [
   // Welcome message is now handled by InteractiveChatbot via IntegratedAssistantController
   { id: 'about', speakableText: "About Chakradhar: He's a passionate software engineer and AI developer specializing in full-stack development and intelligent data processing." },
@@ -20,35 +22,40 @@ const sectionsToReadData: SectionToRead[] = [
   { id: 'education-section', speakableText: "Education: Master's from The University of Texas at Dallas and Bachelor's from R.M.K. Engineering College." },
   { id: 'certifications-section', speakableText: "Certifications: Including IBM DevOps, Microsoft Full-Stack, Meta Back-End, and AWS Certified Cloud Practitioner." },
   { id: 'publication-section', speakableText: "Publication: Featuring Chakradhar's work on Text Detection Based on Deep Learning presented at an IEEE conference." },
-  { id: 'outro', speakableText: "This concludes the overview of Chakradhar's portfolio.", isSpecial: true },
+  { id: 'contact', speakableText: "This concludes the overview of Chakradhar's portfolio. You can use the chat to ask specific questions or download his resume.", isSpecial: true },
 ];
+
 
 interface ContentReaderProps {
   startTour: boolean;
   onTourComplete: () => void;
-  stopTourSignal: boolean; // New prop to signal stop from parent
+  stopTourSignal: boolean;
 }
 
 const ContentReader: React.FC<ContentReaderProps> = ({ startTour, onTourComplete, stopTourSignal }) => {
   const [isReading, setIsReading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const synthRef = useRef<SpeechSynthesis | null>(null);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const sectionQueueRef = useRef<SectionToRead[]>([]);
-  const currentSectionIndexRef = useRef(0); // To keep track of the current section
+  const currentSectionIndexRef = useRef(0);
 
   useEffect(() => {
     setIsMounted(true);
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       synthRef.current = window.speechSynthesis;
+      console.log("ContentReader: Speech synthesis initialized.");
+    } else {
+      console.warn("ContentReader: Speech synthesis not supported or not available.");
     }
     return () => {
+      console.log("ContentReader: Unmounting. Cancelling speech.");
       if (synthRef.current?.speaking) {
         synthRef.current.cancel();
       }
-      if (utteranceRef.current) {
-        utteranceRef.current.onend = null;
-        utteranceRef.current.onerror = null;
+      if (currentUtteranceRef.current) {
+        currentUtteranceRef.current.onend = null;
+        currentUtteranceRef.current.onerror = null;
       }
     };
   }, []);
@@ -56,42 +63,47 @@ const ContentReader: React.FC<ContentReaderProps> = ({ startTour, onTourComplete
   const smoothScrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (element) {
+      console.log(`ContentReader: Scrolling to section: ${id}`);
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      console.warn(`ContentReader: Element with id ${id} not found for scrolling.`);
     }
   }, []);
 
-  const processSpeechQueue = useCallback(() => {
-    if (!isReading || sectionQueueRef.current.length === 0 || !synthRef.current || !isMounted) {
-      setIsReading(false);
-      if (isMounted && sectionQueueRef.current.length === 0 && isReading) { // Ensure tour completion is only called if it was reading
-        onTourComplete();
-      }
+  const speakText = useCallback((textToSpeak: string, onEndCallback: () => void) => {
+    if (!isMounted || !synthRef.current) {
+      console.warn("ContentReader: SpeakText called before synth is ready or component mounted.");
+      if (isReading) setIsReading(false); // Stop if we can't speak
       return;
     }
+    console.log(`ContentReader: Attempting to speak: "${textToSpeak}"`);
 
-    const section = sectionQueueRef.current.shift();
-    if (!section) {
-      setIsReading(false);
-      if (isMounted) onTourComplete();
-      return;
+    // Cancel any ongoing speech *before* creating a new utterance
+    // This is important if a new speak command comes while previous is still finishing.
+    if (synthRef.current.speaking || synthRef.current.pending) {
+        console.log("ContentReader: Cancelling existing speech before speaking new text.");
+        synthRef.current.cancel(); 
+        // It's crucial that onend/onerror of the *cancelled* utterance don't fire or are handled.
+        // Setting them null on the ref helps, but `cancel()` should also prevent `onend`.
+        if (currentUtteranceRef.current) {
+            currentUtteranceRef.current.onend = null;
+            currentUtteranceRef.current.onerror = null;
+        }
     }
 
-    if (!section.isSpecial && section.id !== 'outro') {
-      smoothScrollTo(section.id);
-    }
 
-    const utterance = new SpeechSynthesisUtterance(section.speakableText);
-    utteranceRef.current = utterance;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    currentUtteranceRef.current = utterance;
 
     utterance.onend = () => {
-      if (utteranceRef.current === utterance) { // Ensure it's the current utterance
-        utteranceRef.current = null;
-        if (sectionQueueRef.current.length === 0) { // Last actual section was "outro"
-          setIsReading(false);
-          if (isMounted) onTourComplete();
-        } else {
-          processSpeechQueue();
-        }
+      console.log(`ContentReader: Speech ended for: "${textToSpeak}"`);
+      if (currentUtteranceRef.current === utterance) { // Ensure it's the current one
+        currentUtteranceRef.current.onend = null; // Clean up self
+        currentUtteranceRef.current.onerror = null; // Clean up self
+        currentUtteranceRef.current = null;
+        onEndCallback();
+      } else {
+        console.log("ContentReader: onend called for a stale utterance.");
       }
     };
 
@@ -100,77 +112,124 @@ const ContentReader: React.FC<ContentReaderProps> = ({ startTour, onTourComplete
       if (event && event.error) {
         errorDetails = event.error;
       }
-      console.error('SpeechSynthesisUtterance.onerror for text:', `"${section.speakableText}"`, 'Error details:', errorDetails, 'Full event object:', event);
-      if (utteranceRef.current === utterance) {
-        utteranceRef.current = null;
+      console.error('ContentReader: SpeechSynthesisUtterance.onerror for text:', `"${textToSpeak}"`, 'Error details:', errorDetails, 'Full event object:', event);
+      if (currentUtteranceRef.current === utterance) {
+        currentUtteranceRef.current.onend = null; // Clean up self
+        currentUtteranceRef.current.onerror = null; // Clean up self
+        currentUtteranceRef.current = null;
       }
-      setIsReading(false);
-      // Optionally call onTourComplete here or allow user to retry? For now, just stops.
-    };
-
-    const trySpeak = () => {
-      if (synthRef.current && utteranceRef.current === utterance && isMounted) {
-        synthRef.current.speak(utterance);
-      }
+      setIsReading(false); // Stop reading on error
     };
     
-    if (synthRef.current?.getVoices().length > 0) {
-      trySpeak();
-    } else if (synthRef.current) {
-      const voiceChangeHandler = () => {
-        if(synthRef.current) synthRef.current.onvoiceschanged = null; // Detach listener
-        trySpeak();
-      };
-      synthRef.current.onvoiceschanged = voiceChangeHandler;
-      // Fallback timeout in case onvoiceschanged doesn't fire reliably
-      setTimeout(() => {
-        if (synthRef.current && synthRef.current.onvoiceschanged === voiceChangeHandler) {
-           synthRef.current.onvoiceschanged = null;
-           trySpeak();
-        }
-      }, 250);
+    // Try to speak directly
+    // Browsers usually queue if voices are loading, or use a default.
+    // The 'voiceschanged' event can be complex to manage reliably across browsers for simple sequential speech.
+    if (synthRef.current.getVoices().length > 0) {
+        console.log("ContentReader: Voices available, speaking directly.");
+        synthRef.current.speak(utterance);
+    } else {
+        console.log("ContentReader: Voices not immediately available, attempting to speak anyway (browser might queue or use default).");
+        // Attempt to speak; if it fails, the onerror should catch it.
+        // For more robustness, one might re-add an onvoiceschanged listener here,
+        // but it adds complexity that can lead to loops if not handled perfectly.
+        const voiceLoadTimeout = setTimeout(() => {
+            if (synthRef.current && !utterance.onend && !utterance.onerror) { // Check if it hasn't already started/errored
+                 console.log("ContentReader: Voice load timeout, trying to speak again if synth is idle.");
+                 if(!synthRef.current.speaking && !synthRef.current.pending){
+                    synthRef.current.speak(utterance);
+                 } else {
+                    console.log("ContentReader: Synth busy after voice load timeout.");
+                 }
+            }
+        }, 250); // Short timeout as a fallback
+        synthRef.current.speak(utterance); // Try to speak immediately
     }
 
-  }, [isReading, smoothScrollTo, onTourComplete, isMounted, setIsReading]); // Added setIsReading
+  }, [isMounted, isReading, setIsReading]); // Added isReading and setIsReading
+
+  const processSpeechQueue = useCallback(() => {
+    console.log(`ContentReader: processSpeechQueue called. isReading: ${isReading}, queue length: ${sectionQueueRef.current.length}`);
+    if (!isReading || sectionQueueRef.current.length === 0) {
+      console.log("ContentReader: Queue empty or not reading. Tour complete or stopped.");
+      setIsReading(false);
+      if (sectionQueueRef.current.length === 0 && isReading) { // Check isReading one last time
+        onTourComplete();
+      }
+      return;
+    }
+
+    const section = sectionQueueRef.current.shift();
+    if (!section) {
+      console.log("ContentReader: No section found in queue, ending tour.");
+      setIsReading(false);
+      onTourComplete();
+      return;
+    }
+
+    currentSectionIndexRef.current = sectionsToReadData.findIndex(s => s.id === section.id);
+
+    if (!section.isSpecial) {
+      smoothScrollTo(section.id);
+    }
+
+    speakText(section.speakableText, processSpeechQueue); // Pass processSpeechQueue as the onEndCallback
+
+  }, [isReading, setIsReading, sectionsToReadData, smoothScrollTo, speakText, onTourComplete]);
+
+
+  const startReadingSequence = useCallback(() => {
+    console.log("ContentReader: startReadingSequence called.");
+    if (!isMounted || !synthRef.current) {
+      console.warn("ContentReader: startReadingSequence called before component mounted or synth ready.");
+      return;
+    }
+    setIsReading(true);
+    sectionQueueRef.current = [...sectionsToReadData]; // Reset queue
+    currentSectionIndexRef.current = 0;
+    // The useEffect listening to `isReading` will call processSpeechQueue
+  }, [isMounted, setIsReading, sectionsToReadData]);
 
   useEffect(() => {
+    console.log(`ContentReader: startTour prop changed to: ${startTour}`);
     if (startTour && !isReading && isMounted) {
-      setIsReading(true);
-      sectionQueueRef.current = [...sectionsToReadData];
-      currentSectionIndexRef.current = 0; // Reset index
-      // The actual start of speech processing is handled by the effect below
+      console.log("ContentReader: Start tour signal received, calling startReadingSequence.");
+      startReadingSequence();
+    } else if (!startTour && isReading && isMounted) {
+      // This case might be for externally stopping, but stopTourSignal is more direct.
+      console.log("ContentReader: startTour became false while reading, potential external stop.");
     }
-  }, [startTour, isReading, isMounted]);
-
+  }, [startTour, isReading, isMounted, startReadingSequence]);
+  
   useEffect(() => {
-    if (isReading && isMounted && sectionQueueRef.current.length > 0 && !synthRef.current?.speaking) {
+    if (isReading && sectionQueueRef.current.length > 0 && synthRef.current && !synthRef.current.speaking && !synthRef.current.pending) {
+      // This effect kicks off processing if `isReading` becomes true and the queue isn't empty.
+      console.log("ContentReader: isReading is true, queue has items, synth is idle. Processing queue.");
       processSpeechQueue();
     }
-  }, [isReading, isMounted, processSpeechQueue]);
-
+  }, [isReading, processSpeechQueue]); // Removed sectionQueueRef.current from deps as it's a ref
 
   useEffect(() => {
+    console.log(`ContentReader: stopTourSignal changed to: ${stopTourSignal}`);
     if (stopTourSignal && isReading && isMounted) {
-      if (synthRef.current?.speaking) {
+      console.log("ContentReader: Stop tour signal received. Stopping speech.");
+      if (synthRef.current) {
+        // Detach handlers from the current utterance *before* cancelling
+        if (currentUtteranceRef.current) {
+            currentUtteranceRef.current.onend = null;
+            currentUtteranceRef.current.onerror = null;
+        }
         synthRef.current.cancel();
       }
-      if (utteranceRef.current) {
-        utteranceRef.current.onend = null;
-        utteranceRef.current.onerror = null;
-        utteranceRef.current = null;
-      }
+      currentUtteranceRef.current = null;
       sectionQueueRef.current = [];
       setIsReading(false);
-      // onTourComplete is not called here, as this is an interruption
+      // onTourComplete is NOT called here as it's an interruption
     }
   }, [stopTourSignal, isReading, isMounted, setIsReading]);
 
-
-  // This component no longer renders its own UI button.
-  // Control is handled by IntegratedAssistantController.
-  return null; 
+  // This component is now fully controlled by IntegratedAssistantController for its UI.
+  // The play/stop button will be managed there.
+  return null;
 };
 
 export default ContentReader;
-
-    
