@@ -5,13 +5,13 @@ import { useInView } from 'react-intersection-observer';
 import ChatbotBubble from '@/components/chatbot/ChatbotBubble';
 import InteractiveChatbot, { type ChatMessage as ChatbotMessageType, type QuickReply as ChatbotQuickReplyType } from '@/components/chatbot/InteractiveChatbot';
 import ContentReader from '@/components/ai/ContentReader';
-import { BotMessageSquare, CheckCircle, Download, MessageCircleQuestion, XCircle } from 'lucide-react';
+import { BotMessageSquare, CheckCircle, Download, MessageCircleQuestion, XCircle, Play, Square } from 'lucide-react';
 
 type AssistantMode = 
   | 'idle'
   | 'greeting' 
   | 'voice_tour_active' 
-  | 'voice_tour_paused' // If user clicks bubble during voice tour
+  | 'voice_tour_paused' 
   | 'qa' 
   | 'post_voice_tour_qa'
   | 'scrolled_to_end_greeting';
@@ -23,18 +23,19 @@ const IntegratedAssistantController: React.FC = () => {
   const [chatQuickReplies, setChatQuickReplies] = useState<ChatbotQuickReplyType[]>([]);
   
   const [startVoiceTourSignal, setStartVoiceTourSignal] = useState(false);
-  const [stopVoiceTourSignal, setStopVoiceTourSignal] = useState(false); // To explicitly stop voice tour
+  const [stopVoiceTourSignal, setStopVoiceTourSignal] = useState(false);
   const [voiceTourCompleted, setVoiceTourCompleted] = useState(false);
   
-  const [userRespondedToGreeting, setUserRespondedToGreeting] = useState(false);
+  const [userRespondedToGreeting, setUserRespondedToGreeting] = useState(false); // Tracks if user acted on the initial greeting
+  const initialGreetingDoneRef = useRef(false); // Ensures initial greeting logic runs once
+
   const [hasShownScrolledToEndGreeting, setHasShownScrolledToEndGreeting] = useState(false);
 
-  const contactSectionObserverRef = useRef<HTMLDivElement | null>(null);
   const { ref: contactSectionInViewRefCallback, inView: contactSectionInView } = useInView({
     threshold: 0.5,
+    triggerOnce: true, // Important: trigger only once when it comes into view
   });
 
-  // Assign the ref from useInView to the actual DOM element
   useEffect(() => {
     const contactElement = document.getElementById('contact');
     if (contactElement) {
@@ -51,7 +52,7 @@ const IntegratedAssistantController: React.FC = () => {
       timestamp: new Date(),
       speakableTextOverride 
     }]);
-  }, []); // setChatMessages is stable from useState
+  }, []);
 
   const initiateGreeting = useCallback(() => {
     addMessageToChat('ai', "Hi there! I’m your AI assistant. Would you like me to walk you through Chakradhar’s portfolio?");
@@ -61,20 +62,23 @@ const IntegratedAssistantController: React.FC = () => {
     ]);
     setIsChatInterfaceOpen(true);
     setAssistantMode('greeting');
+    initialGreetingDoneRef.current = true; // Mark that greeting has been initiated
+    setUserRespondedToGreeting(false); // Reset this until user actually responds
   }, [addMessageToChat, setChatQuickReplies, setIsChatInterfaceOpen, setAssistantMode]);
 
+  // Effect for initial greeting on page load
   useEffect(() => {
-    if (!userRespondedToGreeting && assistantMode === 'idle' && !isChatInterfaceOpen && !startVoiceTourSignal && !voiceTourCompleted) {
+    if (!initialGreetingDoneRef.current && assistantMode === 'idle' && !isChatInterfaceOpen) {
       initiateGreeting();
     }
-  }, [userRespondedToGreeting, assistantMode, isChatInterfaceOpen, startVoiceTourSignal, voiceTourCompleted, initiateGreeting]);
+  }, [assistantMode, isChatInterfaceOpen, initiateGreeting]);
 
 
   const handleQuickReplyAction = useCallback((action: string) => {
-    setUserRespondedToGreeting(true); 
+    setUserRespondedToGreeting(true); // User has now responded
 
     if (action === 'start_voice_tour') {
-      setIsChatInterfaceOpen(false); // Close chat for voice tour
+      setIsChatInterfaceOpen(false); 
       setChatQuickReplies([]);
       setStartVoiceTourSignal(true);
       setStopVoiceTourSignal(false); 
@@ -82,13 +86,13 @@ const IntegratedAssistantController: React.FC = () => {
     } else if (action === 'decline_tour') {
       setIsChatInterfaceOpen(false);
       setChatQuickReplies([]);
-      setAssistantMode('idle'); // User can re-engage by clicking bubble
+      setAssistantMode('idle'); 
     } else if (action === 'open_qa') {
       setAssistantMode('qa');
       addMessageToChat('ai', "Great! What would you like to know about Chakradhar?");
       setChatQuickReplies([]); 
     } else if (action === 'download_resume') {
-      window.open('/lakshmi_resume.pdf', '_blank'); // Assuming resume is in public folder
+      window.open('/lakshmi_resume.pdf', '_blank'); 
     } else if (action === 'end_chat_interaction') {
       setIsChatInterfaceOpen(false);
       setChatQuickReplies([]);
@@ -98,6 +102,7 @@ const IntegratedAssistantController: React.FC = () => {
 
   const handleVoiceTourComplete = useCallback(() => {
     setStartVoiceTourSignal(false);
+    setStopVoiceTourSignal(false);
     setVoiceTourCompleted(true);
     setAssistantMode('post_voice_tour_qa');
     addMessageToChat('ai', "The guided tour is complete! Feel free to ask any questions you have about Chakradhar.");
@@ -109,8 +114,9 @@ const IntegratedAssistantController: React.FC = () => {
     setIsChatInterfaceOpen(true);
   }, [addMessageToChat, setAssistantMode, setChatQuickReplies, setIsChatInterfaceOpen, setStartVoiceTourSignal, setVoiceTourCompleted]);
 
+  // Effect for "No Thanks" and scroll to end
   useEffect(() => {
-    if (contactSectionInView && assistantMode === 'idle' && userRespondedToGreeting && !startVoiceTourSignal && !voiceTourCompleted && !hasShownScrolledToEndGreeting) {
+    if (contactSectionInView && userRespondedToGreeting && assistantMode === 'idle' && !startVoiceTourSignal && !voiceTourCompleted && !hasShownScrolledToEndGreeting) {
       addMessageToChat('ai', "Thanks for exploring! Have any questions about Chakradhar's work or experience?");
       setChatQuickReplies([
         { text: "Ask a Question", action: 'open_qa', icon: <MessageCircleQuestion className="mr-2 h-4 w-4" /> },
@@ -122,30 +128,24 @@ const IntegratedAssistantController: React.FC = () => {
     }
   }, [contactSectionInView, assistantMode, userRespondedToGreeting, startVoiceTourSignal, voiceTourCompleted, hasShownScrolledToEndGreeting, addMessageToChat, setChatQuickReplies, setAssistantMode, setIsChatInterfaceOpen, setHasShownScrolledToEndGreeting]);
 
+
   const mainBubbleClickHandler = useCallback(() => {
     if (isChatInterfaceOpen) { 
-      // If chat is open, clicking bubble (or X in chat) should close it
-      // If voice tour was active, it implies user wants to stop/interrupt it.
       if (assistantMode === 'voice_tour_active') {
-        setStopVoiceTourSignal(true); // Signal ContentReader to stop
-        setStartVoiceTourSignal(false); // Ensure tour doesn't restart if bubble clicked again quickly
-        setAssistantMode('idle'); // Reset mode
+        setStopVoiceTourSignal(true); 
+        setStartVoiceTourSignal(false); 
+        setAssistantMode('idle'); 
       }
       setIsChatInterfaceOpen(false);
       setChatQuickReplies([]); 
-      // Do not reset assistantMode if it was 'post_voice_tour_qa' or 'scrolled_to_end_greeting'
-      // as user might want to re-open to that same context.
-      // If it was 'greeting', it means they closed the initial popup; set to 'idle'.
       if (assistantMode === 'greeting' || assistantMode === 'qa') {
          setAssistantMode('idle'); 
       }
     } else { 
-      // Chat is closed, clicking bubble should open it
-      setStopVoiceTourSignal(false); // Ensure any stop signal is cleared if we are re-opening
+      setStopVoiceTourSignal(false); 
 
       if (voiceTourCompleted || assistantMode === 'post_voice_tour_qa') {
         setAssistantMode('post_voice_tour_qa');
-        // Avoid duplicate message if re-opening to the same context
         if (chatMessages.length === 0 || chatMessages[chatMessages.length -1]?.text !== "Welcome back! You've completed the tour. Still have questions about Chakradhar or want to download the resume?") {
            addMessageToChat('ai', "Welcome back! You've completed the tour. Still have questions about Chakradhar or want to download the resume?");
         }
@@ -155,7 +155,6 @@ const IntegratedAssistantController: React.FC = () => {
           { text: "End Chat", action: 'end_chat_interaction', icon: <XCircle className="mr-2 h-4 w-4" /> },
         ]);
       } else if (assistantMode === 'scrolled_to_end_greeting') {
-        // Re-show the scrolled-to-end greeting if bubble clicked again
         if (chatMessages.length === 0 || chatMessages[chatMessages.length -1]?.text !== "Thanks for exploring! Have any questions about Chakradhar's work or experience?") {
           addMessageToChat('ai', "Thanks for exploring! Have any questions about Chakradhar's work or experience?");
         }
@@ -164,7 +163,6 @@ const IntegratedAssistantController: React.FC = () => {
             { text: "Not right now", action: 'end_chat_interaction', icon: <XCircle className="mr-2 h-4 w-4" /> },
         ]);
       } else if (userRespondedToGreeting && (assistantMode === 'idle' || assistantMode === 'qa')) { 
-        // User has responded to greeting before, and is now re-engaging for QA
         setAssistantMode('qa');
         if (chatMessages.length === 0 || chatMessages[chatMessages.length -1]?.text !== "Hello again! What can I help you with regarding Chakradhar's profile?") {
            addMessageToChat('ai', "Hello again! What can I help you with regarding Chakradhar's profile?");
@@ -173,7 +171,7 @@ const IntegratedAssistantController: React.FC = () => {
       } else { 
         // Default: Not greeted yet, or tour was interrupted and mode is 'idle'.
         // Trigger initial greeting logic.
-        initiateGreeting(); // This will set mode to 'greeting' and set messages/replies
+        initiateGreeting(); 
       }
       setIsChatInterfaceOpen(true);
     }
@@ -192,8 +190,6 @@ const IntegratedAssistantController: React.FC = () => {
     setStartVoiceTourSignal
   ]);
   
-  // Show the bubble if the main chat interface is NOT open,
-  // AND it's not the case that the voice tour is active AND the signal to start it is true (meaning it's auto-playing)
   const showChatBubble = !isChatInterfaceOpen && !(assistantMode === 'voice_tour_active' && startVoiceTourSignal);
 
   return (
@@ -220,5 +216,3 @@ const IntegratedAssistantController: React.FC = () => {
 };
 
 export default IntegratedAssistantController;
-
-    
