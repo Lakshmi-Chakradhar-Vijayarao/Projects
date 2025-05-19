@@ -23,7 +23,7 @@ export interface QuickReply {
 
 interface InteractiveChatbotProps {
   isOpen: boolean;
-  mode: 'greeting' | 'qa' | 'post_tour_qa' | 'scrolled_to_end_greeting' | 'voice_tour_active' | 'idle' | 'tour_paused_by_user'; // Added tour_paused_by_user
+  mode: 'greeting' | 'qa' | 'post_voice_tour_qa' | 'scrolled_to_end_greeting' | 'voice_tour_active' | 'idle' | 'post_tour_qa' | 'tour_paused_by_user';
   initialMessages: ChatMessage[];
   initialQuickReplies: QuickReply[];
   onClose: () => void;
@@ -42,14 +42,15 @@ const InteractiveChatbot: React.FC<InteractiveChatbotProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [currentInput, setCurrentInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [quickReplies, setQuickReplies] = useState<QuickReplyButtonProps[]>(initialQuickReplies);
+  const [quickReplies, setQuickReplies] = useState<QuickReplyButtonProps[]>([]);
 
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
 
   useEffect(() => {
-    setQuickReplies(initialQuickReplies.map(qr => ({ text: qr.text, action: qr.action, icon: qr.icon })));
+    // Guard against initialQuickReplies being undefined
+    setQuickReplies((initialQuickReplies || []).map(qr => ({ text: qr.text, action: qr.action, icon: qr.icon })));
   }, [initialQuickReplies]);
 
   const addMessage = useCallback((sender: 'user' | 'ai', text: string | React.ReactNode, speakableTextOverride?: string) => {
@@ -64,7 +65,7 @@ const InteractiveChatbot: React.FC<InteractiveChatbotProps> = ({
   }, []);
 
   const handleSendMessage = useCallback(async () => {
-    if (!currentInput.trim() || mode !== 'qa' && mode !== 'post_tour_qa') return;
+    if (!currentInput.trim() || (mode !== 'qa' && mode !== 'post_voice_tour_qa' && mode !== 'post_tour_qa')) return;
 
     addMessage('user', currentInput);
     const userQuestion = currentInput;
@@ -85,14 +86,15 @@ const InteractiveChatbot: React.FC<InteractiveChatbotProps> = ({
   
   // Effect to handle quick replies based on mode, if not directly set by initialQuickReplies
   useEffect(() => {
-    if (mode === 'greeting' || mode === 'post_tour_qa' || mode === 'scrolled_to_end_greeting') {
+    if (mode === 'greeting' || mode === 'post_voice_tour_qa' || mode === 'post_tour_qa' || mode === 'scrolled_to_end_greeting') {
       // Quick replies are set by initialQuickReplies for these modes via IntegratedAssistantController
+      // The useEffect for initialQuickReplies already handles this.
     } else if (mode === 'qa') {
        setQuickReplies([]); // Expect text input for QA
     } else {
       setQuickReplies([]); // Default to no quick replies
     }
-  }, [mode, initialQuickReplies]);
+  }, [mode]);
 
 
   return (
@@ -107,6 +109,9 @@ const InteractiveChatbot: React.FC<InteractiveChatbotProps> = ({
         onInputChange={setCurrentInput}
         onSendMessage={handleSendMessage}
         isLoading={isLoading}
+        // Pass onQuickReplyAction directly to ChatbotInterface
+        // @ts-ignore // TODO: Fix this type issue if ChatbotInterface's onQuickReplyAction is differently typed
+        onQuickReplyAction={onQuickReplyAction} 
       />
     </>
   );
