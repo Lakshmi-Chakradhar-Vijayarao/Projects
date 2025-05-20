@@ -12,34 +12,34 @@ html {
 
 @layer base {
   :root {
-    /* Dark Theme with Blue/Purple Accents */
-    --background: 240 10% 6%;       /* Very dark desaturated blue */
-    --foreground: 240 10% 95%;     /* Very light gray */
+    /* Light Theme based on PRD and common patterns */
+    --background: 220 20% 95%;       /* PRD: Extremely light blue */
+    --foreground: 220 25% 10%;     /* Dark desaturated blue for text */
 
-    --card: 240 10% 12%;          /* Slightly lighter dark blue for cards */
-    --card-foreground: 240 10% 90%;
+    --card: 0 0% 100%;              /* White for cards */
+    --card-foreground: 220 25% 10%; /* Dark desaturated blue */
 
-    --popover: 240 10% 8%;         /* Dark popover */
-    --popover-foreground: 240 10% 90%;
+    --popover: 0 0% 100%;           /* White for popovers */
+    --popover-foreground: 220 25% 10%;
 
-    --primary: 220 80% 65%;       /* Brightish Blue */
-    --primary-foreground: 220 80% 15%; /* Dark blue for text on primary */
+    --primary: 220 70% 50%;         /* PRD: Vibrant blue */
+    --primary-foreground: 0 0% 100%;   /* White for text on primary */
 
-    --secondary: 270 50% 65%;     /* Purple */
-    --secondary-foreground: 270 50% 15%; /* Dark purple for text on secondary */
+    --secondary: 270 60% 55%;       /* A complementary purple, good for light theme */
+    --secondary-foreground: 0 0% 100%; /* White for text on secondary */
 
-    --muted: 240 10% 20%;          /* Muted dark blue */
-    --muted-foreground: 240 5% 65%;   /* Lighter gray for muted text */
+    --muted: 220 20% 90%;            /* Slightly darker light blue / very light gray */
+    --muted-foreground: 220 15% 45%;     /* Muted dark blue for text */
 
-    --accent: 290 70% 60%;        /* Magenta/Bright Purple */
-    --accent-foreground: 290 70% 10%; /* Dark magenta for text on accent */
+    --accent: 190 70% 50%;          /* PRD: Cyan */
+    --accent-foreground: 220 25% 10%;   /* Dark text for contrast on cyan */
 
-    --destructive: 0 70% 55%;       /* Destructive red */
-    --destructive-foreground: 0 0% 98%; /* Light foreground for destructive */
+    --destructive: 0 70% 55%;         /* Destructive red */
+    --destructive-foreground: 0 0% 100%; /* White text on destructive */
 
-    --border: 240 10% 25%;          /* Border color */
-    --input: 240 10% 30%;           /* Input background */
-    --ring: 220 80% 65%;          /* Ring color - same as primary */
+    --border: 220 20% 80%;            /* Light blueish-gray border */
+    --input: 0 0% 100%;               /* White for input backgrounds */
+    --ring: 220 70% 50%;            /* Primary blue for focus rings */
 
     --radius: 0.5rem;
 
@@ -49,14 +49,14 @@ html {
     --chart-4: 200 70% 60%;
     --chart-5: 320 70% 60%;
     
-    /* Sidebar colors adjusted for dark theme */
-    --sidebar-background: 240 10% 8%;
-    --sidebar-foreground: 240 10% 85%;
+    /* Sidebar colors adjusted for light theme */
+    --sidebar-background: 0 0% 100%; /* White sidebar */
+    --sidebar-foreground: 220 25% 10%; /* Dark text */
     --sidebar-primary: hsl(var(--primary));
     --sidebar-primary-foreground: hsl(var(--primary-foreground));
-    --sidebar-accent: 240 10% 15%;
-    --sidebar-accent-foreground: 240 10% 85%;
-    --sidebar-border: 240 10% 20%;
+    --sidebar-accent: 220 20% 90%; /* Light gray-blue for selected items background */
+    --sidebar-accent-foreground: hsl(var(--primary)); /* Primary blue text for selected item */
+    --sidebar-border: 220 20% 85%; /* Light border for sidebar */
     --sidebar-ring: hsl(var(--ring));
   }
 }
