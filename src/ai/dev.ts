@@ -3,4 +3,4 @@ import { config } from 'dotenv';
 config();
 
 import '@/ai/flows/analyze-text-tone.ts';
-// Removed import for resume-qa-flow.ts
+import '@/ai/flows/resume-qa-flow.ts';

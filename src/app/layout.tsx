@@ -1,20 +1,21 @@
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter, Roboto_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-// Removed import for IntegratedAssistantController
+import InteractiveChatbot from '@/components/chatbot/InteractiveChatbot';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const robotoMono = Roboto_Mono({
+  variable: '--font-roboto-mono',
   subsets: ['latin'],
+  weight: ['400', '700'] // Common weights for a mono font
 });
 
 export const metadata: Metadata = {
@@ -29,14 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-background text-foreground`}>
+      <body className={`${inter.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen bg-background text-foreground`}>
         <Header />
         <main className="flex-grow">
           {children}
         </main>
         <Footer />
         <Toaster />
-        {/* Removed IntegratedAssistantController instance */}
+        <InteractiveChatbot />
       </body>
     </html>
   );

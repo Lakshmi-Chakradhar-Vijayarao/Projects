@@ -7,7 +7,7 @@ import ProjectCard from '@/components/project-card';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Button } from '@/components/ui/button';
 
-// projectsData is now local to this component
+
 const projectsData = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
@@ -16,7 +16,7 @@ const projectsData = [
     technologies: ["Python", "YOLO", "Object Detection", "TensorFlow"],
     image: "https://placehold.co/640x400.png",
     imageHint: "agriculture technology",
-    projectUrl: "#",
+    projectUrl: "#", // Replace with actual URL
     categories: ["AI/ML"],
   },
   {
@@ -26,7 +26,7 @@ const projectsData = [
     technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala", "NLP"],
     image: "https://placehold.co/640x400.png",
     imageHint: "data search",
-    projectUrl: "#",
+    projectUrl: "#", // Replace with actual URL
     categories: ["Big Data", "AI/ML"],
   },
   {
@@ -36,7 +36,7 @@ const projectsData = [
     technologies: ["Python", "OpenCV", "Machine Learning", "Cloud"],
     image: "https://placehold.co/640x400.png",
     imageHint: "security face recognition",
-    projectUrl: "#",
+    projectUrl: "#", // Replace with actual URL
     categories: ["AI/ML"],
   },
   {
@@ -46,7 +46,7 @@ const projectsData = [
     technologies: ["Python", "Scikit-Learn", "DT Classifier", "RF Classifier", "KNN"],
     image: "https://placehold.co/640x400.png",
     imageHint: "nature classification",
-    projectUrl: "#",
+    projectUrl: "#", // Replace with actual URL
     categories: ["AI/ML"],
   },
   {
@@ -56,7 +56,7 @@ const projectsData = [
     technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
     image: "https://placehold.co/640x400.png",
     imageHint: "computing programming",
-    projectUrl: "#",
+    projectUrl: "#", // Replace with actual URL
     categories: ["Systems"],
   },
   {
@@ -119,3 +119,4 @@ const Projects: React.FC = () => {
 };
 
 export default Projects;
+// Removed export of projectsData
