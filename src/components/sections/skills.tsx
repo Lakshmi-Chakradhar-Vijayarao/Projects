@@ -1,42 +1,80 @@
-
 "use client";
-import { SectionWrapper } from '@/components/ui/section-wrapper';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Brain } from 'lucide-react';
 
-const skillCategories = [
+import { SectionWrapper } from '@/components/ui/section-wrapper';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import type { ReactNode } from 'react';
+import { Code2, Library, BrainCircuit, CloudCog, Database, Wrench } from 'lucide-react';
+
+interface SkillCategory {
+  name: string;
+  icon: ReactNode;
+  skills: string[];
+}
+
+const skillCategories: SkillCategory[] = [
   {
-    name: "Core Technical Skills",
-    icon: <Brain className="h-5 w-5 mr-2 text-primary" />,
-    skills: ["Python", "PySpark", "DevOps Concepts", "Machine Learning"]
-  }
+    name: "Programming Languages",
+    icon: <Code2 className="h-5 w-5 mr-2 text-primary" />,
+    skills: ["Python", "Java", "JavaScript (ES6+)", "C++", "C", "C#"],
+  },
+  {
+    name: "Frameworks & Libraries",
+    icon: <Library className="h-5 w-5 mr-2 text-primary" />,
+    skills: ["React.js", "Node.js", "Express.js", "Django", "Scikit-learn", "YOLO", "OpenCV", "NumPy", "Pandas"],
+  },
+  {
+    name: "Data & Machine Learning",
+    icon: <BrainCircuit className="h-5 w-5 mr-2 text-primary" />,
+    skills: ["PySpark", "Hadoop", "Databricks", "ML algorithms: Decision Trees, Random Forest, KNN, YOLO", "Model evaluation, cross-validation", "data preprocessing"],
+  },
+  {
+    name: "Cloud & DevOps",
+    icon: <CloudCog className="h-5 w-5 mr-2 text-primary" />,
+    skills: ["AWS (EC2, S3, Lambda – foundational)", "GitHub Actions", "CI/CD fundamentals", "Docker (familiar)", "REST API integration", "Linux"],
+  },
+  {
+    name: "Databases",
+    icon: <Database className="h-5 w-5 mr-2 text-primary" />,
+    skills: ["MySQL", "PostgreSQL", "SQL"],
+  },
+  {
+    name: "Tools & Practices",
+    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />,
+    skills: ["Git", "VS Code", "Eclipse", "Jupyter Notebook", "Agile development", "API design", "cross-functional collaboration"],
+  },
 ];
 
 export default function Skills() {
   return (
     <SectionWrapper id="skills-section" title="Technical Skills">
-      <div className="grid md:grid-cols-2 lg:grid-cols-1 gap-6 md:gap-8"> {/* Adjusted grid for potentially single card */}
-        {skillCategories.map((category) => (
-          <Card key={category.name} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50 flex flex-col">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xl font-semibold text-primary flex items-center">
-                {category.icon}
-                {category.name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <Badge key={skill} variant="secondary" className="text-xs sm:text-sm bg-secondary/80 text-secondary-foreground hover:bg-secondary transition-colors">
-                    {skill}
-                  </Badge>
-                ))}
+      <Card className="shadow-xl bg-card/80 backdrop-blur-sm border border-border/50">
+        <CardContent className="p-6 md:p-8">
+          <div className="space-y-8">
+            {skillCategories.map((category, index) => (
+              <div key={category.name}>
+                <h3 className="text-xl font-semibold text-primary mb-4 flex items-center">
+                  {category.icon}
+                  <span>{category.name}</span>
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {category.skills.map((skill) => (
+                    <Badge
+                      key={skill}
+                      variant="outline"
+                      className="border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/60 text-sm px-3 py-1"
+                    >
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+                {index < skillCategories.length - 1 && <Separator className="my-8 bg-border/50" />}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </SectionWrapper>
   );
 }
