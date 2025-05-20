@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ReactNode } from 'react';
@@ -6,26 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-// Simple SVG Logo Components
+// Updated SVG Logo Components to better match screenshot
 const IbmLogo = () => (
   <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg" className="h-10 w-auto mb-4 text-primary fill-current">
-    {/* A very simplified IBM-like logo pattern */}
-    <rect x="0" y="10" width="10" height="20" />
-    <rect x="12" y="10" width="10" height="3" />
-    <rect x="12" y="15" width="10" height="3" />
-    <rect x="12" y="20" width="10" height="3" />
-    <rect x="12" y="25" width="10" height="3" />
-    <rect x="24" y="10" width="10" height="20" />
-
-    <rect x="38" y="10" width="10" height="20" />
-    <rect x="50" y="10" width="3" height="20" />
-    <rect x="55" y="10" width="10" height="3" />
-    <rect x="55" y="27" width="10" height="3" />
-    <path d="M55 13 Q60 13 60 10 L60 20 Q60 17 55 17 Z" />
-    <path d="M55 27 Q60 27 60 30 L60 20 Q60 23 55 23 Z" />
-
-
-    <path d="M70 10 H80 V13 H73 V18 H80 V21 H73 V27 H80 V30 H70 Z" />
+    {/* Simplified IBM-like stripes */}
+    <rect y="0" width="100" height="6"/>
+    <rect y="10" width="100" height="6"/>
+    <rect y="20" width="100" height="6"/>
   </svg>
 );
 
@@ -39,22 +27,19 @@ const MicrosoftLogo = () => (
 );
 
 const MetaLogo = () => (
-  // Simplified infinity-like symbol
-  <svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" className="h-8 w-auto mb-4 fill-current text-primary">
-    <path d="M15 5 C5 5, 5 25, 15 25 S25 5, 30 15 S35 25, 45 25 S55 5, 45 5 S35 25, 30 15 S25 5, 15 5 Z" />
+  <svg viewBox="0 0 200 100" className="h-8 w-auto mb-4 text-primary fill-current">
+    <path d="M100 50 C 50 0, 50 100, 100 50 C 150 0, 150 100, 100 50 M 70 50 C 70 25, 130 25, 130 50 C 130 75, 70 75, 70 50 Z" />
   </svg>
 );
-
 
 const AwsLogo = () => (
-  // Simplified "aws" text-like logo
-  <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" className="h-10 w-auto mb-4 fill-current text-primary">
-    <path d="M10 80 L30 20 L50 80 L40 80 L35 50 L25 50 L20 80 Z" />
-    <path d="M60 80 V20 H70 V70 H100 V80 H60 Z M80 20 H90 V30 H80 Z" />
-    <path d="M110 80 C100 80 95 70 95 60 S100 40 110 40 C120 40 125 50 125 60 C125 70 120 80 110 80 Z M110 45 C105 45 102 52 102 60 S105 75 110 75 S118 68 118 60 S115 45 110 45 Z" />
-    <path d="M135 80 L135 20 L145 20 L145 55 L165 20 L175 20 L155 50 L175 80 L165 80 L150 55 L145 60 V80 Z" />
+  // Simplified AWS "smile" logo, directly filled with orange
+  <svg viewBox="0 0 64 38" className="h-10 w-auto mb-4" fill="#FF9900"> {/* AWS Orange */}
+    <path d="M18.7,32.5C15.9,32.5,15,31.6,15,30.5V7.8c0-1.5,1.3-2.4,3.6-2.4c1.9,0,3.5,0.8,3.5,2.2v13.4h8.2V7.6 c0-1.4,1.3-2.2,3.3-2.2c2.2,0,3.6,0.9,3.6,2.4v22.9c0,0.9-0.8,1.6-2.7,1.6c-2.4,0-3.7-1.1-3.7-2.6V19.9h-8.2v10.9 C22.4,31.9,21.1,32.5,18.7,32.5z M47.8,32.5c-2.2,0-3.6-0.9-3.6-2.4V7.6c0-1.4,1.3-2.2,3.3-2.2c2.2,0,3.6,0.9,3.6,2.4 v22.9c0,0.9-0.8,1.6-2.7,1.6C48.5,32.5,48.2,32.5,47.8,32.5z"/>
+    <path d="M60.1,29.9c0.7,2.1,1.7,3.9,2.9,5.4c-3.4,3.3-7.9,5.3-12.8,5.3c-10.3,0-18.7-8.4-18.7-18.7c0-10.3,8.4-18.7,18.7-18.7 c4.9,0,9.4,1.9,12.8,5.3c-1.2,1.5-2.2,3.3-2.9,5.4c-2.2-2.5-5.3-4-8.7-4c-6.5,0-11.8,5.3-11.8,11.8S41.6,34,48.1,34 C51.5,34,54.6,32.4,56.8,29.9L60.1,29.9z"/>
   </svg>
 );
+
 
 interface Certification {
   name: string;
@@ -65,27 +50,27 @@ interface Certification {
 
 const certificationsData: Certification[] = [
   {
-    name: "DevOps and Software Engineering Professional Certificate",
+    name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#", // Placeholder URL
+    url: "#", 
     icon: <IbmLogo />
   },
   {
-    name: "Full-Stack Developer Professional Certificate",
+    name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#", // Placeholder URL
+    url: "#", 
     icon: <MicrosoftLogo />
   },
   {
-    name: "Back-End Developer Professional Certificate",
+    name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#", // Placeholder URL
+    url: "#", 
     icon: <MetaLogo />
   },
   {
-    name: "Cloud Practitioner",
-    issuer: "AWS Academy",
-    url: "#", // Placeholder URL
+    name: "AWS Certified Cloud Practitioner", // Updated name
+    issuer: "AWS Academy", // Updated issuer to be more specific if that's the case
+    url: "#", 
     icon: <AwsLogo />
   }
 ];
@@ -96,17 +81,17 @@ export default function Certifications() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {certificationsData.map((cert, index) => (
           <Link 
-            key={index} // Using index as key is fine for static, non-reordering lists
+            key={index} 
             href={cert.url} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="block group h-full" // Added h-full for consistent card height
+            className="block group h-full"
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <CardHeader className="p-0 mb-4 items-center"> {/* Added items-center */}
+              <CardHeader className="p-0 mb-4 items-center"> 
                 {cert.icon}
-                <CardTitle className="text-lg md:text-xl font-semibold text-primary group-hover:text-accent transition-colors leading-tight">
+                <CardTitle className="text-lg md:text-xl font-semibold text-primary group-hover:text-accent transition-colors leading-tight mt-2">
                   {cert.name}
                 </CardTitle>
               </CardHeader>
@@ -123,3 +108,4 @@ export default function Certifications() {
     </SectionWrapper>
   );
 }
+
