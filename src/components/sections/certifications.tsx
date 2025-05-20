@@ -12,10 +12,8 @@ interface Certification {
   name: string;
   issuer: string;
   url: string;
-  logoSrc: string;
+  logoSrc: string; // Path within public/logos/
   logoAlt: string;
-  logoWidth: number;
-  logoHeight: number;
   dataAiHint: string;
 }
 
@@ -23,41 +21,33 @@ const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#", // Placeholder URL
+    url: "#",
     logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
-    logoWidth: 100,
-    logoHeight: 40,
     dataAiHint: "ibm",
   },
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#", // Placeholder URL
+    url: "#",
     logoSrc: "/logos/microsoft.png",
     logoAlt: "Microsoft Logo",
-    logoWidth: 120,
-    logoHeight: 26,
     dataAiHint: "microsoft",
   },
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#", // Placeholder URL
+    url: "#",
     logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
-    logoWidth: 100,
-    logoHeight: 20,
     dataAiHint: "meta",
   },
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#", // Placeholder URL
+    url: "#",
     logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
-    logoWidth: 70,
-    logoHeight: 42,
     dataAiHint: "aws",
   }
 ];
@@ -76,18 +66,18 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <CardHeader className="p-0 mb-4 items-center flex-shrink-0">
-                <div className="h-12 w-full flex items-center justify-center mb-4">
-                  <Image
-                    src={cert.logoSrc}
-                    alt={cert.logoAlt}
-                    width={cert.logoWidth}
-                    height={cert.logoHeight}
-                    objectFit="contain"
-                    data-ai-hint={cert.dataAiHint}
-                  />
-                </div>
-                <CardTitle className="text-base md:text-lg font-semibold text-primary group-hover:text-accent transition-colors leading-tight mt-2">
+              <div className="mb-4 h-12 flex items-center justify-center"> {/* Logo container */}
+                <Image
+                  src={cert.logoSrc}
+                  alt={cert.logoAlt}
+                  width={100} // Adjusted width, can be fine-tuned
+                  height={40} // Adjusted height
+                  objectFit="contain"
+                  data-ai-hint={cert.dataAiHint}
+                />
+              </div>
+              <CardHeader className="p-0 mb-2 flex-shrink-0">
+                <CardTitle className="text-base md:text-lg font-semibold text-primary group-hover:text-accent transition-colors leading-tight">
                   {cert.name}
                 </CardTitle>
               </CardHeader>
