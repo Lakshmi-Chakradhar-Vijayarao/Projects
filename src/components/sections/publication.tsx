@@ -1,4 +1,4 @@
-
+"use client";
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { BookOpenText, ExternalLink } from 'lucide-react';
@@ -10,7 +10,7 @@ const publicationData = {
   details: [
     "Built a handwriting recognition model using MNIST-style data, achieving 98.6% training precision and 96.9% test accuracy."
   ],
-  url: "#" // Placeholder for link to paper or conference
+  url: "#" 
 };
 
 export default function Publication() {
@@ -34,11 +34,9 @@ export default function Publication() {
                 <li key={index}>{point}</li>
               ))}
             </ul>
-            {/* You can add a more prominent link button here if desired */}
           </CardContent>
         </Link>
       </Card>
     </SectionWrapper>
   );
 }
-

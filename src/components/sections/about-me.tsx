@@ -1,16 +1,16 @@
-
+"use client";
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LockKeyhole, Zap, Cloud, Database, ScanEye, Leaf, Lightbulb } from 'lucide-react'; // Added Lightbulb
+import { LockKeyhole, Zap, Cloud, Database, ScanEye, Leaf, Lightbulb, Activity } from 'lucide-react'; 
 
 const keyHighlights = [
   { text: "OAuth2 & JWT Security", icon: <LockKeyhole className="h-5 w-5 text-primary" /> },
   { text: "Real-time AI Inference", icon: <Zap className="h-5 w-5 text-primary" /> },
-  { text: "AWS & Databricks", icon: <Cloud className="h-5 w-5 text-primary" /> }, // Simplified to Cloud
+  { text: "AWS & Databricks", icon: <Cloud className="h-5 w-5 text-primary" /> }, 
   { text: "Computer Vision (YOLO, OpenCV)", icon: <ScanEye className="h-5 w-5 text-primary" /> },
   { text: "Sustainable AI Solutions", icon: <Leaf className="h-5 w-5 text-primary" /> },
-  { text: "Full-Stack Development", icon: <Lightbulb className="h-5 w-5 text-primary" /> }, // Added as a general highlight
+  { text: "Full-Stack Development", icon: <Lightbulb className="h-5 w-5 text-primary" /> }, 
 ];
 
 export default function AboutMe() {
@@ -21,7 +21,7 @@ export default function AboutMe() {
           <div className="md:w-1/3 md:shrink-0">
             <Image
               src="https://placehold.co/600x800.png"
-              alt="Lakshmi Chakradhar Vijayarao - Professional"
+              alt="Chakradhar Vijayarao - Professional"
               width={600}
               height={800}
               className="h-full w-full object-cover"
@@ -54,4 +54,3 @@ export default function AboutMe() {
     </SectionWrapper>
   );
 }
-

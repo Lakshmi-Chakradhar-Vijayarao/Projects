@@ -1,10 +1,8 @@
-
 "use client";
-
 import type { ReactNode } from 'react';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Award } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -12,11 +10,12 @@ interface Certification {
   name: string;
   issuer: string;
   url: string;
-  logoSrc: string;
-  logoAlt: string;
-  dataAiHint: string;
-  logoWidth: number;
-  logoHeight: number;
+  logoSrc?: string;
+  logoAlt?: string;
+  dataAiHint?: string;
+  icon?: ReactNode;
+  logoWidth?: number;
+  logoHeight?: number;
 }
 
 const certificationsData: Certification[] = [
@@ -27,8 +26,8 @@ const certificationsData: Certification[] = [
     logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
     dataAiHint: "ibm",
-    logoWidth: 200, 
-    logoHeight: 80, 
+    logoWidth: 100, 
+    logoHeight: 40, 
   },
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
@@ -37,8 +36,8 @@ const certificationsData: Certification[] = [
     logoSrc: "/logos/microsoft.png",
     logoAlt: "Microsoft Logo",
     dataAiHint: "microsoft",
-    logoWidth: 300, 
-    logoHeight: 64,  
+    logoWidth: 120, 
+    logoHeight: 26,  
   },
   {
     name: "Meta Back-End Developer Professional Certificate",
@@ -47,8 +46,8 @@ const certificationsData: Certification[] = [
     logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
     dataAiHint: "meta",
-    logoWidth: 200, 
-    logoHeight: 80,  
+    logoWidth: 100, 
+    logoHeight: 40,  
   },
   {
     name: "AWS Certified Cloud Practitioner",
@@ -57,8 +56,8 @@ const certificationsData: Certification[] = [
     logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
     dataAiHint: "aws",
-    logoWidth: 125, 
-    logoHeight: 75,  
+    logoWidth: 60, 
+    logoHeight: 40,  
   }
 ];
 
@@ -76,15 +75,19 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <div className="mb-4 flex items-center justify-center h-24 w-full"> {/* Changed from h-20 to h-24 */}
-                <Image
-                  src={cert.logoSrc}
-                  alt={cert.logoAlt}
-                  width={cert.logoWidth}
-                  height={cert.logoHeight}
-                  className="max-h-full max-w-full object-contain"
-                  data-ai-hint={cert.dataAiHint}
-                />
+              <div className="mb-4 flex items-center justify-center h-24 w-full"> {/* Increased container height for logos */}
+                {cert.logoSrc && cert.logoAlt && cert.dataAiHint && cert.logoWidth && cert.logoHeight ? (
+                  <Image
+                    src={cert.logoSrc}
+                    alt={cert.logoAlt}
+                    width={cert.logoWidth} 
+                    height={cert.logoHeight}
+                    className="max-h-full max-w-full object-contain"
+                    data-ai-hint={cert.dataAiHint}
+                  />
+                ) : (
+                  cert.icon || <Award className="h-12 w-12 text-primary" /> 
+                )}
               </div>
               <CardHeader className="p-0 mb-2 flex-shrink-0 min-h-[3em]">
                 <CardTitle className="text-base md:text-lg font-semibold text-primary group-hover:text-accent transition-colors leading-tight">
@@ -102,4 +105,3 @@ export default function Certifications() {
     </SectionWrapper>
   );
 }
-

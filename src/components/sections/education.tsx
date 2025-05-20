@@ -1,9 +1,7 @@
-
 "use client";
-
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { CalendarDays, MapPin } from 'lucide-react';
+import { CalendarDays, MapPin, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 
@@ -44,7 +42,7 @@ const educationData: EducationEntry[] = [
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
     logoDisplayWidthClass: "w-16", 
-    logoDisplayHeightClass: "h-14", 
+    logoDisplayHeightClass: "h-10", 
   }
 ];
 
@@ -54,7 +52,7 @@ export default function Education() {
       <div className="space-y-8">
         {educationData.map((edu, index) => (
           <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-            <div className="flex items-start p-6 gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row items-start p-6 gap-4 sm:gap-6">
               {edu.logoSrc && (
                 <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center`}>
                   <Image
@@ -67,11 +65,8 @@ export default function Education() {
                   />
                 </div>
               )}
-              {!edu.logoSrc && edu.icon && (
-                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center text-primary`}>
-                   {React.cloneElement(edu.icon as React.ReactElement, { className: "w-full h-full" })}
-                </div>
-              )}
+              {!edu.logoSrc && (edu.icon || <GraduationCap className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 text-primary`} />)}
+              
               <div className="flex-grow">
                 <CardHeader className="p-0">
                   <CardTitle className="text-xl font-semibold text-primary">
