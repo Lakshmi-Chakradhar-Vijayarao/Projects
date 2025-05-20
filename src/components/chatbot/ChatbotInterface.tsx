@@ -8,8 +8,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { X, Send, User, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Consistent with IntegratedAssistantController
-export interface ChatMessage {
+// Consistent with IntegratedAssistantController's ChatbotMessageType
+export interface ChatMessageFromController {
   id: string;
   sender: 'user' | 'ai';
   text: string | React.ReactNode;
@@ -26,13 +26,13 @@ export interface QuickReplyButtonProps {
 interface ChatbotInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
-  messages: ChatMessage[];
+  messages: ChatMessageFromController[]; // Use the renamed type
   quickReplies: QuickReplyButtonProps[];
   currentInput: string;
   onInputChange: (value: string) => void;
   onSendMessage: () => void;
   isLoading: boolean;
-  onQuickReplyAction: (action: string) => void; // Added this prop definition
+  onQuickReplyAction: (action: string) => void;
 }
 
 const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
@@ -44,7 +44,7 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   onInputChange,
   onSendMessage,
   isLoading,
-  onQuickReplyAction, // Destructure the prop
+  onQuickReplyAction,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,11 +52,12 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      if ((!quickReplies || quickReplies.length === 0) && !isLoading) {
+      // Only focus input if it's meant for typing (no quick replies and not loading)
+      if (quickReplies && quickReplies.length === 0 && !isLoading) {
         inputRef.current?.focus();
       }
     }
-  }, [isOpen, messages, quickReplies, isLoading]);
+  }, [isOpen, messages, quickReplies, isLoading]); // messages dependency ensures scroll on new message
 
   if (!isOpen) {
     return null;
@@ -84,7 +85,7 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
       <ScrollArea className="flex-grow p-3 sm:p-4 space-y-3">
         {messages.map((msg) => (
           <div
-            key={msg.id}
+            key={msg.id} // Key comes from IntegratedAssistantController
             className={cn(
               "flex items-start gap-2.5 p-2.5 rounded-lg max-w-[85%]",
               msg.sender === 'user' ? 'ml-auto bg-primary/10' : 'mr-auto bg-muted/50'
@@ -106,16 +107,16 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
       {/* Quick Replies or Input Area */}
       {(quickReplies && quickReplies.length > 0) ? (
         <div className="p-3 sm:p-4 border-t border-border/50">
-          <ScrollArea className="max-h-32"> {/* Allows scrolling for many quick replies */}
+          <ScrollArea className="max-h-32">
             <div className="flex flex-col space-y-2">
               {quickReplies.map((reply) => (
                 <Button
-                  key={reply.text} 
+                  key={reply.action} // Use reply.action as key if text can duplicate
                   variant="outline"
                   className="w-full justify-start text-left h-auto py-2.5 px-3 sm:px-4 text-xs sm:text-sm"
-                  onClick={() => onQuickReplyAction(reply.action)}
+                  onClick={() => onQuickReplyAction(reply.action)} // This prop is now correctly typed and expected
                 >
-                  {reply.icon && React.cloneElement(reply.icon as React.ReactElement, { className: cn((reply.icon as React.ReactElement).props.className, "mr-2 h-4 w-4 flex-shrink-0") })}
+                  {reply.icon && React.isValidElement(reply.icon) && React.cloneElement(reply.icon as React.ReactElement, { className: cn((reply.icon as React.ReactElement).props.className, "mr-2 h-4 w-4 flex-shrink-0") })}
                   {reply.text}
                 </Button>
               ))}
