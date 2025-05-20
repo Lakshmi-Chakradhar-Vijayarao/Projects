@@ -76,8 +76,7 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              {/* Increased height of logo container from h-14 to h-16 */}
-              <div className="mb-4 flex items-center justify-center h-16 w-full"> 
+              <div className="mb-4 flex items-center justify-center h-20 w-full"> {/* Changed from h-16 to h-20 */}
                 <Image
                   src={cert.logoSrc}
                   alt={cert.logoAlt}
