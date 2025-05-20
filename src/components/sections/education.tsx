@@ -39,8 +39,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-10", // Changed from w-7
-    logoDisplayHeightClass: "h-10", // Changed from h-7
+    logoDisplayWidthClass: "w-14", 
+    logoDisplayHeightClass: "h-14", 
   }
 ];
 
@@ -81,7 +81,7 @@ export default function Education() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pl-[calc(3rem+1.5rem)]"> {/* 3rem for w-12 (48px) + 1.5rem for gap, adjust if default logo size changes */}
+            <CardContent className="pl-[calc(3rem+1.5rem)]"> {/* Adjust based on the largest logo container width + gap if needed */}
               <p className="text-foreground/80 text-sm">{edu.details}</p>
             </CardContent>
           </Card>
