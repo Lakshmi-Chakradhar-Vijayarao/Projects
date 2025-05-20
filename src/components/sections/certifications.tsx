@@ -12,7 +12,7 @@ interface Certification {
   name: string;
   issuer: string;
   url: string;
-  logoSrc: string; // Path within public/logos/
+  logoSrc: string; 
   logoAlt: string;
   dataAiHint: string;
 }
@@ -21,32 +21,32 @@ const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#",
-    logoSrc: "/logos/ibm.png",
+    url: "#", // Replace with actual URL
+    logoSrc: "/logos/ibm.png", 
     logoAlt: "IBM Logo",
     dataAiHint: "ibm",
   },
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#",
-    logoSrc: "/logos/microsoft.png",
+    url: "#", // Replace with actual URL
+    logoSrc: "/logos/microsoft.png", 
     logoAlt: "Microsoft Logo",
     dataAiHint: "microsoft",
   },
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#",
-    logoSrc: "/logos/meta.png",
+    url: "#", // Replace with actual URL
+    logoSrc: "/logos/meta.png", 
     logoAlt: "Meta Logo",
     dataAiHint: "meta",
   },
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#",
-    logoSrc: "/logos/aws.png",
+    url: "#", // Replace with actual URL
+    logoSrc: "/logos/aws.png", 
     logoAlt: "AWS Logo",
     dataAiHint: "aws",
   }
@@ -66,12 +66,12 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <div className="mb-4 h-12 flex items-center justify-center"> {/* Logo container */}
+              <div className="h-10 flex items-center justify-center mb-4"> {/* Logo container */}
                 <Image
                   src={cert.logoSrc}
                   alt={cert.logoAlt}
-                  width={100} // Adjusted width, can be fine-tuned
-                  height={40} // Adjusted height
+                  width={80} 
+                  height={32} 
                   objectFit="contain"
                   data-ai-hint={cert.dataAiHint}
                 />
