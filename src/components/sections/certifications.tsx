@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ReactNode } from 'react';
@@ -22,7 +23,7 @@ const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#",
+    url: "#", // Placeholder URL
     logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
     logoWidth: 100,
@@ -32,8 +33,8 @@ const certificationsData: Certification[] = [
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#",
-    logoSrc: "/logos/microsoft.png", // Assuming PNG, can be SVG if you have it
+    url: "#", // Placeholder URL
+    logoSrc: "/logos/microsoft.png",
     logoAlt: "Microsoft Logo",
     logoWidth: 120,
     logoHeight: 26,
@@ -42,7 +43,7 @@ const certificationsData: Certification[] = [
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#",
+    url: "#", // Placeholder URL
     logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
     logoWidth: 100,
@@ -52,7 +53,7 @@ const certificationsData: Certification[] = [
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#",
+    url: "#", // Placeholder URL
     logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
     logoWidth: 70,

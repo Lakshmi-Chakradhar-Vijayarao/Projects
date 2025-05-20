@@ -47,33 +47,34 @@ export default function Education() {
             <CardHeader>
               <div className="flex items-start sm:items-center justify-between flex-col sm:flex-row gap-4">
                 <div className="flex items-center">
-                  <GraduationCap className="h-7 w-7 mr-3 text-primary flex-shrink-0" />
+                   <div className="flex-shrink-0 mr-4">
+                    <Image
+                      src={edu.logoSrc}
+                      alt={edu.logoAlt}
+                      width={48}
+                      height={48}
+                      objectFit="contain"
+                      data-ai-hint={edu.dataAiHint}
+                    />
+                  </div>
                   <div>
                     <CardTitle className="text-xl font-semibold text-primary">{edu.degree}</CardTitle>
                     <CardDescription className="text-muted-foreground mt-1">{edu.institution}</CardDescription>
                   </div>
                 </div>
-                <div className="flex-shrink-0 self-start sm:self-center">
-                  <Image
-                    src={edu.logoSrc}
-                    alt={edu.logoAlt}
-                    width={48}
-                    height={48}
-                    objectFit="contain"
-                    data-ai-hint={edu.dataAiHint}
-                  />
-                </div>
+                 <div className="flex-shrink-0 self-start sm:self-center text-right">
+                   <div className="flex items-center text-xs text-muted-foreground">
+                     <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
+                     {edu.duration}
+                   </div>
+                    <div className="flex items-center text-xs text-muted-foreground mt-1">
+                     <MapPin className="h-3.5 w-3.5 mr-1.5" />
+                     {edu.location}
+                   </div>
+                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm text-muted-foreground mb-2">
-                <CalendarDays className="h-4 w-4 mr-2" />
-                <span>{edu.duration}</span>
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground mb-3">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span>{edu.location}</span>
-              </div>
               <p className="text-foreground/80">{edu.details}</p>
             </CardContent>
           </Card>
