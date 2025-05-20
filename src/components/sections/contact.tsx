@@ -1,4 +1,3 @@
-
 "use client";
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -38,7 +37,7 @@ export default function Contact() {
                 ))}
                  <div className="flex items-center space-x-3">
                     <FileText className="h-5 w-5 text-primary flex-shrink-0" />
-                    <a href="/lakshmi_resume.pdf" target="_blank" rel="noopener noreferrer" className="text-foreground/90 hover:text-primary transition-colors">
+                    <a href="/Lakshmi_resume.pdf" target="_blank" rel="noopener noreferrer" className="text-foreground/90 hover:text-primary transition-colors">
                       Download My Resume
                     </a>
                   </div>

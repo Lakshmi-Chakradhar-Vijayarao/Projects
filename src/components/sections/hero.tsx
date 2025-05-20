@@ -1,4 +1,3 @@
-
 "use client";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -29,7 +28,7 @@ export default function Hero() {
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg transition-transform hover:scale-105 rounded-lg text-base px-6 py-3 w-full sm:w-auto"
             >
-              <a href="/lakshmi_resume.pdf" target="_blank" rel="noopener noreferrer">
+              <a href="/Lakshmi_resume.pdf" target="_blank" rel="noopener noreferrer">
                 <Download className="mr-2 h-5 w-5" /> Download Resume
               </a>
             </Button>
