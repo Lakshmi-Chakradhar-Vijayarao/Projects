@@ -23,7 +23,7 @@ const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#", // Replace with actual URL
+    url: "#", 
     logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
     dataAiHint: "ibm",
@@ -33,7 +33,7 @@ const certificationsData: Certification[] = [
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#", // Replace with actual URL
+    url: "#", 
     logoSrc: "/logos/microsoft.png",
     logoAlt: "Microsoft Logo",
     dataAiHint: "microsoft",
@@ -43,7 +43,7 @@ const certificationsData: Certification[] = [
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#", // Replace with actual URL
+    url: "#", 
     logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
     dataAiHint: "meta",
@@ -53,7 +53,7 @@ const certificationsData: Certification[] = [
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#", // Replace with actual URL
+    url: "#", 
     logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
     dataAiHint: "aws",
@@ -76,7 +76,7 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <div className="mb-4 flex items-center justify-center h-20 w-full"> {/* Changed from h-16 to h-20 */}
+              <div className="mb-4 flex items-center justify-center h-24 w-full"> {/* Changed from h-20 to h-24 */}
                 <Image
                   src={cert.logoSrc}
                   alt={cert.logoAlt}
@@ -102,3 +102,4 @@ export default function Certifications() {
     </SectionWrapper>
   );
 }
+
