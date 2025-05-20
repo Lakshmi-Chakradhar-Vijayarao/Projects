@@ -3,7 +3,7 @@
 
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { CalendarDays, MapPin, GraduationCap } from 'lucide-react';
+import { CalendarDays, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 
@@ -16,7 +16,7 @@ interface EducationEntry {
   logoSrc?: string;
   logoAlt?: string;
   dataAiHint?: string;
-  icon?: ReactNode; // For potential direct icon usage
+  icon?: ReactNode;
   logoDisplayWidthClass?: string;
   logoDisplayHeightClass?: string;
 }
@@ -44,7 +44,7 @@ const educationData: EducationEntry[] = [
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
     logoDisplayWidthClass: "w-16", 
-    logoDisplayHeightClass: "h-6", 
+    logoDisplayHeightClass: "h-10", 
   }
 ];
 
@@ -60,7 +60,7 @@ export default function Education() {
                   <Image
                     src={edu.logoSrc}
                     alt={edu.logoAlt || edu.institution}
-                    width={parseInt(edu.logoDisplayWidthClass?.substring(2) || '48') * 4} // Convert Tailwind units to approx pixels for intrinsic
+                    width={parseInt(edu.logoDisplayWidthClass?.substring(2) || '48') * 4} 
                     height={parseInt(edu.logoDisplayHeightClass?.substring(2) || '48') * 4}
                     className="object-contain w-full h-full"
                     data-ai-hint={edu.dataAiHint}
@@ -74,20 +74,19 @@ export default function Education() {
               )}
               <div className="flex-grow">
                 <CardHeader className="p-0">
-                  <CardTitle className="text-xl font-semibold text-primary flex items-center">
-                    {/* <GraduationCap className="h-6 w-6 mr-3 text-secondary flex-shrink-0 hidden sm:inline-block" /> */}
+                  <CardTitle className="text-xl font-semibold text-primary">
                     {edu.degree}
                   </CardTitle>
                   <CardDescription className="text-muted-foreground mt-1">{edu.institution}</CardDescription>
                 </CardHeader>
-                <CardContent className="p-0 pt-2">
-                  <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                <CardContent className="p-0 pt-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
                     <div className="flex items-center">
-                      <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
+                      <CalendarDays className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
                       {edu.duration}
                     </div>
                     <div className="flex items-center">
-                      <MapPin className="h-3.5 w-3.5 mr-1.5" />
+                      <MapPin className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
                       {edu.location}
                     </div>
                   </div>
