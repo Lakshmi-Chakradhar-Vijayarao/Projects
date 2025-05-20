@@ -27,7 +27,7 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/utd.png",
     logoAlt: "University of Texas at Dallas Logo",
     dataAiHint: "utd university",
-    logoDisplayWidthClass: "w-12",
+    logoDisplayWidthClass: "w-12", // Default size or specific for UTD
     logoDisplayHeightClass: "h-12",
   },
   {
@@ -39,8 +39,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-14", 
-    logoDisplayHeightClass: "h-14", 
+    logoDisplayWidthClass: "w-20", 
+    logoDisplayHeightClass: "h-20", 
   }
 ];
 
@@ -56,8 +56,8 @@ export default function Education() {
                   <Image
                     src={edu.logoSrc}
                     alt={edu.logoAlt}
-                    width={48} 
-                    height={48} 
+                    width={64} 
+                    height={64} 
                     className="object-contain w-full h-full"
                     data-ai-hint={edu.dataAiHint}
                   />
