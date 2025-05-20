@@ -8,9 +8,6 @@ import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Define simple SVG components as fallbacks or for specific logos if needed.
-// For now, we'll rely on next/image for all.
-
 interface Certification {
   name: string;
   issuer: string;
@@ -18,7 +15,6 @@ interface Certification {
   logoSrc: string;
   logoAlt: string;
   dataAiHint: string;
-  icon?: ReactNode | null; // Keeping for flexibility, but will set to null to use Image
   logoWidth: number;
   logoHeight: number;
 }
@@ -27,46 +23,42 @@ const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#",
+    url: "#", // Replace with actual URL
     logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
     dataAiHint: "ibm",
-    icon: null,
-    logoWidth: 200, // Intrinsic width for aspect ratio
-    logoHeight: 80, // Intrinsic height for aspect ratio
+    logoWidth: 200, 
+    logoHeight: 80, 
   },
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#",
+    url: "#", // Replace with actual URL
     logoSrc: "/logos/microsoft.png",
     logoAlt: "Microsoft Logo",
     dataAiHint: "microsoft",
-    icon: null,
-    logoWidth: 300, // Intrinsic width for aspect ratio
-    logoHeight: 64,  // Intrinsic height for aspect ratio
+    logoWidth: 300, 
+    logoHeight: 64,  
   },
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#",
+    url: "#", // Replace with actual URL
     logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
     dataAiHint: "meta",
-    icon: null,
-    logoWidth: 200, // Intrinsic width for aspect ratio
-    logoHeight: 80,  // Intrinsic height for aspect ratio
+    logoWidth: 200, 
+    logoHeight: 80,  
   },
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#",
+    url: "#", // Replace with actual URL
     logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
     dataAiHint: "aws",
-    icon: null,
-    logoWidth: 125, // Intrinsic width for aspect ratio
-    logoHeight: 75,  // Intrinsic height for aspect ratio
+    logoWidth: 125, 
+    logoHeight: 75,  
   }
 ];
 
@@ -84,17 +76,16 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <div className="mb-4 flex items-center justify-center h-14 w-full"> {/* Consistent height container */}
-                {cert.icon ? cert.icon : (
-                  <Image
-                    src={cert.logoSrc}
-                    alt={cert.logoAlt}
-                    width={cert.logoWidth}   // For aspect ratio & optimization
-                    height={cert.logoHeight} // For aspect ratio & optimization
-                    className="max-h-full max-w-full object-contain" // Scales down to fit container
-                    data-ai-hint={cert.dataAiHint}
-                  />
-                )}
+              {/* Increased height of logo container from h-14 to h-16 */}
+              <div className="mb-4 flex items-center justify-center h-16 w-full"> 
+                <Image
+                  src={cert.logoSrc}
+                  alt={cert.logoAlt}
+                  width={cert.logoWidth}
+                  height={cert.logoHeight}
+                  className="max-h-full max-w-full object-contain"
+                  data-ai-hint={cert.dataAiHint}
+                />
               </div>
               <CardHeader className="p-0 mb-2 flex-shrink-0 min-h-[3em]">
                 <CardTitle className="text-base md:text-lg font-semibold text-primary group-hover:text-accent transition-colors leading-tight">
