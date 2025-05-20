@@ -1,4 +1,6 @@
 
+"use client";
+
 import ExperienceItem from '@/components/experience-item';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 
@@ -25,7 +27,7 @@ const experienceData = [
       'Integrated WebRTC for 1,000+ real-time users.',
       'Participated in Agile sprints with QA and product teams.',
     ],
-    companyLogoSrc: "/logos/zoho.png",
+    companyLogoSrc: "/logos/Zoho.png", // Updated to try capital "Z"
     companyLogoAlt: "Zoho Logo",
     dataAiHint: "zoho",
   },
@@ -34,7 +36,7 @@ const experienceData = [
 export default function Experience() {
   return (
     <SectionWrapper id="experience" title="My Experience">
-      <div className="space-y-8"> 
+      <div className="space-y-8">
         {experienceData.map((exp, index) => (
           <ExperienceItem 
             key={exp.company + exp.title + index}
