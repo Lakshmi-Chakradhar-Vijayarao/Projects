@@ -1,71 +1,72 @@
+
 "use client";
 
 import type { ReactNode } from 'react';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ExternalLink, Award } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+
+// Define simple SVG components as fallbacks or for specific logos if needed.
+// For now, we'll rely on next/image for all.
 
 interface Certification {
   name: string;
   issuer: string;
   url: string;
-  logoSrc?: string | null; // Can be null if using icon
+  logoSrc: string;
   logoAlt: string;
   dataAiHint: string;
-  icon?: ReactNode | null; // If we have a custom SVG or Lucide icon
-  logoWidth?: number;
-  logoHeight?: number;
+  icon?: ReactNode | null; // Keeping for flexibility, but will set to null to use Image
+  logoWidth: number;
+  logoHeight: number;
 }
-
-// Define inline SVG components if needed for some logos, or use Image for all
-// For now, setting icon to null for all to use next/image based on previous requests
 
 const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#", // Replace with actual URL
-    logoSrc: "/logos/ibm.png", // User will upload 'ibm.png' to public/logos
+    url: "#",
+    logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
     dataAiHint: "ibm",
     icon: null,
-    logoWidth: 100, // Example width
-    logoHeight: 40,  // Example height
+    logoWidth: 200, // Intrinsic width for aspect ratio
+    logoHeight: 80, // Intrinsic height for aspect ratio
   },
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#", // Replace with actual URL
-    logoSrc: "/logos/microsoft.png", // User will upload 'microsoft.png' to public/logos
+    url: "#",
+    logoSrc: "/logos/microsoft.png",
     logoAlt: "Microsoft Logo",
     dataAiHint: "microsoft",
     icon: null,
-    logoWidth: 120, // Example width, Microsoft logo can be wide
-    logoHeight: 30,  // Example height
+    logoWidth: 300, // Intrinsic width for aspect ratio
+    logoHeight: 64,  // Intrinsic height for aspect ratio
   },
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#", // Replace with actual URL
-    logoSrc: "/logos/meta.png", // User will upload 'meta.png' to public/logos
+    url: "#",
+    logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
     dataAiHint: "meta",
     icon: null,
-    logoWidth: 90,  // Example width
-    logoHeight: 40, // Example height
+    logoWidth: 200, // Intrinsic width for aspect ratio
+    logoHeight: 80,  // Intrinsic height for aspect ratio
   },
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#", // Replace with actual URL
-    logoSrc: "/logos/aws.png", // User will upload 'aws.png' to public/logos
+    url: "#",
+    logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
     dataAiHint: "aws",
     icon: null,
-    logoWidth: 70,  // Example width, AWS smile can be more compact
-    logoHeight: 50, // Example height
+    logoWidth: 125, // Intrinsic width for aspect ratio
+    logoHeight: 75,  // Intrinsic height for aspect ratio
   }
 ];
 
@@ -83,21 +84,17 @@ export default function Certifications() {
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <div className="mb-4 flex items-center justify-center" style={{ height: cert.logoHeight ? `${cert.logoHeight + 10}px` : '60px' }}> {/* Container with a bit of extra space */}
+              <div className="mb-4 flex items-center justify-center h-14 w-full"> {/* Consistent height container */}
                 {cert.icon ? cert.icon : (
-                  cert.logoSrc && (
-                    <Image
-                      src={cert.logoSrc}
-                      alt={cert.logoAlt}
-                      width={cert.logoWidth || 80}   // Use specific or default width
-                      height={cert.logoHeight || 32} // Use specific or default height
-                      className="max-h-full w-auto" 
-                      objectFit="contain"
-                      data-ai-hint={cert.dataAiHint}
-                    />
-                  )
+                  <Image
+                    src={cert.logoSrc}
+                    alt={cert.logoAlt}
+                    width={cert.logoWidth}   // For aspect ratio & optimization
+                    height={cert.logoHeight} // For aspect ratio & optimization
+                    className="max-h-full max-w-full object-contain" // Scales down to fit container
+                    data-ai-hint={cert.dataAiHint}
+                  />
                 )}
-                {!cert.icon && !cert.logoSrc && <Award className="h-10 w-10 text-primary" />}
               </div>
               <CardHeader className="p-0 mb-2 flex-shrink-0 min-h-[3em]">
                 <CardTitle className="text-base md:text-lg font-semibold text-primary group-hover:text-accent transition-colors leading-tight">
