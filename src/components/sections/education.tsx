@@ -41,8 +41,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-24", 
-    logoDisplayHeightClass: "h-20", 
+    logoDisplayWidthClass: "w-16", 
+    logoDisplayHeightClass: "h-14", 
   }
 ];
 
@@ -54,12 +54,12 @@ export default function Education() {
           <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50">
             <CardHeader>
               <div className="flex items-start gap-4">
-                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center`}>
+                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center mr-2`}>
                   {edu.logoSrc && (
                     <Image
                       src={edu.logoSrc}
                       alt={edu.logoAlt}
-                      width={100} // Intrinsic width, actual display controlled by container
+                      width={100} // Intrinsic width for next/image, actual display controlled by container
                       height={100} // Intrinsic height
                       className="object-contain w-full h-full"
                       data-ai-hint={edu.dataAiHint}
