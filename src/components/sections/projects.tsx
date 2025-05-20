@@ -7,14 +7,14 @@ import ProjectCard from '@/components/project-card';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Button } from '@/components/ui/button';
 
-// Re-export projectsData for use by the AI assistant
-export const projectsData = [
+// projectsData is now local to this component
+const projectsData = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
     date: "2023",
     description: "Built a YOLO-based object detection model (90% accuracy) for classifying crop and weed species, reducing herbicide usage by 15%. Processed 10,000+ agricultural images and established scalable inference pipelines for real-time analysis.",
     technologies: ["Python", "YOLO", "Object Detection", "TensorFlow"],
-    image: "https://placehold.co/640x400.png", // Placeholder
+    image: "https://placehold.co/640x400.png",
     imageHint: "agriculture technology",
     projectUrl: "#",
     categories: ["AI/ML"],
@@ -24,7 +24,7 @@ export const projectsData = [
     date: "2022",
     description: "Developed a distributed search engine leveraging TF-IDF and cosine similarity to improve query relevance by 10%. Deployed on Hadoop and Databricks to manage 100,000+ records efficiently.",
     technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala", "NLP"],
-    image: "https://placehold.co/640x400.png", // Placeholder
+    image: "https://placehold.co/640x400.png",
     imageHint: "data search",
     projectUrl: "#",
     categories: ["Big Data", "AI/ML"],
@@ -34,7 +34,7 @@ export const projectsData = [
     date: "2022",
     description: "Designed a facial recognition system with 99% accuracy for 200+ users, reducing attendance tracking errors by 30%. Linked to cloud storage for real-time data syncing and secure logging.",
     technologies: ["Python", "OpenCV", "Machine Learning", "Cloud"],
-    image: "https://placehold.co/640x400.png", // Placeholder
+    image: "https://placehold.co/640x400.png",
     imageHint: "security face recognition",
     projectUrl: "#",
     categories: ["AI/ML"],
@@ -44,7 +44,7 @@ export const projectsData = [
     date: "2021",
     description: "Trained and evaluated ensemble models (Decision Tree, Random Forest, KNN), achieving 95% accuracy using cross-validation. Enhanced reliability through preprocessing techniques to address 20% missing data.",
     technologies: ["Python", "Scikit-Learn", "DT Classifier", "RF Classifier", "KNN"],
-    image: "https://placehold.co/640x400.png", // Placeholder
+    image: "https://placehold.co/640x400.png",
     imageHint: "nature classification",
     projectUrl: "#",
     categories: ["AI/ML"],
@@ -54,19 +54,19 @@ export const projectsData = [
     date: "2021",
     description: "Programmed custom priority and lottery schedulers in xv6/Linux kernel, reducing context switching overhead by 18%. Validated algorithm fairness and efficiency with synthetic workload simulations.",
     technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
-    image: "https://placehold.co/640x400.png", // Placeholder
+    image: "https://placehold.co/640x400.png",
     imageHint: "computing programming",
     projectUrl: "#",
     categories: ["Systems"],
   },
   {
-    title: "Personal Portfolio Website", // Example Web Dev project
+    title: "Personal Portfolio Website",
     date: "2024",
-    description: "The very website you're looking at! Built with Next.js, React, TypeScript, and Tailwind CSS, featuring a clean design and interactive AI assistant.",
+    description: "The very website you're looking at! Built with Next.js, React, TypeScript, and Tailwind CSS, featuring a clean design and interactive elements.",
     technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Genkit"],
-    image: "https://placehold.co/640x400.png", // Placeholder
+    image: "https://placehold.co/640x400.png",
     imageHint: "web design portfolio",
-    projectUrl: "#", // Update with actual link if this is a real project entry
+    projectUrl: "#", 
     categories: ["Web Dev"],
   }
 ];

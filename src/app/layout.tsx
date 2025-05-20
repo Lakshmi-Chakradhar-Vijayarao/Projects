@@ -5,7 +5,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-import IntegratedAssistantController from '@/components/ai/IntegratedAssistantController';
+// Removed import for IntegratedAssistantController
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,7 +36,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        <IntegratedAssistantController /> {/* Only the controller should be here */}
+        {/* Removed IntegratedAssistantController instance */}
       </body>
     </html>
   );
