@@ -1,7 +1,7 @@
 
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { GraduationCap, CalendarDays, MapPin } from 'lucide-react';
+import { CalendarDays, MapPin } from 'lucide-react';
 import Image from 'next/image';
 
 interface EducationEntry {
@@ -13,6 +13,8 @@ interface EducationEntry {
   logoSrc: string;
   logoAlt: string;
   dataAiHint: string;
+  logoDisplayWidthClass?: string; // Optional: Tailwind width class for logo container
+  logoDisplayHeightClass?: string; // Optional: Tailwind height class for logo container
 }
 
 const educationData: EducationEntry[] = [
@@ -25,6 +27,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/utd.png",
     logoAlt: "University of Texas at Dallas Logo",
     dataAiHint: "utd university",
+    logoDisplayWidthClass: "w-12", // 48px
+    logoDisplayHeightClass: "h-12", // 48px
   },
   {
     degree: "Bachelor of Engineering in Electronics and Communication Engineering",
@@ -35,6 +39,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
+    logoDisplayWidthClass: "w-10", // 40px - Making RMK logo container smaller
+    logoDisplayHeightClass: "h-10", // 40px
   }
 ];
 
@@ -43,39 +49,37 @@ export default function Education() {
     <SectionWrapper id="education-section" title="Education">
       <div className="space-y-8">
         {educationData.map((edu, index) => (
-          <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm">
+          <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50">
             <CardHeader>
-              <div className="flex items-start sm:items-center justify-between flex-col sm:flex-row gap-4">
-                <div className="flex items-center">
-                   <div className="flex-shrink-0 mr-4">
-                    <Image
-                      src={edu.logoSrc}
-                      alt={edu.logoAlt}
-                      width={48}
-                      height={48}
-                      objectFit="contain"
-                      data-ai-hint={edu.dataAiHint}
-                    />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-semibold text-primary">{edu.degree}</CardTitle>
-                    <CardDescription className="text-muted-foreground mt-1">{edu.institution}</CardDescription>
+              <div className="flex items-center gap-4">
+                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0`}>
+                  <Image
+                    src={edu.logoSrc}
+                    alt={edu.logoAlt}
+                    width={48} // Intrinsic aspect ratio guide for next/image
+                    height={48} // Intrinsic aspect ratio guide for next/image
+                    className="object-contain w-full h-full" // Make image fill its container div
+                    data-ai-hint={edu.dataAiHint}
+                  />
+                </div>
+                <div className="flex-grow">
+                  <CardTitle className="text-xl font-semibold text-primary">{edu.degree}</CardTitle>
+                  <CardDescription className="text-muted-foreground mt-1">{edu.institution}</CardDescription>
+                  <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    <div className="flex items-center">
+                      <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
+                      {edu.duration}
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin className="h-3.5 w-3.5 mr-1.5" />
+                      {edu.location}
+                    </div>
                   </div>
                 </div>
-                 <div className="flex-shrink-0 self-start sm:self-center text-right">
-                   <div className="flex items-center text-xs text-muted-foreground">
-                     <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
-                     {edu.duration}
-                   </div>
-                    <div className="flex items-center text-xs text-muted-foreground mt-1">
-                     <MapPin className="h-3.5 w-3.5 mr-1.5" />
-                     {edu.location}
-                   </div>
-                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-foreground/80">{edu.details}</p>
+              <p className="text-foreground/80 text-sm">{edu.details}</p>
             </CardContent>
           </Card>
         ))}
