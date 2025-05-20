@@ -5,7 +5,6 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-// Removed direct imports of ContentReader and InteractiveChatbot as IntegratedAssistantController handles them
 import IntegratedAssistantController from '@/components/ai/IntegratedAssistantController';
 
 const geistSans = Geist({
@@ -37,8 +36,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        {/* Only IntegratedAssistantController should be here to manage both child components */}
-        <IntegratedAssistantController />
+        <IntegratedAssistantController /> {/* Only the controller should be here */}
       </body>
     </html>
   );
