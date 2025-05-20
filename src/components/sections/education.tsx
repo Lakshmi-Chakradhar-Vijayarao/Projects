@@ -5,6 +5,7 @@ import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CalendarDays, MapPin, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
+import type { ReactNode } from 'react';
 
 interface EducationEntry {
   degree: string;
@@ -12,9 +13,10 @@ interface EducationEntry {
   duration: string;
   details: string;
   location: string;
-  logoSrc: string;
-  logoAlt: string;
-  dataAiHint: string;
+  logoSrc?: string;
+  logoAlt?: string;
+  dataAiHint?: string;
+  icon?: ReactNode; // For potential direct icon usage
   logoDisplayWidthClass?: string;
   logoDisplayHeightClass?: string;
 }
@@ -42,7 +44,7 @@ const educationData: EducationEntry[] = [
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
     logoDisplayWidthClass: "w-16", 
-    logoDisplayHeightClass: "h-14", 
+    logoDisplayHeightClass: "h-6", 
   }
 ];
 
@@ -51,28 +53,35 @@ export default function Education() {
     <SectionWrapper id="education-section" title="Education">
       <div className="space-y-8">
         {educationData.map((edu, index) => (
-          <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50">
-            <CardHeader>
-              <div className="flex items-start gap-4">
-                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center mr-2`}>
-                  {edu.logoSrc && (
-                    <Image
-                      src={edu.logoSrc}
-                      alt={edu.logoAlt}
-                      width={100} // Intrinsic width for next/image, actual display controlled by container
-                      height={100} // Intrinsic height
-                      className="object-contain w-full h-full"
-                      data-ai-hint={edu.dataAiHint}
-                    />
-                  )}
+          <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
+            <div className="flex items-start p-6 gap-4 sm:gap-6">
+              {edu.logoSrc && (
+                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center`}>
+                  <Image
+                    src={edu.logoSrc}
+                    alt={edu.logoAlt || edu.institution}
+                    width={parseInt(edu.logoDisplayWidthClass?.substring(2) || '48') * 4} // Convert Tailwind units to approx pixels for intrinsic
+                    height={parseInt(edu.logoDisplayHeightClass?.substring(2) || '48') * 4}
+                    className="object-contain w-full h-full"
+                    data-ai-hint={edu.dataAiHint}
+                  />
                 </div>
-                <div className="flex-grow">
+              )}
+              {!edu.logoSrc && edu.icon && (
+                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center text-primary`}>
+                   {React.cloneElement(edu.icon as React.ReactElement, { className: "w-full h-full" })}
+                </div>
+              )}
+              <div className="flex-grow">
+                <CardHeader className="p-0">
                   <CardTitle className="text-xl font-semibold text-primary flex items-center">
-                    <GraduationCap className="h-6 w-6 mr-3 text-secondary flex-shrink-0" />
+                    {/* <GraduationCap className="h-6 w-6 mr-3 text-secondary flex-shrink-0 hidden sm:inline-block" /> */}
                     {edu.degree}
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground mt-1 ml-9">{edu.institution}</CardDescription>
-                  <div className="mt-2 space-y-1 text-xs text-muted-foreground ml-9">
+                  <CardDescription className="text-muted-foreground mt-1">{edu.institution}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 pt-2">
+                  <div className="mt-2 space-y-1 text-xs text-muted-foreground">
                     <div className="flex items-center">
                       <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
                       {edu.duration}
@@ -82,12 +91,10 @@ export default function Education() {
                       {edu.location}
                     </div>
                   </div>
-                </div>
+                  <p className="text-foreground/80 text-sm mt-3">{edu.details}</p>
+                </CardContent>
               </div>
-            </CardHeader>
-            <CardContent className="pl-[calc(3rem+1.5rem)]"> {/* Adjust based on the largest logo container width + gap if needed */}
-              <p className="text-foreground/80 text-sm">{edu.details}</p>
-            </CardContent>
+            </div>
           </Card>
         ))}
       </div>
