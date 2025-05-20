@@ -27,8 +27,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/utd.png",
     logoAlt: "University of Texas at Dallas Logo",
     dataAiHint: "utd university",
-    logoDisplayWidthClass: "w-12", // 48px
-    logoDisplayHeightClass: "h-12", // 48px
+    logoDisplayWidthClass: "w-12", 
+    logoDisplayHeightClass: "h-12",
   },
   {
     degree: "Bachelor of Engineering in Electronics and Communication Engineering",
@@ -39,8 +39,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-8", // 32px - Reduced size
-    logoDisplayHeightClass: "h-8", // 32px - Reduced size
+    logoDisplayWidthClass: "w-7", // Zoomed out RMK logo
+    logoDisplayHeightClass: "h-7", // Zoomed out RMK logo
   }
 ];
 
@@ -51,8 +51,8 @@ export default function Education() {
         {educationData.map((edu, index) => (
           <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50">
             <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0`}>
+              <div className="flex items-start gap-4"> {/* Changed to items-start for better alignment with varying logo sizes */}
+                <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center`}>
                   <Image
                     src={edu.logoSrc}
                     alt={edu.logoAlt}
@@ -87,3 +87,4 @@ export default function Education() {
     </SectionWrapper>
   );
 }
+
