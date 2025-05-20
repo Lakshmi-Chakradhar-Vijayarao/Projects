@@ -13,8 +13,8 @@ interface EducationEntry {
   logoSrc: string;
   logoAlt: string;
   dataAiHint: string;
-  logoDisplayWidthClass?: string; // Optional: Tailwind width class for logo container
-  logoDisplayHeightClass?: string; // Optional: Tailwind height class for logo container
+  logoDisplayWidthClass?: string; 
+  logoDisplayHeightClass?: string;
 }
 
 const educationData: EducationEntry[] = [
@@ -39,8 +39,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-10", // 40px - Making RMK logo container smaller
-    logoDisplayHeightClass: "h-10", // 40px
+    logoDisplayWidthClass: "w-8", // 32px - Reduced size
+    logoDisplayHeightClass: "h-8", // 32px - Reduced size
   }
 ];
 
@@ -56,9 +56,9 @@ export default function Education() {
                   <Image
                     src={edu.logoSrc}
                     alt={edu.logoAlt}
-                    width={48} // Intrinsic aspect ratio guide for next/image
-                    height={48} // Intrinsic aspect ratio guide for next/image
-                    className="object-contain w-full h-full" // Make image fill its container div
+                    width={48} 
+                    height={48} 
+                    className="object-contain w-full h-full" 
                     data-ai-hint={edu.dataAiHint}
                   />
                 </div>
