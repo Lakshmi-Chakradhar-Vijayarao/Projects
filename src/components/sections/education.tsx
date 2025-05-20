@@ -1,4 +1,6 @@
 
+"use client";
+
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CalendarDays, MapPin, GraduationCap } from 'lucide-react';
@@ -27,7 +29,7 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/utd.png",
     logoAlt: "University of Texas at Dallas Logo",
     dataAiHint: "utd university",
-    logoDisplayWidthClass: "w-12", // Default size or specific for UTD
+    logoDisplayWidthClass: "w-12", 
     logoDisplayHeightClass: "h-12",
   },
   {
@@ -39,7 +41,7 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-20", 
+    logoDisplayWidthClass: "w-24", 
     logoDisplayHeightClass: "h-20", 
   }
 ];
@@ -53,14 +55,16 @@ export default function Education() {
             <CardHeader>
               <div className="flex items-start gap-4">
                 <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center`}>
-                  <Image
-                    src={edu.logoSrc}
-                    alt={edu.logoAlt}
-                    width={64} 
-                    height={64} 
-                    className="object-contain w-full h-full"
-                    data-ai-hint={edu.dataAiHint}
-                  />
+                  {edu.logoSrc && (
+                    <Image
+                      src={edu.logoSrc}
+                      alt={edu.logoAlt}
+                      width={100} // Intrinsic width, actual display controlled by container
+                      height={100} // Intrinsic height
+                      className="object-contain w-full h-full"
+                      data-ai-hint={edu.dataAiHint}
+                    />
+                  )}
                 </div>
                 <div className="flex-grow">
                   <CardTitle className="text-xl font-semibold text-primary flex items-center">
