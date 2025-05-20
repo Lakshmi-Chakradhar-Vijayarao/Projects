@@ -1,4 +1,5 @@
 
+"use client";
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Github, Linkedin, Mail, Phone, FileText } from 'lucide-react';
@@ -6,8 +7,10 @@ import Link from 'next/link';
 import ContactForm from '@/components/contact-form';
 
 const socialLinks = [
+  { name: 'Email', href: 'mailto:lakshmichakradhar.v@gmail.com', icon: Mail, text: 'lakshmichakradhar.v@gmail.com' },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/in/lakshmichakradharvijayarao/', icon: Linkedin, text: 'lakshmichakradharvijayarao' },
   { name: 'GitHub', href: 'https://github.com/Lakshmi-Chakradhar-Vijayarao', icon: Github, text: 'Lakshmi-Chakradhar-Vijayarao' },
+  { name: 'Phone', href: 'tel:+14697834637', icon: Phone, text: '+1 (469)-783-4637' },
 ];
 
 export default function Contact() {
@@ -25,23 +28,6 @@ export default function Contact() {
             <div>
               <h3 className="text-xl font-semibold text-foreground mb-3">Contact Details</h3>
               <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-5 w-5 text-primary flex-shrink-0" />
-                  <a href="mailto:lakshmichakradhar.v@gmail.com" className="text-foreground/90 hover:text-primary transition-colors break-all">
-                    lakshmichakradhar.v@gmail.com
-                  </a>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-5 w-5 text-primary flex-shrink-0" />
-                  <a href="tel:+14697834637" className="text-foreground/90 hover:text-primary transition-colors">
-                    +1 (469)-783-4637
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-foreground mb-3 mt-6">Find me on</h3>
-              <div className="space-y-3">
                 {socialLinks.map((link) => (
                   <div key={link.name} className="flex items-center space-x-3">
                     <link.icon className="h-5 w-5 text-primary flex-shrink-0" />
@@ -58,6 +44,7 @@ export default function Contact() {
                   </div>
               </div>
             </div>
+            
           </div>
           <div>
             <h3 className="text-xl font-semibold text-foreground mb-4">Send a Message</h3>
