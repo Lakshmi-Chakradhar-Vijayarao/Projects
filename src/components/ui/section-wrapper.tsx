@@ -1,6 +1,6 @@
 "use client";
 import type { ReactNode } from 'react';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
+// import { useScrollReveal } from '@/hooks/useScrollReveal'; // Temporarily disable
 import { cn } from '@/lib/utils';
 
 interface SectionWrapperProps {
@@ -11,15 +11,16 @@ interface SectionWrapperProps {
 }
 
 export function SectionWrapper({ id, children, className, title }: SectionWrapperProps) {
-  const { ref, isVisible } = useScrollReveal<HTMLElement>({ threshold: 0.1, once: true });
+  // const { ref, isVisible } = useScrollReveal<HTMLElement>({ threshold: 0.1, once: true }); // Temporarily disable
 
   return (
     <section
       id={id}
-      ref={ref}
+      // ref={ref} // Temporarily disable
       className={cn(
-        'py-16 sm:py-24 transition-all duration-1000 ease-out transform',
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12',
+        'py-16 sm:py-24', // Removed animation classes: transition-all duration-1000 ease-out transform
+        // isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12', // Temporarily disable
+        'opacity-100 translate-y-0', // Render immediately visible
         className
       )}
     >
