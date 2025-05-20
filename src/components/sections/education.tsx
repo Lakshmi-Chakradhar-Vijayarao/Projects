@@ -44,7 +44,7 @@ const educationData: EducationEntry[] = [
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
     logoDisplayWidthClass: "w-16", 
-    logoDisplayHeightClass: "h-10", 
+    logoDisplayHeightClass: "h-14", 
   }
 ];
 
