@@ -10,15 +10,16 @@ interface ExperienceItemProps {
   descriptionPoints: string[];
   companyLogoSrc?: string;
   companyLogoAlt?: string;
+  dataAiHint?: string;
 }
 
-export default function ExperienceItem({ title, company, duration, descriptionPoints, companyLogoSrc, companyLogoAlt }: ExperienceItemProps) {
+export default function ExperienceItem({ title, company, duration, descriptionPoints, companyLogoSrc, companyLogoAlt, dataAiHint }: ExperienceItemProps) {
   return (
     <Card className="shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out w-full hover:scale-[1.02] bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
       <CardHeader>
         <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
           <div className="flex items-start gap-3">
-            {companyLogoSrc && companyLogoAlt && (
+            {companyLogoSrc && companyLogoAlt && dataAiHint && (
               <div className="flex-shrink-0 mt-1">
                 <Image
                   src={companyLogoSrc}
@@ -26,7 +27,7 @@ export default function ExperienceItem({ title, company, duration, descriptionPo
                   width={40}
                   height={40}
                   objectFit="contain"
-                  data-ai-hint={`${company.toLowerCase().replace(/[^a-z0-9]+/g, '-')} logo`}
+                  data-ai-hint={dataAiHint}
                 />
               </div>
             )}

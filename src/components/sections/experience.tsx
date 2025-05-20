@@ -12,8 +12,9 @@ const experienceData = [
       'Enhanced login security with JWT + OAuth2.',
       'Conducted Android full-stack training for 30+ learners.',
     ],
-    companyLogoSrc: "https://placehold.co/40x40.png", // Replace with /logos/nsic-logo.png
+    companyLogoSrc: "/logos/nsic.png",
     companyLogoAlt: "NSIC Technical Services Centre Logo",
+    dataAiHint: "nsic",
   },
   {
     title: 'Summer Internship Project Associate',
@@ -24,8 +25,9 @@ const experienceData = [
       'Integrated WebRTC for 1,000+ real-time users.',
       'Participated in Agile sprints with QA and product teams.',
     ],
-    companyLogoSrc: "https://placehold.co/40x40.png", // Replace with /logos/zoho-logo.png
+    companyLogoSrc: "/logos/zoho.png",
     companyLogoAlt: "Zoho Corporation Logo",
+    dataAiHint: "zoho",
   },
 ];
 

@@ -1,10 +1,9 @@
-
 "use client";
 
 import type { ReactNode } from 'react';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ExternalLink, Award } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -16,44 +15,49 @@ interface Certification {
   logoAlt: string;
   logoWidth: number;
   logoHeight: number;
+  dataAiHint: string;
 }
 
 const certificationsData: Certification[] = [
   {
     name: "IBM DevOps and Software Engineering Professional Certificate",
     issuer: "IBM",
-    url: "#", // Replace with actual URL
-    logoSrc: "https://placehold.co/120x50.png", // Replace with /logos/ibm-logo.png
+    url: "#",
+    logoSrc: "/logos/ibm.png",
     logoAlt: "IBM Logo",
     logoWidth: 100,
     logoHeight: 40,
+    dataAiHint: "ibm",
   },
   {
     name: "Microsoft Full-Stack Developer Professional Certificate",
     issuer: "Microsoft",
-    url: "#", // Replace with actual URL
-    logoSrc: "https://placehold.co/120x50.png", // Replace with /logos/microsoft-logo.png
+    url: "#",
+    logoSrc: "/logos/microsoft.png", // Assuming PNG, can be SVG if you have it
     logoAlt: "Microsoft Logo",
     logoWidth: 120,
     logoHeight: 26,
+    dataAiHint: "microsoft",
   },
   {
     name: "Meta Back-End Developer Professional Certificate",
     issuer: "Meta",
-    url: "#", // Replace with actual URL
-    logoSrc: "https://placehold.co/120x50.png", // Replace with /logos/meta-logo.png
+    url: "#",
+    logoSrc: "/logos/meta.png",
     logoAlt: "Meta Logo",
     logoWidth: 100,
     logoHeight: 20,
+    dataAiHint: "meta",
   },
   {
     name: "AWS Certified Cloud Practitioner",
     issuer: "AWS Academy",
-    url: "#", // Replace with actual URL
-    logoSrc: "https://placehold.co/100x60.png", // Replace with /logos/aws-logo.png
+    url: "#",
+    logoSrc: "/logos/aws.png",
     logoAlt: "AWS Logo",
     logoWidth: 70,
     logoHeight: 42,
+    dataAiHint: "aws",
   }
 ];
 
@@ -62,16 +66,16 @@ export default function Certifications() {
     <SectionWrapper id="certifications-section" title="Certifications">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {certificationsData.map((cert, index) => (
-          <Link 
-            key={index} 
-            href={cert.url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <Link
+            key={index}
+            href={cert.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="block group h-full"
             aria-label={`View certification: ${cert.name}`}
           >
             <Card className="h-full flex flex-col items-center text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out bg-card/80 backdrop-blur-sm border border-border/50 hover:border-primary/50">
-              <CardHeader className="p-0 mb-4 items-center flex-shrink-0"> 
+              <CardHeader className="p-0 mb-4 items-center flex-shrink-0">
                 <div className="h-12 w-full flex items-center justify-center mb-4">
                   <Image
                     src={cert.logoSrc}
@@ -79,7 +83,7 @@ export default function Certifications() {
                     width={cert.logoWidth}
                     height={cert.logoHeight}
                     objectFit="contain"
-                    data-ai-hint={`${cert.issuer.toLowerCase()} logo`}
+                    data-ai-hint={cert.dataAiHint}
                   />
                 </div>
                 <CardTitle className="text-base md:text-lg font-semibold text-primary group-hover:text-accent transition-colors leading-tight mt-2">
