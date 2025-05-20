@@ -12,8 +12,8 @@ const experienceData = [
       'Enhanced login security with JWT + OAuth2.',
       'Conducted Android full-stack training for 30+ learners.',
     ],
-    logoSrc: "/logos/nsic.png",
-    logoAlt: "NSIC Logo",
+    companyLogoSrc: "/logos/nsic.png",
+    companyLogoAlt: "NSIC Logo",
     dataAiHint: "nsic",
   },
   {
@@ -25,8 +25,8 @@ const experienceData = [
       'Integrated WebRTC for 1,000+ real-time users.',
       'Participated in Agile sprints with QA and product teams.',
     ],
-    logoSrc: "/logos/zoho.png",
-    logoAlt: "Zoho Logo",
+    companyLogoSrc: "/logos/zoho.png",
+    companyLogoAlt: "Zoho Logo",
     dataAiHint: "zoho",
   },
 ];
@@ -34,10 +34,10 @@ const experienceData = [
 export default function Experience() {
   return (
     <SectionWrapper id="experience" title="My Experience">
-      <div className="space-y-8"> {/* Changed from grid to space-y for row layout */}
+      <div className="space-y-8"> 
         {experienceData.map((exp, index) => (
           <ExperienceItem 
-            key={exp.company + exp.title + index} // Added index to key for more uniqueness if titles/companies were ever identical
+            key={exp.company + exp.title + index}
             {...exp} 
           />
         ))}
