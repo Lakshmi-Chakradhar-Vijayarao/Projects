@@ -1,7 +1,7 @@
 
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { CalendarDays, MapPin } from 'lucide-react';
+import { CalendarDays, MapPin, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 
 interface EducationEntry {
@@ -13,7 +13,7 @@ interface EducationEntry {
   logoSrc: string;
   logoAlt: string;
   dataAiHint: string;
-  logoDisplayWidthClass?: string; 
+  logoDisplayWidthClass?: string;
   logoDisplayHeightClass?: string;
 }
 
@@ -27,7 +27,7 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/utd.png",
     logoAlt: "University of Texas at Dallas Logo",
     dataAiHint: "utd university",
-    logoDisplayWidthClass: "w-12", 
+    logoDisplayWidthClass: "w-12",
     logoDisplayHeightClass: "h-12",
   },
   {
@@ -39,8 +39,8 @@ const educationData: EducationEntry[] = [
     logoSrc: "/logos/rmk.png",
     logoAlt: "R.M.K. Engineering College Logo",
     dataAiHint: "rmk college",
-    logoDisplayWidthClass: "w-7", // Zoomed out RMK logo
-    logoDisplayHeightClass: "h-7", // Zoomed out RMK logo
+    logoDisplayWidthClass: "w-10", // Changed from w-7
+    logoDisplayHeightClass: "h-10", // Changed from h-7
   }
 ];
 
@@ -51,21 +51,24 @@ export default function Education() {
         {educationData.map((edu, index) => (
           <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm border border-border/50">
             <CardHeader>
-              <div className="flex items-start gap-4"> {/* Changed to items-start for better alignment with varying logo sizes */}
+              <div className="flex items-start gap-4">
                 <div className={`relative ${edu.logoDisplayWidthClass || 'w-12'} ${edu.logoDisplayHeightClass || 'h-12'} flex-shrink-0 flex items-center justify-center`}>
                   <Image
                     src={edu.logoSrc}
                     alt={edu.logoAlt}
                     width={48} 
                     height={48} 
-                    className="object-contain w-full h-full" 
+                    className="object-contain w-full h-full"
                     data-ai-hint={edu.dataAiHint}
                   />
                 </div>
                 <div className="flex-grow">
-                  <CardTitle className="text-xl font-semibold text-primary">{edu.degree}</CardTitle>
-                  <CardDescription className="text-muted-foreground mt-1">{edu.institution}</CardDescription>
-                  <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <CardTitle className="text-xl font-semibold text-primary flex items-center">
+                    <GraduationCap className="h-6 w-6 mr-3 text-secondary flex-shrink-0" />
+                    {edu.degree}
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground mt-1 ml-9">{edu.institution}</CardDescription>
+                  <div className="mt-2 space-y-1 text-xs text-muted-foreground ml-9">
                     <div className="flex items-center">
                       <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
                       {edu.duration}
@@ -78,7 +81,7 @@ export default function Education() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pl-[calc(3rem+1.5rem)]"> {/* 3rem for w-12 (48px) + 1.5rem for gap, adjust if default logo size changes */}
               <p className="text-foreground/80 text-sm">{edu.details}</p>
             </CardContent>
           </Card>
@@ -87,4 +90,3 @@ export default function Education() {
     </SectionWrapper>
   );
 }
-
