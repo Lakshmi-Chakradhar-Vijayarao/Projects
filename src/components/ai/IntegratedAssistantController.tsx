@@ -11,61 +11,40 @@ type AssistantMode =
   | 'idle'
   | 'greeting'
   | 'voice_tour_active'
-  | 'voice_tour_paused_by_user' 
-  | 'qa' 
-  | 'post_voice_tour_qa' 
-  | 'scrolled_to_end_greeting' 
+  | 'voice_tour_paused_by_user'
+  | 'qa'
+  | 'post_voice_tour_qa'
+  | 'scrolled_to_end_greeting'
   | 'tour_declined_pending_scroll';
 
 const IntegratedAssistantController: React.FC = () => {
+  // State declarations MUST come first
   const [assistantMode, setAssistantMode] = useState<AssistantMode>('idle');
   const [isChatInterfaceOpen, setIsChatInterfaceOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatbotMessageType[]>([]);
   const [chatQuickReplies, setChatQuickReplies] = useState<ChatbotQuickReplyType[]>([]);
-  const [showChatBubble, setShowChatBubble] = useState(true);
-  
+  const [showChatBubble, setShowChatBubble] = useState(true); // Moved up
   const [startVoiceTourSignal, setStartVoiceTourSignal] = useState(false);
-  const [stopVoiceTourSignal, setStopVoiceTourSignal] = useState(false); 
+  const [stopVoiceTourSignal, setStopVoiceTourSignal] = useState(false);
   const [voiceTourCompleted, setVoiceTourCompleted] = useState(false);
   const [userRespondedToGreeting, setUserRespondedToGreeting] = useState(false);
   const [hasShownScrolledToEndGreeting, setHasShownScrolledToEndGreeting] = useState(false);
-  const [currentTourStep, setCurrentTourStep] = useState<string>('greeting'); 
+  const [currentTourStep, setCurrentTourStep] = useState<string>('greeting'); // 'greeting' is the first step
+  const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0);
 
+  // Ref declarations
   const initialGreetingDoneRef = useRef(false);
   const messageIdCounterRef = useRef(0);
   const synthRef = useRef<SpeechSynthesis | null>(null);
-  const isMountedRef = useRef(false); 
-  const [chatInterfaceRenderKey, setChatInterfaceRenderKey] = useState(0);
-
+  const isMountedRef = useRef(false);
+  const tourTimeoutRef = useRef<NodeJS.Timeout | null>(null); // For ContentReader's auto-advance
 
   const { ref: contactSectionRef, inView: contactSectionInView } = useInView({
     threshold: 0.1,
-    triggerOnce: false, 
+    triggerOnce: false,
   });
 
-  useEffect(() => {
-    isMountedRef.current = true;
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      synthRef.current = window.speechSynthesis;
-      console.log("IntegratedAssistantController: Speech synthesis initialized.");
-    } else {
-      console.warn("IntegratedAssistantController: Speech synthesis not supported.");
-    }
-
-    const contactElement = document.getElementById('contact');
-    if (contactElement) {
-      contactSectionRef(contactElement);
-    }
-
-    return () => {
-      isMountedRef.current = false;
-      if (synthRef.current && synthRef.current.speaking) {
-        console.log("IntegratedAssistantController: Unmounting. Cancelling speech.");
-        synthRef.current.cancel();
-      }
-    };
-  }, [contactSectionRef]);
-
+  // Callback definitions
   const speakTextNow = useCallback((text: string, onEnd?: () => void) => {
     if (!isMountedRef.current || !synthRef.current || !text) {
       console.warn("IntegratedAssistantController: SpeakTextNow called prematurely or with no text.");
@@ -74,11 +53,12 @@ const IntegratedAssistantController: React.FC = () => {
     }
     console.log(`IntegratedAssistantController: Attempting to speak: "${text.substring(0, 50)}..."`);
 
-    if (synthRef.current.speaking) {
-      console.log("IntegratedAssistantController: Cancelling existing speech before speaking new text via speakTextNow.");
-      synthRef.current.cancel();
+    // Cancel any speech currently managed by *this controller* or globally if it's a new primary speech action.
+    if (synthRef.current.speaking || synthRef.current.pending) {
+        console.log("IntegratedAssistantController: Cancelling existing speech before speaking new text via speakTextNow.");
+        synthRef.current.cancel(); // This is a global cancel.
     }
-
+    
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.onend = () => {
       console.log(`IntegratedAssistantController: Speech ended for: "${text.substring(0, 50)}..."`);
@@ -93,7 +73,7 @@ const IntegratedAssistantController: React.FC = () => {
       if (onEnd) onEnd(); 
     };
     synthRef.current.speak(utterance);
-  }, []); // synthRef is stable
+  }, []); // synthRef is stable after mount
 
   const addMessageToChat = useCallback((sender: 'user' | 'ai', text: string | React.ReactNode, speakableTextOverride?: string) => {
     messageIdCounterRef.current += 1;
@@ -106,24 +86,15 @@ const IntegratedAssistantController: React.FC = () => {
     };
     console.log("IntegratedAssistantController: Adding message to chat:", newMessage);
     setChatMessages(prev => [...prev, newMessage]);
-    // Only speak here if it's an AI message *not* part of the main voice tour (ContentReader handles its own speech)
-    if (sender === 'ai' && speakableTextOverride && assistantMode !== 'voice_tour_active') { 
-      console.log("IntegratedAssistantController: Speaking AI message from addMessageToChat (not voice tour).");
-      speakTextNow(speakableTextOverride);
-    }
     return newMessage;
-  }, [speakTextNow, assistantMode]); // Removed setChatMessages as it's stable from useState
-
+  }, [setChatMessages]);
 
   const initiateGreeting = useCallback(() => {
     console.log("IntegratedAssistantController: Initiating greeting.");
-    setChatInterfaceRenderKey(prev => prev + 1); 
-    setChatMessages([]); 
+    setChatInterfaceRenderKey(prev => prev + 1);
+    setChatMessages([]); // Clear previous messages
     const greetingText = "Hi there! I’m your AI assistant. Would you like me to walk you through Chakradhar’s portfolio?";
-    // Call addMessageToChat without its own speakTextNow, as we call it directly after.
-    setChatMessages([{ id: `${Date.now()}-greeting`, sender: 'ai', text: greetingText, timestamp: new Date(), speakableTextOverride: greetingText }]);
-    speakTextNow(greetingText); // Speak the greeting
-
+    addMessageToChat('ai', greetingText, greetingText); // The useEffect watching chatMessages will speak this
     setChatQuickReplies([
       { text: "Yes, Guide Me", action: 'start_voice_tour_yes', icon: <CheckCircle className="mr-2 h-4 w-4" /> },
       { text: "No, Thanks", action: 'decline_tour', icon: <XCircle className="mr-2 h-4 w-4" /> },
@@ -131,80 +102,110 @@ const IntegratedAssistantController: React.FC = () => {
     setIsChatInterfaceOpen(true);
     setShowChatBubble(false);
     setAssistantMode('greeting');
-    setUserRespondedToGreeting(false); 
-  }, [speakTextNow, setChatMessages, setChatQuickReplies, setIsChatInterfaceOpen, setShowChatBubble, setAssistantMode, setUserRespondedToGreeting]);
-  
-
-  useEffect(() => {
-    if (isMountedRef.current && !initialGreetingDoneRef.current) {
-        console.log("IntegratedAssistantController: Initial greeting useEffect triggered.");
-        initiateGreeting();
-        initialGreetingDoneRef.current = true; 
-    }
-  }, [initiateGreeting]); // Only depends on initiateGreeting to run once after mount.
+    setUserRespondedToGreeting(false);
+  }, [addMessageToChat, setChatMessages, setChatQuickReplies, setIsChatInterfaceOpen, setShowChatBubble, setAssistantMode, setUserRespondedToGreeting]);
 
   const handleProjectsStepInController = useCallback(() => {
     console.log("IntegratedAssistantController: ContentReader reached projects step. Opening chat for project selection.");
-    setStartVoiceTourSignal(false); 
-    setStopVoiceTourSignal(true); 
+    setStartVoiceTourSignal(false);
+    setStopVoiceTourSignal(true); // Signal ContentReader to stop its own speech
     
     setChatInterfaceRenderKey(prev => prev + 1);
-    // Add project intro message; speakable text is provided to avoid speaking JSX
+    setChatMessages(prev => prev.filter(msg => msg.id.startsWith('tour-') || msg.sender === 'user')); // Keep user messages and tour intro
+
     const projectIntroMsg = "Chakradhar has led and contributed to impactful projects. Here are the titles:";
     addMessageToChat('ai', projectIntroMsg, projectIntroMsg);
 
-     const projectQuickReplies: ChatbotQuickReplyType[] = [
-        { text: "AI-Powered Smart Detection of Crops and Weeds", action: "project_detail_AI-Powered_Smart_Detection_of_Crops_and_Weeds" },
-        { text: "Search Engine for Movie Summaries", action: "project_detail_Search_Engine_for_Movie_Summaries" },
-        { text: "Facial Recognition Attendance System", action: "project_detail_Facial_Recognition_Attendance_System" },
-        { text: "Mushroom Classification with Scikit-Learn", action: "project_detail_Mushroom_Classification_with_Scikit-Learn" },
-        { text: "Custom Process Scheduler", action: "project_detail_Custom_Process_Scheduler" },
-        { text: "Next Section", action: "next_section_education", icon: <Play className="mr-2 h-4 w-4" /> }
-     ];
+    const projectQuickReplies: ChatbotQuickReplyType[] = (ContentReader.sectionsToReadData_FOR_DETAILS_ONLY || [])
+      .filter(section => section.categories?.includes("project_detail_button"))
+      .map(project => ({
+        text: project.title || "Unnamed Project",
+        action: `project_detail_${project.id}`
+      }));
+    
+    projectQuickReplies.push({ text: "Next Section (Education)", action: "next_section_education", icon: <Play className="mr-2 h-4 w-4" /> });
+      
     setChatQuickReplies(projectQuickReplies);
     setIsChatInterfaceOpen(true);
     setShowChatBubble(false);
-    setAssistantMode('qa'); 
-    setCurrentTourStep('projects_list_intro'); 
-  }, [addMessageToChat, setStartVoiceTourSignal, setStopVoiceTourSignal, setChatQuickReplies, setIsChatInterfaceOpen, setShowChatBubble, setAssistantMode, setCurrentTourStep]);
+    setAssistantMode('qa'); // Or a new 'project_selection' mode
+    setCurrentTourStep('projects_list_intro');
+  }, [addMessageToChat, setStartVoiceTourSignal, setStopVoiceTourSignal, setChatQuickReplies, setIsChatInterfaceOpen, setShowChatBubble, setAssistantMode, setCurrentTourStep, setChatMessages]);
 
   const handleQuickReplyAction = useCallback((action: string) => {
     console.log(`IntegratedAssistantController: Quick reply action: ${action}`);
-    setChatQuickReplies([]); // Clear current quick replies
-    setUserRespondedToGreeting(true);
-
+    setChatQuickReplies([]); 
+    setUserRespondedToGreeting(true); // General flag for any initial interaction
+    initialGreetingDoneRef.current = true; // Also mark general greeting as fully processed.
 
     if (action === 'start_voice_tour_yes') {
       addMessageToChat('user', "Yes, Guide Me");
       const startMessage = "Great! Starting the guided audio tour now.";
-      addMessageToChat('ai', startMessage, startMessage);
-      speakTextNow(startMessage, () => {
-        setTimeout(() => { // Give a slight delay for speech to finish before starting tour
-            console.log("IntegratedAssistantController: Signalling ContentReader to start voice tour from 'about'.");
-            setCurrentTourStep('about'); 
-            setStartVoiceTourSignal(true); 
-            setStopVoiceTourSignal(false); // Ensure stop signal is off
-          }, 300); 
+      addMessageToChat('ai', startMessage, startMessage); // Let message useEffect speak this
+      speakTextNow(startMessage, () => { // Explicit speak for transition
+        console.log("IntegratedAssistantController: 'Great! Starting...' speech finished. Closing chat, starting voice tour.");
+        setTimeout(() => {
+          setIsChatInterfaceOpen(false);
+          setShowChatBubble(false); // Hide bubble during active voice tour
+          setCurrentTourStep('about'); 
+          setStartVoiceTourSignal(true);
+          setStopVoiceTourSignal(false);
+        }, 300); 
       });
-      setIsChatInterfaceOpen(false); 
-      setShowChatBubble(false);    
       setAssistantMode('voice_tour_active');
     } else if (action === 'decline_tour') {
       addMessageToChat('user', "No, Thanks");
       const declineMessage = "Alright. Feel free to explore at your own pace. If you have questions later, just click on my icon!";
       addMessageToChat('ai', declineMessage, declineMessage);
+      speakTextNow(declineMessage);
       setIsChatInterfaceOpen(false);
-      setShowChatBubble(true); 
+      setShowChatBubble(true);
       setAssistantMode('tour_declined_pending_scroll');
+    } else if (action.startsWith('project_detail_')) {
+      const projectSectionId = action.replace('project_detail_', '');
+      const userClickedMsg = `Tell me about: ${projectSectionId.replace(/_/g, ' ')}`;
+      addMessageToChat('user', userClickedMsg);
+      
+      const projectDetailSection = ContentReader.sectionsToReadData_FOR_DETAILS_ONLY?.find(s => s.id === projectSectionId);
+      const projectSpeakableText = projectDetailSection?.speakableText || `Details for ${projectSectionId.replace(/_/g, ' ')} would be shown here.`;
+      addMessageToChat('ai', projectSpeakableText, projectSpeakableText); // Let message useEffect speak this
+      speakTextNow(projectSpeakableText);
+
+      // Re-show project quick replies
+      const projectReplies: ChatbotQuickReplyType[] = (ContentReader.sectionsToReadData_FOR_DETAILS_ONLY || [])
+        .filter(section => section.categories?.includes("project_detail_button"))
+        .map(project => ({
+          text: project.title || "Unnamed Project",
+          action: `project_detail_${project.id}`
+        }));
+      projectReplies.push({ text: "Next Section (Education)", action: "next_section_education", icon: <Play className="mr-2 h-4 w-4" /> });
+      setChatQuickReplies(projectReplies);
+
+    } else if (action === 'next_section_education') {
+      addMessageToChat('user', "Next Section (from Projects)");
+      const nextMessage = "Okay, moving to Education.";
+      addMessageToChat('ai', nextMessage, nextMessage);
+      speakTextNow(nextMessage, () => {
+        setTimeout(() => {
+          setIsChatInterfaceOpen(false);
+          setShowChatBubble(false); // Hide bubble during active voice tour
+          setCurrentTourStep('education-section'); 
+          setStartVoiceTourSignal(true);
+          setStopVoiceTourSignal(false);
+        }, 300);
+      });
+      setAssistantMode('voice_tour_active');
     } else if (action === 'open_qa') {
       setAssistantMode('qa');
       const qaMessage = "Great! What would you like to know about Chakradhar?";
       addMessageToChat('ai', qaMessage, qaMessage);
+      speakTextNow(qaMessage);
     } else if (action === 'download_resume') {
-      window.open('/lakshmi_resume.pdf', '_blank');
+      window.open('/lakshmi_resume.pdf', '_blank'); // Ensure lakshmi_resume.pdf is in /public
       const downloadMessage = "The resume is being downloaded. Anything else I can help with?";
       addMessageToChat('ai', downloadMessage, downloadMessage);
-       setChatQuickReplies([
+      speakTextNow(downloadMessage);
+      setChatQuickReplies([
         { text: "Ask another Question", action: 'open_qa', icon: <MessageCircleQuestion className="mr-2 h-4 w-4" /> },
         { text: "End Chat", action: 'end_chat_interaction', icon: <XCircle className="mr-2 h-4 w-4" /> },
       ]);
@@ -212,47 +213,10 @@ const IntegratedAssistantController: React.FC = () => {
       setIsChatInterfaceOpen(false);
       setShowChatBubble(true);
       setAssistantMode('idle');
-      setStopVoiceTourSignal(true); // Stop any voice tour if chat is ended
-    } else if (action.startsWith('project_detail_')) {
-      const projectTitleKey = action.replace('project_detail_', '');
-      // Find the speakableText for this project from ContentReader's data
-      // This logic might be better if ContentReader exports its data or if data is centralized
-      const projectDetail = ContentReader.sectionsToReadData_FOR_DETAILS_ONLY?.find(p => p.id === projectTitleKey)?.speakableText;
-      
-      const userClickedMsg = `Tell me about: ${projectTitleKey.replace(/_/g, ' ')}`;
-      addMessageToChat('user', userClickedMsg);
-
-      if (projectDetail) {
-        addMessageToChat('ai', projectDetail, projectDetail);
-      } else {
-        addMessageToChat('ai', `Details for ${projectTitleKey.replace(/_/g, ' ')} would be shown here.`, `Details for ${projectTitleKey.replace(/_/g, ' ')} would be shown here.`);
-      }
-      // Keep project quick replies visible
-      setChatQuickReplies([
-        { text: "AI-Powered Smart Detection of Crops and Weeds", action: "project_detail_AI-Powered_Smart_Detection_of_Crops_and_Weeds" },
-        { text: "Search Engine for Movie Summaries", action: "project_detail_Search_Engine_for_Movie_Summaries" },
-        { text: "Facial Recognition Attendance System", action: "project_detail_Facial_Recognition_Attendance_System" },
-        { text: "Mushroom Classification with Scikit-Learn", action: "project_detail_Mushroom_Classification_with_Scikit-Learn" },
-        { text: "Custom Process Scheduler", action: "project_detail_Custom_Process_Scheduler" },
-        { text: "Next Section", action: "next_section_education", icon: <Play className="mr-2 h-4 w-4" /> }
-      ]);
-    } else if (action === 'next_section_education') {
-      addMessageToChat('user', "Next Section (from Projects)");
-      const nextMessage = "Okay, moving to Education.";
-      addMessageToChat('ai', nextMessage, nextMessage);
-      speakTextNow(nextMessage, () => {
-        setTimeout(() => {
-            console.log("IntegratedAssistantController: Signalling ContentReader to resume tour from education.");
-            setCurrentTourStep('education-section'); 
-            setStartVoiceTourSignal(true); 
-            setStopVoiceTourSignal(false);
-        }, 300);
-      });
-      setIsChatInterfaceOpen(false);
-      setShowChatBubble(false);
-      setAssistantMode('voice_tour_active');
+      setStopVoiceTourSignal(true);
+      if(synthRef.current?.speaking) synthRef.current.cancel(); // Stop any controller speech
     }
-  }, [addMessageToChat, speakTextNow, setIsChatInterfaceOpen, setShowChatBubble, setAssistantMode, setStartVoiceTourSignal, setStopVoiceTourSignal, setCurrentTourStep, setChatQuickReplies, setUserRespondedToGreeting]);
+  }, [addMessageToChat, speakTextNow, setIsChatInterfaceOpen, setShowChatBubble, setAssistantMode, setStartVoiceTourSignal, setStopVoiceTourSignal, setCurrentTourStep, setChatQuickReplies, setUserRespondedToGreeting, setChatMessages]);
 
   const handleVoiceTourComplete = useCallback(() => {
     console.log("IntegratedAssistantController: Voice tour completed by ContentReader.");
@@ -261,75 +225,142 @@ const IntegratedAssistantController: React.FC = () => {
     setVoiceTourCompleted(true);
     setAssistantMode('post_voice_tour_qa');
     
-    setChatInterfaceRenderKey(prev => prev + 1);
-    setChatMessages([]);
+    setChatInterfaceRenderKey(prev => prev + 1); // Force re-render of chat interface
+    setChatMessages([]); // Clear messages for post-tour interaction
+
     const endMessage = "That's a complete tour of Chakradhar’s resume. Would you like to explore anything else?";
-    addMessageToChat('ai', endMessage, endMessage);
+    addMessageToChat('ai', endMessage, endMessage); // Let message useEffect speak
+    speakTextNow(endMessage); // Also explicitly speak for immediate feedback
     setChatQuickReplies([
       { text: "Ask a Question", action: 'open_qa', icon: <MessageCircleQuestion className="mr-2 h-4 w-4" /> },
       { text: "Download Resume", action: 'download_resume', icon: <Download className="mr-2 h-4 w-4" /> },
       { text: "End Chat", action: 'end_chat_interaction', icon: <XCircle className="mr-2 h-4 w-4" /> },
     ]);
     setIsChatInterfaceOpen(true);
-    setShowChatBubble(false); 
-  }, [addMessageToChat, setStartVoiceTourSignal, setStopVoiceTourSignal, setVoiceTourCompleted, setAssistantMode, setChatMessages, setChatQuickReplies, setIsChatInterfaceOpen, setShowChatBubble]);
+    setShowChatBubble(false);
+  }, [addMessageToChat, speakTextNow, setStartVoiceTourSignal, setStopVoiceTourSignal, setVoiceTourCompleted, setAssistantMode, setChatMessages, setChatQuickReplies, setIsChatInterfaceOpen, setShowChatBubble]);
   
   const mainBubbleClickHandler = useCallback(() => {
     console.log("IntegratedAssistantController: Bubble/Close clicked. Current mode:", assistantMode, "Chat open:", isChatInterfaceOpen);
+    
+    if(tourTimeoutRef.current) clearTimeout(tourTimeoutRef.current); // Clear any auto-advance from ContentReader
     setStopVoiceTourSignal(true); // Signal ContentReader to stop if active
+    if(synthRef.current?.speaking) synthRef.current.cancel(); // Stop controller's speech too
 
-    if (isChatInterfaceOpen) { 
+    if (isChatInterfaceOpen) {
         setIsChatInterfaceOpen(false);
         setShowChatBubble(true);
-        setChatQuickReplies([]); 
+        setChatQuickReplies([]);
         if (assistantMode === 'voice_tour_active') {
             setAssistantMode('voice_tour_paused_by_user');
-            setStartVoiceTourSignal(false); 
+            setStartVoiceTourSignal(false);
         } else if (assistantMode === 'greeting' && !userRespondedToGreeting) {
-             setAssistantMode('tour_declined_pending_scroll'); 
-        } else { // For other modes like qa, post_voice_tour_qa, etc.
-          setAssistantMode('idle'); // Or a specific "paused_qa" state
+             setAssistantMode('tour_declined_pending_scroll');
+        } else {
+          setAssistantMode('idle'); 
         }
-    } else { 
-        setShowChatBubble(false); 
-        setChatInterfaceRenderKey(prev => prev + 1);
-        setChatMessages([]); 
-        
+    } else { // Chat is closed, bubble was clicked
+        setShowChatBubble(false);
+        setChatInterfaceRenderKey(prev => prev + 1); // Force re-render chat interface
+        setChatMessages([]); // Clear previous messages
+
         if (assistantMode === 'voice_tour_paused_by_user' || assistantMode === 'post_voice_tour_qa' || voiceTourCompleted) {
             const resumeMsg = "Welcome back! You can ask questions about Chakradhar's resume or download it.";
             addMessageToChat('ai', resumeMsg, resumeMsg);
+            // speakTextNow(resumeMsg); // Let message useEffect handle speaking
             setChatQuickReplies([
               { text: "Ask a Question", action: 'open_qa', icon: <MessageCircleQuestion className="mr-2 h-4 w-4" /> },
               { text: "Download Resume", action: 'download_resume', icon: <Download className="mr-2 h-4 w-4" /> },
               { text: "End Chat", action: 'end_chat_interaction', icon: <XCircle className="mr-2 h-4 w-4" /> },
             ]);
-            setAssistantMode('qa'); // General Q&A
-        } else if (assistantMode === 'scrolled_to_end_greeting') {
+            setAssistantMode('qa'); 
+        } else if (assistantMode === 'scrolled_to_end_greeting' || (assistantMode === 'tour_declined_pending_scroll' && contactSectionInView) ) {
              const scrolledEndMsg = "Thanks for exploring! Have any questions about Chakradhar's work or experience?";
              addMessageToChat('ai', scrolledEndMsg, scrolledEndMsg);
+            // speakTextNow(scrolledEndMsg); // Let message useEffect handle speaking
              setChatQuickReplies([
                 { text: "Ask a Question", action: 'open_qa', icon: <MessageCircleQuestion className="mr-2 h-4 w-4" /> },
                 { text: "Not right now", action: 'not_right_now_scrolled_end', icon: <XCircle className="mr-2 h-4 w-4" /> },
             ]);
-        } else { 
-            initialGreetingDoneRef.current = false; // Allow re-greeting
-            initiateGreeting(); 
+             setAssistantMode('scrolled_to_end_greeting'); // Ensure mode is set
+        } else { // Default to re-greeting if no other specific state
+            initialGreetingDoneRef.current = false; 
+            initiateGreeting();
         }
         setIsChatInterfaceOpen(true);
     }
   }, [
-    isChatInterfaceOpen, assistantMode, voiceTourCompleted, userRespondedToGreeting,
+    isChatInterfaceOpen, assistantMode, voiceTourCompleted, userRespondedToGreeting, contactSectionInView,
     addMessageToChat, initiateGreeting, setIsChatInterfaceOpen, setShowChatBubble, setChatQuickReplies,
-    setAssistantMode, setStartVoiceTourSignal, setStopVoiceTourSignal
+    setAssistantMode, setStartVoiceTourSignal, setStopVoiceTourSignal, setChatMessages // Added setChatMessages
   ]);
+  
+  // Effects
+  useEffect(() => {
+    isMountedRef.current = true;
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      synthRef.current = window.speechSynthesis;
+      const voices = synthRef.current.getVoices();
+      if (voices.length === 0 && synthRef.current.onvoiceschanged !== undefined) {
+        synthRef.current.onvoiceschanged = () => {
+          console.log("IntegratedAssistantController: Voices loaded via onvoiceschanged.");
+        };
+      } else if (voices.length > 0) {
+        console.log("IntegratedAssistantController: Voices immediately available.");
+      }
+      console.log("IntegratedAssistantController: Speech synthesis initialized.");
+    } else {
+      console.warn("IntegratedAssistantController: Speech synthesis not supported.");
+    }
 
+    const contactElement = document.getElementById('contact');
+    if (contactElement) {
+      contactSectionRef(contactElement);
+    }
+
+    return () => {
+      isMountedRef.current = false;
+      if (synthRef.current && (synthRef.current.speaking || synthRef.current.pending)) {
+        console.log("IntegratedAssistantController: Unmounting. Cancelling speech.");
+        synthRef.current.cancel();
+      }
+      if (tourTimeoutRef.current) clearTimeout(tourTimeoutRef.current);
+    };
+  }, [contactSectionRef]);
+
+  // Initial Greeting on Page Load
+  useEffect(() => {
+    if (isMountedRef.current && !initialGreetingDoneRef.current) {
+      console.log("IntegratedAssistantController: Checking initial greeting conditions...", { assistantMode, isChatInterfaceOpen, startVoiceTourSignal, voiceTourCompleted });
+      // Ensure it's truly the initial idle state before greeting
+      if (assistantMode === 'idle' && !isChatInterfaceOpen && !startVoiceTourSignal && !voiceTourCompleted) {
+        console.log("IntegratedAssistantController: Conditions met. Calling initiateGreeting.");
+        initiateGreeting();
+        // initialGreetingDoneRef.current = true; // Moved inside initiateGreeting to ensure it's set after initiation
+      }
+    }
+  }, [initiateGreeting, assistantMode, isChatInterfaceOpen, startVoiceTourSignal, voiceTourCompleted]);
+
+
+  // Effect to speak AI messages when they are added (unless ContentReader is active)
+  useEffect(() => {
+    const lastMessage = chatMessages[chatMessages.length - 1];
+    if (lastMessage && lastMessage.sender === 'ai' && lastMessage.speakableTextOverride && assistantMode !== 'voice_tour_active') {
+      console.log("IntegratedAssistantController: useEffect speaking new AI message from chatMessages:", lastMessage.speakableTextOverride);
+      speakTextNow(lastMessage.speakableTextOverride);
+    }
+  }, [chatMessages, speakTextNow, assistantMode]);
+
+
+  // Scroll-to-end greeting
   useEffect(() => {
     if (contactSectionInView && assistantMode === 'tour_declined_pending_scroll' && !hasShownScrolledToEndGreeting && !isChatInterfaceOpen) {
-      console.log("IntegratedAssistantController: Contact section in view after tour declined. Opening chat.");
+      console.log("IntegratedAssistantController: Contact section in view after tour declined. Opening chat for scrolled-to-end greeting.");
       setChatInterfaceRenderKey(prev => prev + 1);
       setChatMessages([]);
       const scrolledMsg = "Thanks for taking the time to look through Chakradhar's portfolio! Have any questions about his work or experience?";
       addMessageToChat('ai', scrolledMsg, scrolledMsg);
+      // speakTextNow(scrolledMsg); // Let message useEffect speak
       setChatQuickReplies([
         { text: "Ask a Question", action: 'open_qa', icon: <MessageCircleQuestion className="mr-2 h-4 w-4" /> },
         { text: "Not right now", action: 'not_right_now_scrolled_end', icon: <XCircle className="mr-2 h-4 w-4" /> },
@@ -337,11 +368,11 @@ const IntegratedAssistantController: React.FC = () => {
       setIsChatInterfaceOpen(true);
       setShowChatBubble(false);
       setAssistantMode('scrolled_to_end_greeting');
-      setHasShownScrolledToEndGreeting(true); 
+      setHasShownScrolledToEndGreeting(true);
     }
   }, [
       contactSectionInView, assistantMode, hasShownScrolledToEndGreeting, isChatInterfaceOpen,
-      addMessageToChat, setChatMessages, setChatQuickReplies, setIsChatInterfaceOpen, 
+      addMessageToChat, setChatMessages, setChatQuickReplies, setIsChatInterfaceOpen,
       setShowChatBubble, setAssistantMode
   ]);
 
@@ -354,10 +385,10 @@ const IntegratedAssistantController: React.FC = () => {
       <InteractiveChatbot
         key={chatInterfaceRenderKey}
         isOpen={isChatInterfaceOpen}
-        mode={assistantMode} 
+        mode={assistantMode}
         initialMessages={chatMessages}
         initialQuickReplies={chatQuickReplies}
-        onClose={mainBubbleClickHandler} 
+        onClose={mainBubbleClickHandler}
         onQuickReplyAction={handleQuickReplyAction}
       />
       <ContentReader
@@ -365,17 +396,10 @@ const IntegratedAssistantController: React.FC = () => {
         stopTourSignal={stopVoiceTourSignal}
         onTourComplete={handleVoiceTourComplete}
         onProjectsStepReached={handleProjectsStepInController}
-        initialSectionIndex={
-            currentTourStep === 'about' ? 0 :
-            currentTourStep === 'skills-section' ? 1 :
-            currentTourStep === 'experience' ? 2 :
-            currentTourStep === 'projects_intro' ? 3 :
-            currentTourStep === 'education-section' ? 4 :
-            currentTourStep === 'certifications-section' ? 5 :
-            currentTourStep === 'publication-section' ? 6 :
-            currentTourStep === 'additional_info' ? 7 : 0
+        initialSectionIndex={ // Map currentTourStep (string ID) to a numeric index
+            ContentReader.sectionsToReadData_FOR_DETAILS_ONLY?.findIndex(s => s.id === currentTourStep) ?? 0
         }
-        currentGlobalStepId={currentTourStep}
+        currentGlobalStepId={currentTourStep} // Pass the string ID directly
       />
     </>
   );
@@ -383,4 +407,3 @@ const IntegratedAssistantController: React.FC = () => {
 
 export default IntegratedAssistantController;
 
-    
