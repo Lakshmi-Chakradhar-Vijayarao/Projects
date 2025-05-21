@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
 html {
@@ -12,7 +12,7 @@ html {
 
 @layer base {
   :root {
-    /* New Light Theme based on user prompt */
+    /* Light Theme based on user prompt */
     --background: 0 0% 98%;       /* Light Cream #FAFAFA */
     --foreground: 0 0% 13%;       /* Charcoal Gray #212121 for main text */
 
@@ -25,10 +25,10 @@ html {
     --primary: 231 53% 48%;           /* Indigo Blue #3F51B5 */
     --primary-foreground: 0 0% 100%;     /* White for text on primary */
 
-    --secondary: 174 100% 29%;         /* Soft Teal #009688 */
+    --secondary: 262 52% 47%;         /* Deep Purple #673AB7 (Replaced Soft Teal) */
     --secondary-foreground: 0 0% 100%;   /* White for text on secondary */
 
-    --muted: 0 0% 96%;              /* Lighter Gray for muted backgrounds, derived from cream */
+    --muted: 0 0% 96%;              /* Lighter Gray for muted backgrounds */
     --muted-foreground: 0 0% 46%;       /* Medium Gray #757575 for muted text */
 
     --accent: 45 100% 51%;            /* Warm Amber #FFC107 */
@@ -37,28 +37,27 @@ html {
     --destructive: 0 84% 60%;           /* Standard Clear Red */
     --destructive-foreground: 0 0% 98%; /* Light Cream text on destructive */
 
-    --border: 0 0% 88%;              /* Light gray border (e.g., hsl(0, 0%, 224/0.1 from old dark theme, adjusted to light) */
-    --input: 0 0% 95%;              /* Slightly off-white for inputs, derived from cream */
+    --border: 0 0% 88%;              /* Light gray border */
+    --input: 0 0% 95%;              /* Slightly off-white for inputs */
     --ring: hsl(var(--primary));              /* Primary blue for focus rings */
 
     --radius: 0.5rem;
 
-    /* Chart colors can remain or be adjusted if needed */
     --chart-1: hsl(var(--primary));
-    --chart-2: hsl(var(--secondary));
+    --chart-2: hsl(var(--secondary)); /* Updated to new secondary */
     --chart-3: hsl(var(--accent));
-    --chart-4: 200 80% 55%;
-    --chart-5: 320 70% 60%;
+    --chart-4: 200 70% 60%; /* Kept as a distinct blue */
+    --chart-5: 320 70% 60%; /* Kept as a distinct pink/magenta */
     
-    /* Sidebar colors adjusted for the new light theme */
-    --sidebar-background: hsl(var(--primary)); /* Indigo Blue for sidebar background */
-    --sidebar-foreground: hsl(var(--primary-foreground)); /* White text */
-    --sidebar-primary: hsl(var(--accent)); /* Amber for accents within sidebar */
-    --sidebar-primary-foreground: hsl(var(--accent-foreground)); /* Charcoal for text on Amber */
-    --sidebar-accent: hsl(var(--secondary)); /* Teal for selected item background */
-    --sidebar-accent-foreground: hsl(var(--secondary-foreground)); /* White text on Teal */
-    --sidebar-border: 231 53% 40%;     /* Darker Indigo for sidebar border */
-    --sidebar-ring: hsl(var(--accent)); /* Amber for focus rings */
+    /* Sidebar colors adjusted for the light theme */
+    --sidebar-background: hsl(var(--primary)); 
+    --sidebar-foreground: hsl(var(--primary-foreground)); 
+    --sidebar-primary: hsl(var(--accent)); 
+    --sidebar-primary-foreground: hsl(var(--accent-foreground));
+    --sidebar-accent: hsl(var(--secondary)); /* Updated to new secondary */
+    --sidebar-accent-foreground: hsl(var(--secondary-foreground));
+    --sidebar-border: 231 53% 40%;     
+    --sidebar-ring: hsl(var(--accent)); 
   }
 }
 
