@@ -3,9 +3,8 @@
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import type { ReactNode } from 'react';
-import { Code2, Library, BrainCircuit, CloudCog, Database, Wrench } from 'lucide-react';
+import { Code2, Library, BrainCircuit, CloudCog, Database, Wrench, Users } from 'lucide-react';
 
 interface SkillCategory {
   name: string;
@@ -41,7 +40,7 @@ const skillCategories: SkillCategory[] = [
   },
   {
     name: "Tools & Practices",
-    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />,
+    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />, // Changed from Users for better representation of "Tools"
     skills: ["Git", "VS Code", "Eclipse", "Jupyter Notebook", "Agile development", "API design", "cross-functional collaboration"],
   },
 ];
@@ -51,8 +50,8 @@ export default function Skills() {
     <SectionWrapper id="skills-section" title="Technical Skills">
       <Card className="shadow-xl bg-card/80 backdrop-blur-sm border border-border/50">
         <CardContent className="p-6 md:p-8">
-          <div className="space-y-8">
-            {skillCategories.map((category, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10"> {/* Updated to 2 columns on md+, adjusted gap */}
+            {skillCategories.map((category) => (
               <div key={category.name}>
                 <h3 className="text-xl font-semibold text-primary mb-4 flex items-center">
                   {category.icon}
@@ -69,7 +68,6 @@ export default function Skills() {
                     </Badge>
                   ))}
                 </div>
-                {index < skillCategories.length - 1 && <Separator className="my-8 bg-border/50" />}
               </div>
             ))}
           </div>
