@@ -25,7 +25,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'source.unsplash.com',
+        hostname: 'source.unsplash.com', // This line is crucial
         port: '',
         pathname: '/**',
       },

@@ -14,23 +14,21 @@ export interface Project {
   description: string;
   technologies: string[];
   image: string;
-  imageHint: string;
+  imageHint: string; 
   projectUrl: string;
   categories: string[];
-  icon?: LucideIcon | React.ElementType; // Optional icon for the project card (e.g. from lucide-react)
+  icon?: LucideIcon | React.ElementType;
 }
 
-// This data is now local to this component.
-// If ResumeChatAssistant needs this, it should be sourced differently or passed as props.
-const projectsData: Project[] = [
+export const projectsData: Project[] = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
     date: "Ongoing",
     description: "Developed a deep learning solution achieving over 90% accuracy in distinguishing crops from weeds, optimizing herbicide usage and promoting sustainable agriculture.",
     technologies: ["Python", "YOLO", "Object Detection", "TensorFlow", "OpenCV"],
-    image: "https://source.unsplash.com/640x400/?agriculture,technology",
+    image: "https://source.unsplash.com/640x400/?agriculture technology",
     imageHint: "agriculture technology",
-    projectUrl: "#", 
+    projectUrl: "#",
     categories: ["AI/ML"],
   },
   {
@@ -38,9 +36,9 @@ const projectsData: Project[] = [
     date: "2023",
     description: "Built a scalable search engine using TF-IDF and cosine similarity on PySpark and Hadoop, efficiently querying over 100,000 movie records.",
     technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala", "NLP"],
-    image: "https://source.unsplash.com/640x400/?data,search,movie",
+    image: "https://source.unsplash.com/640x400/?data search movie",
     imageHint: "data search movie",
-    projectUrl: "#", 
+    projectUrl: "#",
     categories: ["Big Data", "AI/ML"],
   },
   {
@@ -48,19 +46,19 @@ const projectsData: Project[] = [
     date: "2023",
     description: "Designed a real-time facial recognition system with 99% accuracy for automated attendance, featuring cloud-synced data logging for over 200 users.",
     technologies: ["Python", "OpenCV", "Machine Learning", "Cloud API"],
-    image: "https://source.unsplash.com/640x400/?security,face,recognition",
+    image: "https://source.unsplash.com/640x400/?security face recognition",
     imageHint: "security face recognition",
-    projectUrl: "#", 
+    projectUrl: "#",
     categories: ["AI/ML"],
   },
   {
-    title: "Mushroom Classification using Scikit-Learn",
+    title: "Mushroom Classification with Scikit-Learn",
     date: "2022",
     description: "Implemented ensemble machine learning models (Decision Tree, Random Forest, KNN) achieving 95% accuracy in classifying mushroom species from feature data.",
     technologies: ["Python", "Scikit-Learn", "Decision Tree", "Random Forest", "KNN"],
-    image: "https://source.unsplash.com/640x400/?nature,classification,mushroom",
+    image: "https://source.unsplash.com/640x400/?nature classification mushroom",
     imageHint: "nature classification mushroom",
-    projectUrl: "#", 
+    projectUrl: "#",
     categories: ["AI/ML"],
   },
   {
@@ -68,19 +66,19 @@ const projectsData: Project[] = [
     date: "2022",
     description: "Engineered custom priority and lottery-based schedulers for the xv6/Linux kernel, reducing context switching overhead by 18%.",
     technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
-    image: "https://source.unsplash.com/640x400/?computing,programming,kernel",
+    image: "https://source.unsplash.com/640x400/?computing programming kernel",
     imageHint: "computing programming kernel",
-    projectUrl: "#", 
+    projectUrl: "#",
     categories: ["Systems"],
   },
   {
     title: "Personal Portfolio Website",
     date: "2024",
-    description: "The very website you're looking at! Built with Next.js, React, TypeScript, Tailwind CSS, and Genkit for AI features.",
+    description: "The very website you're looking at! Built with Next.js, React, TypeScript, Tailwind CSS, and integrated AI features.",
     technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Genkit"],
-    image: "https://source.unsplash.com/640x400/?web,design,portfolio",
+    image: "https://source.unsplash.com/640x400/?web design portfolio",
     imageHint: "web design portfolio",
-    projectUrl: "#", 
+    projectUrl: "#",
     categories: ["Web Dev"],
   }
 ];
@@ -94,8 +92,8 @@ const Projects: React.FC = () => {
   });
   const [activeFilter, setActiveFilter] = useState("All");
 
-  const filteredProjects = activeFilter === "All" 
-    ? projectsData 
+  const filteredProjects = activeFilter === "All"
+    ? projectsData
     : projectsData.filter(project => project.categories.includes(activeFilter));
 
   return (
@@ -112,13 +110,13 @@ const Projects: React.FC = () => {
           </Button>
         ))}
       </div>
-      <div 
+      <div
         ref={ref}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
         {filteredProjects.map((project, index) => (
-          <ProjectCard 
-            key={project.title + index} 
+          <ProjectCard
+            key={project.title + index}
             {...project}
             index={index}
             inView={inView}
