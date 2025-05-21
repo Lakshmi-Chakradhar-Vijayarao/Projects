@@ -24,7 +24,7 @@ export default function Footer() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-accent transition-colors"
                 aria-label={link.name}
               >
                 <link.icon className="h-5 w-5" />
@@ -35,11 +35,11 @@ export default function Footer() {
         <div className="border-t border-border/30 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
           <p>&copy; {currentYear} Lakshmi Chakradhar Vijayarao. All rights reserved.</p>
           <div className="flex space-x-4 items-center">
-            <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
+            <Link href="#" className="hover:text-accent transition-colors">Terms</Link>
             <span className="text-muted-foreground/50">|</span>
-            <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
+            <Link href="#" className="hover:text-accent transition-colors">Privacy</Link>
             <span className="text-muted-foreground/50">|</span>
-            <Link href="#hero" className="hover:text-primary transition-colors flex items-center">
+            <Link href="#hero" className="hover:text-accent transition-colors flex items-center">
               Back to top <ArrowUp className="ml-1 h-4 w-4" />
             </Link>
           </div>
@@ -48,4 +48,3 @@ export default function Footer() {
     </footer>
   );
 }
-
