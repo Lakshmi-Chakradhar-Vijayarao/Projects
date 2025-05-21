@@ -1,227 +1,227 @@
 // src/components/ai/ContentReader.tsx
 "use client";
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Volume2, Square, Loader2, XCircle } from 'lucide-react'; // Play/Stop icons
+import { cn } from '@/lib/utils';
 
 interface SectionToRead {
-  id: string;
-  speakableText: string;
-  uiMessage?: string | React.ReactNode;
-  autoAdvanceTo?: string;
-  autoAdvanceDelay?: number;
-  onAction?: 'triggerProjectsInteractive' | 'triggerTourComplete';
+  id: string; // Corresponds to the HTML ID of the section on the page
+  speakableText: string; // The text to be spoken for this section
+  // No autoAdvanceTo or autoAdvanceDelay, as it will be sequential
 }
 
-// This data defines the tour content and flow for ContentReader
-// NOTE: This is the SCRIPT the AI assistant should follow for voice tour.
+// Define the sections and their speakable text
 const sectionsToReadData: SectionToRead[] = [
-  { 
-    id: 'summary_intro', // Corresponds to About Me section with id="about"
-    speakableText: "Chakradhar is a versatile Software Engineer and Machine Learning practitioner. He’s built secure, scalable, and user-focused applications using Python, React.js, Node.js, and MySQL. He's strong in Agile practices, backend optimization, and AI-powered solutions.",
-    autoAdvanceTo: 'skills_intro', 
-    autoAdvanceDelay: 7000 // Allow time for speech
-  },
-  { 
-    id: 'skills_intro', 
-    speakableText: "Here’s what Chakradhar works with regularly: For Languages: Python, Java, JavaScript, C++, C, and C#. For Web and ML Libraries: React.js, Node.js, Express.js, Django, Scikit-learn, YOLO, and OpenCV. For Data and Cloud: PySpark, Hadoop, Databricks, AWS, and Docker. Databases include MySQL, PostgreSQL, and Oracle. His tools include Git, Linux, VS Code, and REST APIs. And for practices: Agile, CI/CD, and API Design.",
-    autoAdvanceTo: 'experience_intro', 
-    autoAdvanceDelay: 12000
-  },
-  { 
-    id: 'experience_intro', 
-    speakableText: "Regarding his experience: At NSIC Technical Services Centre in Chennai, as an Intern from April to June 2023, he built an e-commerce platform using React.js, Node.js, and MySQL, secured login with OAuth2 and JWT, and conducted Android full-stack training. At Zoho Corporation in Chennai, as a Summer Intern, he refined backend APIs for a video app, integrated WebRTC for over 1,000 users, and collaborated in Agile sprints.",
-    autoAdvanceTo: 'projects_list_intro', 
-    autoAdvanceDelay: 15000 
-  },
-  { 
-    id: 'projects_list_intro', // Controller will handle speaking titles and button display
-    speakableText: "Chakradhar has led and contributed to impactful projects. The main chat window will now show options to explore them.",
-    onAction: 'triggerProjectsInteractive', // Controller will handle this
-    // No autoAdvanceTo here, as it waits for user interaction via controller
-  },
-  { 
-    id: 'education_intro', 
-    speakableText: "About his education: Chakradhar is pursuing a Master of Science in Computer Science at The University of Texas at Dallas, expecting to graduate in May 2025 with a GPA of 3.607. He holds a Bachelor of Engineering in Electronics and Communication from R.M.K Engineering College, India, graduating in March 2023 with a GPA of 9.04.",
-    autoAdvanceTo: 'certifications_intro', 
-    autoAdvanceDelay: 10000
-  },
-  { 
-    id: 'certifications_intro', 
-    speakableText: "Chakradhar holds certifications from IBM for DevOps & Software Engineering, Microsoft as a Full-Stack Developer, Meta as a Back-End Developer, and AWS as a Certified Cloud Practitioner.",
-    autoAdvanceTo: 'publication_intro', 
-    autoAdvanceDelay: 8000
-  },
-  { 
-    id: 'publication_intro', 
-    speakableText: "His publication is on Text Detection Using Deep Learning. He built a handwriting recognition model using MNIST-style data, reaching 98.6% training accuracy, presented at an IEEE Conference.",
-    autoAdvanceTo: 'additional_info_intro', 
-    autoAdvanceDelay: 7000
-  },
-  {
-    id: 'additional_info_intro',
-    speakableText: "Additional valuable skills include proficiency with Git, Linux, REST APIs, strong OOP and multithreading in Java, and experience in model evaluation, preprocessing, and computer vision with Scikit-learn and YOLO.",
-    onAction: 'triggerTourComplete', // This will be the last step spoken by ContentReader
-    autoAdvanceDelay: 8000
-  }
+  // This initial welcome will be spoken by the controller, not ContentReader
+  { id: "about", speakableText: "About Chakradhar: He is a versatile Software Engineer and Machine Learning practitioner with proven experience delivering scalable, secure, and user-centric applications using Python, React.js, Node.js, and MySQL. He's skilled at optimizing backend performance, implementing secure authentication, and developing AI-powered solutions with measurable outcomes. Strong collaborator with expertise in Agile workflows, continuous learning, and cloud technologies." },
+  { id: "skills-section", speakableText: "Regarding Chakradhar's Technical Skills: For Programming Languages, he uses Python, Java, JavaScript, C++, C, and C Sharp. Key Frameworks & Libraries include React.js, Node.js, Express.js, Django, Scikit-learn, YOLO, OpenCV, NumPy, and Pandas. For Data & Machine Learning, he works with PySpark, Hadoop, and Databricks, applying algorithms like Decision Trees, Random Forest, KNN, and YOLO, along with model evaluation and data preprocessing. In Cloud & DevOps, he's familiar with AWS services like EC2, S3, Lambda, GitHub Actions, CI/CD fundamentals, Docker, REST API integration, and Linux. His Database expertise includes MySQL, PostgreSQL, and SQL. Finally, his common Tools & Practices involve Git, VS Code, Eclipse, Jupyter Notebooks, Agile development, API design, and cross-functional collaboration." },
+  { id: "experience", speakableText: "About Chakradhar's Experience: At NSIC Technical Services Centre in Chennai, as an Internship Project Trainee from April to June 2023, he developed a full-stack e-commerce platform, enhanced login security with JWT and OAuth2, and conducted Android full-stack training. At Zoho Corporation in Chennai, as a Summer Internship Project Associate from March to April 2022, he optimized backend API and SQL performance for a video conferencing app, integrated WebRTC for over 1,000 real-time users, and participated in Agile sprints." },
+  { id: "projects", speakableText: "Regarding Chakradhar's Projects: He has worked on AI-Powered Smart Detection of Crops and Weeds, a Search Engine for Movie Summaries, a Facial Recognition Attendance System, Mushroom Classification with Scikit-Learn, and Custom Process Scheduler Development." },
+  { id: "education-section", speakableText: "For his Education: Chakradhar is pursuing a Master of Science in Computer Science at The University of Texas at Dallas, expecting to graduate in May 2025 with a GPA of 3.607. He holds a Bachelor of Engineering in Electronics and Communication from R.M.K Engineering College, India, graduating in March 2023 with a GPA of 9.04." },
+  { id: "certifications-section", speakableText: "Chakradhar's Certifications include: IBM DevOps and Software Engineering Professional Certificate, Microsoft Full-Stack Developer Professional Certificate, Meta Back-End Developer Professional Certificate, and AWS Certified Cloud Practitioner from AWS Academy." },
+  { id: "publication-section", speakableText: "His Publication is on Text Detection Based on Deep Learning, where he built a handwriting recognition model achieving 98.6% training precision, presented at an IEEE Conference." },
+  { id: "contact", speakableText: "This concludes the overview of Chakradhar's portfolio. You can find ways to get in touch in the contact section." }
 ];
 
-export const ContentReaderSectionsDataForDetails = sectionsToReadData.find(s => s.id === 'projects_list_intro')?.projectDetails || []; // Placeholder for project details if needed by controller
 
-interface ContentReaderProps {
-  startTourSignal: boolean;
-  stopTourSignal: boolean;
-  currentGlobalStepId: string | null;
-  onTourComplete: () => void;
-  onProjectsStepReached: () => void; 
-  addMessageToChat: (sender: 'ai' | 'user', textNode: React.ReactNode, speakableText?: string) => void;
-  speakTextProp: (text: string, onEnd?: () => void, isChainedCall?: boolean) => void;
-}
-
-const ContentReader: React.FC<ContentReaderProps> = ({
-  startTourSignal,
-  stopTourSignal,
-  currentGlobalStepId,
-  onTourComplete,
-  onProjectsStepReached,
-  addMessageToChat,
-  speakTextProp
-}) => {
+const ContentReader: React.FC = () => {
   const [isReading, setIsReading] = useState(false);
-  const currentSectionIndexRef = useRef(0); 
-  const isMountedRef = useRef(false);
-  const tourTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isReadingRef = useRef(isReading); 
+  const [isLoadingSpeech, setIsLoadingSpeech] = useState(false);
+  const [hasSpokenWelcome, setHasSpokenWelcome] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const synthRef = useRef<SpeechSynthesis | null>(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const sectionQueueRef = useRef<SectionToRead[]>([]);
+  const currentSectionIndexRef = useRef(0); // To track which section to resume from
 
   useEffect(() => {
-    isMountedRef.current = true;
+    setIsMounted(true);
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      synthRef.current = window.speechSynthesis;
+      // Ensure voices are loaded (helps with some browsers)
+      const populateVoiceList = () => {
+        if(synthRef.current && synthRef.current.getVoices().length > 0) {
+          console.log("ContentReader: Voices loaded.");
+          if(synthRef.current) synthRef.current.onvoiceschanged = null; // remove listener once voices are loaded
+        }
+      };
+      populateVoiceList();
+      if (synthRef.current && synthRef.current.onvoiceschanged !== populateVoiceList) {
+        synthRef.current.onvoiceschanged = populateVoiceList;
+      }
+    } else {
+      console.warn("ContentReader: Speech synthesis not supported by this browser.");
+    }
+
     return () => {
-      isMountedRef.current = false;
-      console.log("ContentReader: Unmounting. Stopping speech and clearing timeouts.");
-      if (tourTimeoutRef.current) clearTimeout(tourTimeoutRef.current);
-      // Ensure speech is cancelled if the component unmounts while reading
-      if (speakTextProp && typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
+      setIsMounted(false);
+      if (synthRef.current) {
+        console.log("ContentReader: Unmounting, cancelling speech.");
+        if (utteranceRef.current) {
+          utteranceRef.current.onend = null;
+          utteranceRef.current.onerror = null;
+        }
+        synthRef.current.cancel();
       }
     };
-  }, [speakTextProp]);
-
-  useEffect(() => {
-    isReadingRef.current = isReading;
-  }, [isReading]);
+  }, []);
 
   const smoothScrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
-    const targetId = id === 'summary_intro' ? 'about' : id; // Map summary_intro to about section
-    const targetElement = document.getElementById(targetId);
-
-    if (targetElement) {
-      console.log(`ContentReader: Scrolling to ${targetId}`);
-      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (element) {
+      console.log(`ContentReader: Scrolling to section: ${id}`);
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
-      console.warn(`ContentReader: Element with id "${targetId}" not found for scrolling.`);
+      console.warn(`ContentReader: Element with id "${id}" not found for scrolling.`);
     }
   }, []);
-  
-  const handleStopReading = useCallback(() => {
-    console.log("ContentReader: handleStopReading called.");
-    if (tourTimeoutRef.current) {
-      clearTimeout(tourTimeoutRef.current);
-      tourTimeoutRef.current = null;
+
+  const speakText = useCallback((textToSpeak: string, onEndCallback?: () => void) => {
+    if (!isMounted || !synthRef.current || !textToSpeak) {
+      console.warn("ContentReader: SpeakText conditions not met.", { isMounted, synthRefReady: !!synthRef.current, textToSpeak });
+      if (onEndCallback) onEndCallback();
+      return;
     }
-    setIsReading(false); 
-    if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel(); // Stop any browser speech
+    console.log(`ContentReader: Attempting to speak: "${textToSpeak.substring(0,30)}..."`);
+    
+    // Cancel any ongoing or pending speech *before* creating a new utterance
+    if (synthRef.current.speaking || synthRef.current.pending) {
+        console.log("ContentReader: Cancelling existing speech before new utterance.");
+        if(utteranceRef.current) {
+            utteranceRef.current.onend = null;
+            utteranceRef.current.onerror = null;
+        }
+        synthRef.current.cancel(); 
     }
-  }, [setIsReading]);
+    
+    // Allow a brief moment for cancel to process
+    setTimeout(() => {
+        if (!isMounted || !synthRef.current) return; // Re-check after timeout
+
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utteranceRef.current = utterance;
+
+        utterance.onstart = () => {
+          console.log(`ContentReader: Speech started for: "${textToSpeak.substring(0,30)}..."`);
+          setIsLoadingSpeech(false);
+        };
+        
+        utterance.onend = () => {
+          console.log(`ContentReader: Speech ended for: "${textToSpeak.substring(0,30)}..."`);
+          if (utteranceRef.current === utterance) { // Ensure it's the correct utterance
+            utteranceRef.current = null;
+            if (onEndCallback) onEndCallback();
+          }
+        };
+
+        utterance.onerror = (event) => {
+          console.error("ContentReader: SpeechSynthesisUtterance.onerror", event.error, `For text: "${textToSpeak.substring(0,30)}..."`);
+          if (utteranceRef.current === utterance) {
+            utteranceRef.current = null;
+          }
+          setIsReading(false);
+          setIsLoadingSpeech(false);
+          if (onEndCallback) onEndCallback(); // still call to allow cleanup or next steps
+        };
+
+        synthRef.current.speak(utterance);
+    }, 50); // Small delay to ensure cancel is processed.
+
+  }, [isMounted]);
 
   const processSpeechQueue = useCallback(() => {
-    if (!isMountedRef.current || !isReadingRef.current) {
-      if(isReadingRef.current) handleStopReading();
+    if (!isReading || !isMounted) {
+      console.log("ContentReader: processSpeechQueue - not reading or not mounted, stopping.");
+      setIsReading(false); // Ensure state is consistent
       return;
     }
 
-    const currentGlobalIndex = currentSectionIndexRef.current;
-    if (currentGlobalIndex >= sectionsToReadData.length) {
-      onTourComplete();
-      handleStopReading();
-      return;
-    }
-
-    const section = sectionsToReadData[currentGlobalIndex];
-    console.log(`ContentReader: Processing section: ${section.id} (Index: ${currentGlobalIndex})`);
-
-    smoothScrollTo(section.id);
-    
-    const textToDisplay = section.uiMessage || section.speakableText;
-    addMessageToChat('ai', <p>{textToDisplay}</p>, section.speakableText);
-
-    speakTextProp(section.speakableText, () => { // onEnd callback from speakTextProp
-      if (!isMountedRef.current || !isReadingRef.current) return;
-
-      if (section.onAction === 'triggerProjectsInteractive') {
-        console.log("ContentReader: Reached projects interactive step, calling controller.");
-        onProjectsStepReached(); // Controller opens chat for project buttons
-        handleStopReading(); // Pause ContentReader here
-      } else if (section.onAction === 'triggerTourComplete') {
-        console.log("ContentReader: Reached end of tour, calling onTourComplete.");
-        onTourComplete();
-        handleStopReading();
-      } else if (section.autoAdvanceTo) {
-        const nextSectionIndex = sectionsToReadData.findIndex(s => s.id === section.autoAdvanceTo);
-        if (nextSectionIndex !== -1) {
-          if (tourTimeoutRef.current) clearTimeout(tourTimeoutRef.current);
-          tourTimeoutRef.current = setTimeout(() => {
-            if (isMountedRef.current && isReadingRef.current) {
-              currentSectionIndexRef.current = nextSectionIndex;
-              processSpeechQueue();
-            }
-          }, section.autoAdvanceDelay || 100);
-        } else {
-          console.warn(`ContentReader: autoAdvanceTo ID "${section.autoAdvanceTo}" not found. Ending tour.`);
-          onTourComplete();
-          handleStopReading();
-        }
-      } else { 
-         // If no autoAdvanceTo and no onAction, it's effectively the end for ContentReader unless controller re-signals
-        console.log("ContentReader: Section has no autoAdvanceTo or onAction, stopping. Controller may resume for next phase.");
-        onTourComplete(); // Or perhaps signal controller differently
-        handleStopReading();
+    if (sectionQueueRef.current.length > 0) {
+      const nextSection = sectionQueueRef.current.shift(); // Get and remove next section
+      if (nextSection) {
+        currentSectionIndexRef.current = sectionsToReadData.findIndex(s => s.id === nextSection.id);
+        console.log(`ContentReader: Processing section from queue: ${nextSection.id}`);
+        smoothScrollTo(nextSection.id);
+        speakText(nextSection.speakableText, processSpeechQueue); // Recursively call on end
+      } else { // Should not happen if length > 0, but as a safeguard
+        console.log("ContentReader: Queue had items, but shift returned undefined. Stopping.");
+        setIsReading(false);
       }
-    }, true); 
-
-  }, [smoothScrollTo, speakTextProp, addMessageToChat, onTourComplete, onProjectsStepReached, handleStopReading]);
-
-  const startReadingSequence = useCallback((startIndex: number) => {
-    if (!isMountedRef.current) return;
-    console.log(`ContentReader: STARTING/RESUMING sequence from index: ${startIndex}, sectionId: ${sectionsToReadData[startIndex]?.id}`);
-    
-    handleStopReading(); 
-
-    currentSectionIndexRef.current = startIndex;
-    setIsReading(true); 
-  }, [handleStopReading, setIsReading]);
-
-  useEffect(() => {
-    if (startTourSignal && !isReadingRef.current && isMountedRef.current) {
-      console.log("ContentReader: startTourSignal is true. currentGlobalStepId:", currentGlobalStepId);
-      const foundIndex = sectionsToReadData.findIndex(s => s.id === (currentGlobalStepId || sectionsToReadData[0].id));
-      const startIndex = foundIndex !== -1 ? foundIndex : 0;
-      startReadingSequence(startIndex);
-    } else if (stopTourSignal && isReadingRef.current && isMountedRef.current) {
-      console.log("ContentReader: stopTourSignal is true, stopping reading.");
-      handleStopReading();
+    } else {
+      console.log("ContentReader: Speech queue empty. Tour finished.");
+      speakText("This concludes the overview of Chakradhar's portfolio.", () => {
+        setIsReading(false);
+        setHasSpokenWelcome(false); // Allow welcome to be spoken again if tour is restarted
+        currentSectionIndexRef.current = 0; // Reset for next time
+      });
     }
-  }, [startTourSignal, stopTourSignal, currentGlobalStepId, startReadingSequence, handleStopReading]);
-  
-  useEffect(() => {
-    if (isReading && isMountedRef.current && currentSectionIndexRef.current < sectionsToReadData.length) {
-        console.log(`ContentReader: isReading is true. Calling processSpeechQueue for index: ${currentSectionIndexRef.current}`);
-        processSpeechQueue();
-    } else if (!isReading && isMountedRef.current) {
-        // Stop actions are handled by handleStopReading or stopTourSignal effect
-    }
-  }, [isReading, processSpeechQueue]); // currentSectionIndexRef.current change handled via startReadingSequence
+  }, [isReading, isMounted, smoothScrollTo, speakText]);
 
-  return null; 
+
+  const handleToggleRead = useCallback(() => {
+    if (!isMounted || !synthRef.current) {
+      console.warn("ContentReader: Cannot toggle read, component not ready.");
+      return;
+    }
+
+    if (isReading) {
+      console.log("ContentReader: Stopping speech.");
+      setIsReading(false);
+      setIsLoadingSpeech(false);
+      sectionQueueRef.current = []; // Clear the queue
+      if (utteranceRef.current) {
+        utteranceRef.current.onend = null;
+        utteranceRef.current.onerror = null;
+      }
+      synthRef.current.cancel();
+      utteranceRef.current = null;
+    } else {
+      console.log("ContentReader: Starting speech sequence.");
+      setIsLoadingSpeech(true);
+      const welcomeText = "Welcome. I will now briefly guide you through Chakradhar's portfolio sections.";
+      
+      const startMainTour = () => {
+        setHasSpokenWelcome(true);
+        // Start from currentSectionIndexRef or 0 if never started/reset
+        const startIndex = currentSectionIndexRef.current < sectionsToReadData.length ? currentSectionIndexRef.current : 0;
+        sectionQueueRef.current = [...sectionsToReadData.slice(startIndex)];
+        setIsReading(true); // This will trigger the useEffect below to start processSpeechQueue
+         // Directly call processSpeechQueue after setting isReading to true
+        requestAnimationFrame(() => processSpeechQueue());
+      };
+
+      if (!hasSpokenWelcome) {
+        speakText(welcomeText, startMainTour);
+      } else {
+        startMainTour();
+      }
+    }
+  }, [isReading, isMounted, hasSpokenWelcome, speakText, processSpeechQueue]);
+
+
+  if (!isMounted) {
+    return null; // Don't render anything until mounted and synth is potentially available
+  }
+
+  return (
+    <Button
+      onClick={handleToggleRead}
+      variant="outline"
+      size="icon"
+      className={cn(
+        "fixed bottom-20 right-6 sm:bottom-20 sm:right-8 z-[9999]", // Positioned above chatbot bubble
+        "rounded-full w-14 h-14 sm:w-16 sm:h-16",
+        "bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg",
+        isLoadingSpeech && "cursor-wait"
+      )}
+      aria-label={isReading ? "Stop Reading" : "Read Page Content"}
+      disabled={isLoadingSpeech}
+    >
+      {isLoadingSpeech ? <Loader2 className="h-6 w-6 animate-spin" /> : (isReading ? <Square className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />)}
+    </Button>
+  );
 };
 
 export default ContentReader;

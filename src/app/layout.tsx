@@ -1,21 +1,22 @@
 
 import type { Metadata } from 'next';
-import { Inter, Roboto_Mono } from 'next/font/google';
+import { Inter as GeistSans, Roboto_Mono as GeistMono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
+import ContentReader from '@/components/ai/ContentReader';
 import InteractiveChatbot from '@/components/chatbot/InteractiveChatbot';
 
-const inter = Inter({
-  variable: '--font-inter',
+const geistSans = GeistSans({
+  variable: '--font-geist-sans',
   subsets: ['latin'],
 });
 
-const robotoMono = Roboto_Mono({
-  variable: '--font-roboto-mono',
+const geistMono = GeistMono({
+  variable: '--font-geist-mono',
   subsets: ['latin'],
-  weight: ['400', '700'] // Common weights for a mono font
+  weight: ['400', '700'] 
 });
 
 export const metadata: Metadata = {
@@ -30,14 +31,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen bg-background text-foreground`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-background text-foreground`}>
         <Header />
         <main className="flex-grow">
           {children}
         </main>
         <Footer />
         <Toaster />
-        <InteractiveChatbot />
+        <ContentReader /> {/* Self-contained voice tour guide */}
+        <InteractiveChatbot /> {/* Self-contained Q&A chatbot */}
       </body>
     </html>
   );
