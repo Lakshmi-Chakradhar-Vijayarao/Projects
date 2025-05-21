@@ -1,3 +1,4 @@
+
 "use client";
 import ExperienceItem from '@/components/experience-item';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
@@ -25,9 +26,10 @@ const experienceData = [
       'Integrated WebRTC for 1,000+ real-time users.',
       'Participated in Agile sprints with QA and product teams.',
     ],
-    companyLogoSrc: "/logos/Zoho.png",
+    // Placeholder - Replace with actual Zoho logo URL or local path
+    companyLogoSrc: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Zoho-logo.svg/2560px-Zoho-logo.svg.png", // Example from Wikimedia
     companyLogoAlt: "Zoho Logo",
-    dataAiHint: "zoho",
+    dataAiHint: "zoho brand",
   },
 ];
 
