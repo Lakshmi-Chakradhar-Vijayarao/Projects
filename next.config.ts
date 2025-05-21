@@ -1,6 +1,8 @@
 
 import type {NextConfig} from 'next';
 
+console.log("<<<<<< EXECUTING next.config.ts - CHECK YOUR SERVER STARTUP LOGS! >>>>>>");
+
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
@@ -25,7 +27,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'source.unsplash.com', // This line is crucial
+        hostname: 'source.unsplash.com',
         port: '',
         pathname: '/**',
       },

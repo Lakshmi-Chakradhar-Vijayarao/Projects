@@ -20,13 +20,14 @@ export interface Project {
   icon?: LucideIcon | React.ElementType;
 }
 
-export const projectsData: Project[] = [
+// This data is now local to this component.
+const projectsData: Project[] = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
-    date: "Ongoing",
-    description: "Developed a deep learning solution achieving over 90% accuracy in distinguishing crops from weeds, optimizing herbicide usage and promoting sustainable agriculture.",
+    date: "2023",
+    description: "Built a YOLO-based object detection model with 90% accuracy for classifying crop and weed species, reducing herbicide usage by 15%. Processed 10,000+ agricultural images for real-time analysis.",
     technologies: ["Python", "YOLO", "Object Detection", "TensorFlow", "OpenCV"],
-    image: "https://source.unsplash.com/640x400/?agriculture technology",
+    image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=640&auto=format",
     imageHint: "agriculture technology",
     projectUrl: "#",
     categories: ["AI/ML"],
@@ -34,19 +35,19 @@ export const projectsData: Project[] = [
   {
     title: "Search Engine for Movie Summaries",
     date: "2023",
-    description: "Built a scalable search engine using TF-IDF and cosine similarity on PySpark and Hadoop, efficiently querying over 100,000 movie records.",
+    description: "Developed a distributed search engine leveraging TF-IDF and cosine similarity to improve query relevance by 10%. Deployed on Hadoop and Databricks to manage 100,000+ records.",
     technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala", "NLP"],
-    image: "https://source.unsplash.com/640x400/?data search movie",
+    image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=640&auto=format",
     imageHint: "data search movie",
     projectUrl: "#",
     categories: ["Big Data", "AI/ML"],
   },
   {
     title: "Facial Recognition Attendance System",
-    date: "2023",
-    description: "Designed a real-time facial recognition system with 99% accuracy for automated attendance, featuring cloud-synced data logging for over 200 users.",
+    date: "2022",
+    description: "Designed a facial recognition system with 99% accuracy for 200+ users, reducing attendance tracking errors by 30%. Linked to cloud storage for real-time data syncing.",
     technologies: ["Python", "OpenCV", "Machine Learning", "Cloud API"],
-    image: "https://source.unsplash.com/640x400/?security face recognition",
+    image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=640&auto=format",
     imageHint: "security face recognition",
     projectUrl: "#",
     categories: ["AI/ML"],
@@ -54,19 +55,19 @@ export const projectsData: Project[] = [
   {
     title: "Mushroom Classification with Scikit-Learn",
     date: "2022",
-    description: "Implemented ensemble machine learning models (Decision Tree, Random Forest, KNN) achieving 95% accuracy in classifying mushroom species from feature data.",
+    description: "Trained and evaluated ensemble models (Decision Tree, Random Forest, KNN), achieving 95% accuracy using cross-validation. Enhanced reliability through preprocessing for missing data.",
     technologies: ["Python", "Scikit-Learn", "Decision Tree", "Random Forest", "KNN"],
-    image: "https://source.unsplash.com/640x400/?nature classification mushroom",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=640&auto=format",
     imageHint: "nature classification mushroom",
     projectUrl: "#",
     categories: ["AI/ML"],
   },
   {
     title: "Custom Process Scheduler Development",
-    date: "2022",
-    description: "Engineered custom priority and lottery-based schedulers for the xv6/Linux kernel, reducing context switching overhead by 18%.",
+    date: "2021",
+    description: "Programmed custom priority and lottery schedulers for the xv6/Linux kernel, reducing context switching overhead by 18%. Validated algorithm fairness with simulations.",
     technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
-    image: "https://source.unsplash.com/640x400/?computing programming kernel",
+    image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?q=80&w=640&auto=format",
     imageHint: "computing programming kernel",
     projectUrl: "#",
     categories: ["Systems"],
@@ -74,9 +75,9 @@ export const projectsData: Project[] = [
   {
     title: "Personal Portfolio Website",
     date: "2024",
-    description: "The very website you're looking at! Built with Next.js, React, TypeScript, Tailwind CSS, and integrated AI features.",
-    technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Genkit"],
-    image: "https://source.unsplash.com/640x400/?web design portfolio",
+    description: "The very website you're looking at! Built with Next.js, React, Tailwind CSS, and TypeScript, showcasing my skills and projects.",
+    technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript"],
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=640&auto=format",
     imageHint: "web design portfolio",
     projectUrl: "#",
     categories: ["Web Dev"],
@@ -131,3 +132,6 @@ const Projects: React.FC = () => {
 };
 
 export default Projects;
+// No longer exporting projectsData as it's used locally
+// export { projectsData };
+
