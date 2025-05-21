@@ -1,59 +1,102 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import ChatbotBubble from './ChatbotBubble';
-import ChatbotInterface, { type ChatbotInterfaceMessage } from './ChatbotInterface';
+import React, { useState, useEffect, useCallback, useRef, type FormEvent } from 'react';
+import ChatbotInterface, { type ChatMessage as ChatbotInterfaceMessage, type QuickReplyButtonProps } from './ChatbotInterface';
 import { askAboutResume, type ResumeQAInput, type ResumeQAOutput } from '@/ai/flows/resume-qa-flow';
 
-const InteractiveChatbot: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatbotInterfaceMessage[]>([]);
+// Re-exporting types for clarity when IntegratedAssistantController imports them
+export interface ChatMessage extends ChatbotInterfaceMessage {}
+export interface QuickReply extends QuickReplyButtonProps {}
+
+interface InteractiveChatbotProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialMessages?: ChatMessage[];
+  initialQuickReplies?: QuickReply[];
+  onQuickReplyAction: (action: string) => void; 
+  // onSendMessageToAI: (message: string) => void; // For direct Q&A in future
+  isLoading: boolean;
+  currentMode: string; // e.g., 'greeting', 'qa_active', 'projects_interactive'
+}
+
+const InteractiveChatbot: React.FC<InteractiveChatbotProps> = ({
+  isOpen,
+  onClose,
+  initialMessages,
+  initialQuickReplies,
+  onQuickReplyAction,
+  isLoading: propIsLoading,
+  currentMode,
+}) => {
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages || []);
   const [currentInput, setCurrentInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [quickReplies, setQuickReplies] = useState<QuickReply[]>(initialQuickReplies || []);
+  const [isTyping, setIsTyping] = useState(false); // Internal loading for AI response
+
   const messageIdCounterRef = useRef(0);
 
-  const toggleChat = useCallback(() => {
-    setIsOpen(prev => !prev);
-  }, []);
+  useEffect(() => {
+    setMessages(initialMessages || []);
+  }, [initialMessages]);
 
-  const addMessage = useCallback((sender: 'user' | 'ai', text: string | React.ReactNode) => {
+  useEffect(() => {
+    setQuickReplies((initialQuickReplies || []).map(qr => ({ text: qr.text, action: qr.action, icon: qr.icon })));
+  }, [initialQuickReplies]);
+
+  const addMessage = useCallback((sender: 'user' | 'ai', text: string | React.ReactNode, speakableTextOverride?: string) => {
     messageIdCounterRef.current += 1;
-    setMessages(prev => [...prev, { id: `${Date.now()}-${messageIdCounterRef.current}`, sender, text }]);
-  }, []);
+    const newMessage: ChatMessage = { id: `${Date.now()}-${messageIdCounterRef.current}`, sender, text, speakableTextOverride };
+    setMessages(prev => [...prev, newMessage]);
+  }, [setMessages]);
 
-  const handleSendMessage = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!currentInput.trim()) return;
+    if (!currentInput.trim() || currentMode !== 'qa_active') return;
 
     const userMessage = currentInput;
-    addMessage('user', userMessage);
+    addMessage('user', userMessage, userMessage);
     setCurrentInput('');
-    setIsLoading(true);
+    setIsTyping(true);
+    setQuickReplies([]); // Clear quick replies when user types a message
 
     try {
       const aiResponse: ResumeQAOutput = await askAboutResume({ question: userMessage });
-      addMessage('ai', aiResponse.answer);
+      addMessage('ai', aiResponse.answer, aiResponse.answer);
     } catch (error) {
-      console.error("Error calling Genkit flow:", error);
-      addMessage('ai', "Sorry, I encountered an error trying to respond. Please try again.");
+      console.error("Error calling Genkit resume Q&A flow:", error);
+      const errorText = "Sorry, I encountered an error trying to respond. Please try again.";
+      addMessage('ai', errorText, errorText);
     } finally {
-      setIsLoading(false);
+      setIsTyping(false);
     }
-  }, [currentInput, addMessage]);
+  }, [currentInput, addMessage, currentMode]);
+
+  const handleQuickReplyClick = useCallback((action: string) => {
+    console.log("InteractiveChatbot: Quick reply clicked with action:", action);
+    if (onQuickReplyAction) {
+      onQuickReplyAction(action);
+    }
+    // The controller will handle message additions for quick replies
+    setQuickReplies([]); // Clear quick replies after one is clicked
+  }, [onQuickReplyAction, setQuickReplies]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
-    <>
-      <ChatbotBubble onClick={toggleChat} isVisible={!isOpen} />
-      <ChatbotInterface
-        isOpen={isOpen}
-        onClose={toggleChat}
-        messages={messages}
-        currentInput={currentInput}
-        onInputChange={(e) => setCurrentInput(e.target.value)}
-        onSendMessage={handleSendMessage}
-        isLoading={isLoading}
-      />
-    </>
+    <ChatbotInterface
+      isOpen={isOpen}
+      onClose={onClose}
+      messages={messages}
+      currentInput={currentInput}
+      onInputChange={(e) => setCurrentInput(e.target.value)}
+      onSendMessage={handleSendMessage}
+      isLoading={propIsLoading || isTyping}
+      quickReplies={quickReplies}
+      onQuickReplyClick={handleQuickReplyClick}
+      showTextInput={currentMode === 'qa_active'}
+    />
   );
 };
 
