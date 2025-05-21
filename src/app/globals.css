@@ -12,51 +12,51 @@ html {
 
 @layer base {
   :root {
-    /* Vibrant Dark Theme */
-    --background: 220 25% 12%;       /* Very dark, slightly desaturated blue */
-    --foreground: 220 20% 92%;       /* Light gray for text */
+    /* Professional Light Theme */
+    --background: 210 60% 97%;       /* Extremely light, slightly desaturated blue */
+    --foreground: 220 25% 25%;       /* Dark desaturated blue for text */
 
-    --card: 220 25% 18%;              /* Dark blue-gray, slightly lighter than background */
+    --card: 0 0% 100%;                /* White */
     --card-foreground: hsl(var(--foreground));
 
-    --popover: hsl(var(--card));      /* Dark popovers */
+    --popover: hsl(var(--card));      /* White popovers */
     --popover-foreground: hsl(var(--foreground));
 
-    --primary: 210 90% 60%;         /* Vibrant blue */
-    --primary-foreground: 220 20% 98%;   /* Very light, almost white for text on primary */
+    --primary: 210 90% 50%;           /* Vibrant blue */
+    --primary-foreground: 210 20% 98%;     /* Very light, almost white for text on primary */
 
-    --secondary: 270 80% 70%;       /* Vibrant purple */
-    --secondary-foreground: 220 20% 98%; /* Very light text on secondary */
+    --secondary: 270 70% 60%;         /* Complementary purple */
+    --secondary-foreground: 270 20% 98%;   /* Very light text on secondary */
 
-    --muted: 220 25% 25%;            /* Darker muted shade */
-    --muted-foreground: 220 15% 60%;     /* Muted light gray for text */
+    --muted: 210 30% 90%;              /* Light gray-blue for muted elements */
+    --muted-foreground: 210 25% 55%;       /* Darker muted text */
 
-    --accent: 180 80% 50%;          /* Vibrant cyan/teal */
-    --accent-foreground: 220 25% 10%;   /* Dark text for contrast on bright accent */
+    --accent: 180 70% 45%;            /* Cyan/Teal */
+    --accent-foreground: 180 20% 98%;     /* Very light text on accent */
 
-    --destructive: 0 70% 60%;         /* Vibrant destructive red */
+    --destructive: 0 80% 60%;           /* Clear red */
     --destructive-foreground: 0 0% 100%; /* White text on destructive */
 
-    --border: 220 25% 28%;            /* Subtle border, slightly lighter than card */
-    --input: hsl(var(--card));        /* Inputs same as card background */
-    --ring: hsl(var(--primary));            /* Primary blue for focus rings */
+    --border: 210 30% 85%;              /* Light gray-blue border */
+    --input: 210 30% 94%;              /* Slightly off-white for inputs */
+    --ring: hsl(var(--primary));              /* Primary blue for focus rings */
 
     --radius: 0.5rem;
 
     --chart-1: hsl(var(--primary));
     --chart-2: hsl(var(--secondary));
     --chart-3: hsl(var(--accent));
-    --chart-4: 200 80% 65%; /* Adjusted for dark theme vibrancy */
-    --chart-5: 320 80% 65%; /* Adjusted for dark theme vibrancy */
+    --chart-4: 200 80% 55%;
+    --chart-5: 320 70% 60%;
     
-    /* Sidebar colors adjusted for dark theme */
-    --sidebar-background: 220 25% 15%; /* Slightly different dark for sidebar */
+    /* Sidebar colors adjusted for light theme */
+    --sidebar-background: 210 40% 94%;    /* Light gray-blue for sidebar */
     --sidebar-foreground: hsl(var(--foreground));
     --sidebar-primary: hsl(var(--primary));
     --sidebar-primary-foreground: hsl(var(--primary-foreground));
     --sidebar-accent: hsl(var(--primary)); /* Selected item background is primary */
     --sidebar-accent-foreground: hsl(var(--primary-foreground)); /* Text on selected primary */
-    --sidebar-border: 220 25% 22%; /* Darker border for sidebar */
+    --sidebar-border: 210 30% 80%;     /* Slightly darker border for sidebar */
     --sidebar-ring: hsl(var(--ring));
   }
 }
@@ -67,5 +67,12 @@ html {
   }
   body {
     @apply bg-background text-foreground;
+    /* background-image: url('/pixel-art-sky-background.jpg'); */ /* Keep pixel art background commented out */
+    /* background-size: cover; */
+    /* background-position: center center; */
+    /* background-repeat: no-repeat; */
+    /* animation: subtle-pan 120s linear infinite alternate; */
+    /* background-color: hsl(var(--background)); */ /* Fallback if image doesn't load */
   }
 }
+
