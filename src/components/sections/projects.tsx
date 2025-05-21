@@ -7,16 +7,26 @@ import ProjectCard from '@/components/project-card';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Button } from '@/components/ui/button';
 
+interface Project {
+  title: string;
+  date: string;
+  description: string;
+  technologies: string[];
+  image: string;
+  imageHint: string;
+  projectUrl: string;
+  categories: string[];
+}
 
-const projectsData = [
+const projectsData: Project[] = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
     date: "2023",
     description: "Built a YOLO-based object detection model (90% accuracy) for classifying crop and weed species, reducing herbicide usage by 15%. Processed 10,000+ agricultural images and established scalable inference pipelines for real-time analysis.",
     technologies: ["Python", "YOLO", "Object Detection", "TensorFlow"],
-    image: "https://placehold.co/640x400.png",
+    image: "https://source.unsplash.com/640x400/?agriculture,technology",
     imageHint: "agriculture technology",
-    projectUrl: "#", // Replace with actual URL
+    projectUrl: "#", 
     categories: ["AI/ML"],
   },
   {
@@ -24,9 +34,9 @@ const projectsData = [
     date: "2022",
     description: "Developed a distributed search engine leveraging TF-IDF and cosine similarity to improve query relevance by 10%. Deployed on Hadoop and Databricks to manage 100,000+ records efficiently.",
     technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala", "NLP"],
-    image: "https://placehold.co/640x400.png",
+    image: "https://source.unsplash.com/640x400/?data,search,movie",
     imageHint: "data search",
-    projectUrl: "#", // Replace with actual URL
+    projectUrl: "#", 
     categories: ["Big Data", "AI/ML"],
   },
   {
@@ -34,9 +44,9 @@ const projectsData = [
     date: "2022",
     description: "Designed a facial recognition system with 99% accuracy for 200+ users, reducing attendance tracking errors by 30%. Linked to cloud storage for real-time data syncing and secure logging.",
     technologies: ["Python", "OpenCV", "Machine Learning", "Cloud"],
-    image: "https://placehold.co/640x400.png",
+    image: "https://source.unsplash.com/640x400/?security,face,recognition",
     imageHint: "security face recognition",
-    projectUrl: "#", // Replace with actual URL
+    projectUrl: "#", 
     categories: ["AI/ML"],
   },
   {
@@ -44,9 +54,9 @@ const projectsData = [
     date: "2021",
     description: "Trained and evaluated ensemble models (Decision Tree, Random Forest, KNN), achieving 95% accuracy using cross-validation. Enhanced reliability through preprocessing techniques to address 20% missing data.",
     technologies: ["Python", "Scikit-Learn", "DT Classifier", "RF Classifier", "KNN"],
-    image: "https://placehold.co/640x400.png",
+    image: "https://source.unsplash.com/640x400/?nature,classification,mushroom",
     imageHint: "nature classification",
-    projectUrl: "#", // Replace with actual URL
+    projectUrl: "#", 
     categories: ["AI/ML"],
   },
   {
@@ -54,17 +64,17 @@ const projectsData = [
     date: "2021",
     description: "Programmed custom priority and lottery schedulers in xv6/Linux kernel, reducing context switching overhead by 18%. Validated algorithm fairness and efficiency with synthetic workload simulations.",
     technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
-    image: "https://placehold.co/640x400.png",
+    image: "https://source.unsplash.com/640x400/?computing,programming,kernel",
     imageHint: "computing programming",
-    projectUrl: "#", // Replace with actual URL
+    projectUrl: "#", 
     categories: ["Systems"],
   },
   {
     title: "Personal Portfolio Website",
     date: "2024",
-    description: "The very website you're looking at! Built with Next.js, React, TypeScript, and Tailwind CSS, featuring a clean design and interactive elements.",
+    description: "The very website you're looking at! Built with Next.js, React, TypeScript, Tailwind CSS, and Genkit, featuring a clean design and interactive elements.",
     technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Genkit"],
-    image: "https://placehold.co/640x400.png",
+    image: "https://source.unsplash.com/640x400/?web,design,portfolio",
     imageHint: "web design portfolio",
     projectUrl: "#", 
     categories: ["Web Dev"],
@@ -85,14 +95,14 @@ const Projects: React.FC = () => {
     : projectsData.filter(project => project.categories.includes(activeFilter));
 
   return (
-    <SectionWrapper id="projects" title="My Projects" className="bg-background/50">
+    <SectionWrapper id="projects" title="My Projects" className="bg-background/95">
       <div className="flex flex-wrap justify-center gap-2 mb-10">
         {filterCategories.map((category) => (
           <Button
             key={category}
             variant={activeFilter === category ? "default" : "outline"}
             onClick={() => setActiveFilter(category)}
-            className="transition-all duration-200 ease-in-out hover:scale-105"
+            className="transition-all duration-200 ease-in-out hover:scale-105 rounded-lg"
           >
             {category}
           </Button>
@@ -119,4 +129,8 @@ const Projects: React.FC = () => {
 };
 
 export default Projects;
-// Removed export of projectsData
+// Removed projectsData export from here to avoid circular dependencies
+// if other components were to import it directly for other purposes.
+// For the AI assistant, we'll need a different strategy to share this data if needed.
+// For now, assuming it's only used within this Projects section.
+// If chat assistant needs it, we should consider a shared data file or context.
