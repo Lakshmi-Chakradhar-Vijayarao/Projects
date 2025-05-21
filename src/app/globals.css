@@ -12,52 +12,53 @@ html {
 
 @layer base {
   :root {
-    /* Professional Light Theme */
-    --background: 210 60% 97%;       /* Extremely light, slightly desaturated blue */
-    --foreground: 220 25% 25%;       /* Dark desaturated blue for text */
+    /* New Light Theme based on user prompt */
+    --background: 0 0% 98%;       /* Light Cream #FAFAFA */
+    --foreground: 0 0% 13%;       /* Charcoal Gray #212121 for main text */
 
-    --card: 0 0% 100%;                /* White */
-    --card-foreground: hsl(var(--foreground));
+    --card: 0 0% 100%;                /* White #FFFFFF */
+    --card-foreground: hsl(var(--foreground)); /* Charcoal Gray for text on cards */
 
     --popover: hsl(var(--card));      /* White popovers */
-    --popover-foreground: hsl(var(--foreground));
+    --popover-foreground: hsl(var(--foreground)); /* Charcoal Gray for text on popovers */
 
-    --primary: 210 90% 50%;           /* Vibrant blue */
-    --primary-foreground: 210 20% 98%;     /* Very light, almost white for text on primary */
+    --primary: 231 53% 48%;           /* Indigo Blue #3F51B5 */
+    --primary-foreground: 0 0% 100%;     /* White for text on primary */
 
-    --secondary: 270 70% 60%;         /* Complementary purple */
-    --secondary-foreground: 270 20% 98%;   /* Very light text on secondary */
+    --secondary: 174 100% 29%;         /* Soft Teal #009688 */
+    --secondary-foreground: 0 0% 100%;   /* White for text on secondary */
 
-    --muted: 210 30% 90%;              /* Light gray-blue for muted elements */
-    --muted-foreground: 210 25% 55%;       /* Darker muted text */
+    --muted: 0 0% 96%;              /* Lighter Gray for muted backgrounds, derived from cream */
+    --muted-foreground: 0 0% 46%;       /* Medium Gray #757575 for muted text */
 
-    --accent: 180 70% 45%;            /* Cyan/Teal */
-    --accent-foreground: 180 20% 98%;     /* Very light text on accent */
+    --accent: 45 100% 51%;            /* Warm Amber #FFC107 */
+    --accent-foreground: 0 0% 13%;     /* Charcoal Gray for text on accent */
 
-    --destructive: 0 80% 60%;           /* Clear red */
-    --destructive-foreground: 0 0% 100%; /* White text on destructive */
+    --destructive: 0 84% 60%;           /* Standard Clear Red */
+    --destructive-foreground: 0 0% 98%; /* Light Cream text on destructive */
 
-    --border: 210 30% 85%;              /* Light gray-blue border */
-    --input: 210 30% 94%;              /* Slightly off-white for inputs */
+    --border: 0 0% 88%;              /* Light gray border (e.g., hsl(0, 0%, 224/0.1 from old dark theme, adjusted to light) */
+    --input: 0 0% 95%;              /* Slightly off-white for inputs, derived from cream */
     --ring: hsl(var(--primary));              /* Primary blue for focus rings */
 
     --radius: 0.5rem;
 
+    /* Chart colors can remain or be adjusted if needed */
     --chart-1: hsl(var(--primary));
     --chart-2: hsl(var(--secondary));
     --chart-3: hsl(var(--accent));
     --chart-4: 200 80% 55%;
     --chart-5: 320 70% 60%;
     
-    /* Sidebar colors adjusted for light theme */
-    --sidebar-background: 210 40% 94%;    /* Light gray-blue for sidebar */
-    --sidebar-foreground: hsl(var(--foreground));
-    --sidebar-primary: hsl(var(--primary));
-    --sidebar-primary-foreground: hsl(var(--primary-foreground));
-    --sidebar-accent: hsl(var(--primary)); /* Selected item background is primary */
-    --sidebar-accent-foreground: hsl(var(--primary-foreground)); /* Text on selected primary */
-    --sidebar-border: 210 30% 80%;     /* Slightly darker border for sidebar */
-    --sidebar-ring: hsl(var(--ring));
+    /* Sidebar colors adjusted for the new light theme */
+    --sidebar-background: hsl(var(--primary)); /* Indigo Blue for sidebar background */
+    --sidebar-foreground: hsl(var(--primary-foreground)); /* White text */
+    --sidebar-primary: hsl(var(--accent)); /* Amber for accents within sidebar */
+    --sidebar-primary-foreground: hsl(var(--accent-foreground)); /* Charcoal for text on Amber */
+    --sidebar-accent: hsl(var(--secondary)); /* Teal for selected item background */
+    --sidebar-accent-foreground: hsl(var(--secondary-foreground)); /* White text on Teal */
+    --sidebar-border: 231 53% 40%;     /* Darker Indigo for sidebar border */
+    --sidebar-ring: hsl(var(--accent)); /* Amber for focus rings */
   }
 }
 
@@ -67,12 +68,5 @@ html {
   }
   body {
     @apply bg-background text-foreground;
-    /* background-image: url('/pixel-art-sky-background.jpg'); */ /* Keep pixel art background commented out */
-    /* background-size: cover; */
-    /* background-position: center center; */
-    /* background-repeat: no-repeat; */
-    /* animation: subtle-pan 120s linear infinite alternate; */
-    /* background-color: hsl(var(--background)); */ /* Fallback if image doesn't load */
   }
 }
-
