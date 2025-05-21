@@ -12,8 +12,7 @@ interface SkillCategory {
   skills: string[];
 }
 
-// Updated to match user's resume structure
-const skillCategories: SkillCategory[] = [
+const skillCategoriesData: SkillCategory[] = [
   {
     name: "Programming Languages",
     icon: <Code2 className="h-5 w-5 mr-2 text-primary" />,
@@ -41,10 +40,11 @@ const skillCategories: SkillCategory[] = [
   },
   {
     name: "Tools & Practices",
-    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />,
+    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />, // Changed from Users icon
     skills: ["Git", "VS Code", "Eclipse", "Jupyter Notebook", "Agile development", "API design", "cross-functional collaboration"],
   },
 ];
+
 
 export default function Skills() {
   return (
@@ -52,7 +52,7 @@ export default function Skills() {
       <Card className="shadow-xl bg-card/90 backdrop-blur-sm border border-border/50">
         <CardContent className="p-6 md:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
-            {skillCategories.map((category) => (
+            {skillCategoriesData.map((category) => (
               <div key={category.name}>
                 <h3 className="text-xl font-semibold text-primary mb-4 flex items-center">
                   {category.icon}
@@ -62,8 +62,8 @@ export default function Skills() {
                   {category.skills.map((skill) => (
                     <Badge
                       key={skill}
-                      variant="secondary" // Changed from outline to secondary
-                      className="text-xs sm:text-sm transition-colors" // Removed custom border/text/hover, rely on variant
+                      variant="secondary" // Keeps the base shape and hover from secondary variant
+                      className="text-xs sm:text-sm bg-secondary/70 text-secondary-foreground hover:bg-secondary/80 transition-colors" // Apply 70% opacity to background
                     >
                       {skill}
                     </Badge>
