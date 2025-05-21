@@ -11,6 +11,7 @@ interface AnimatedVideoAvatarProps {
   className?: string;
 }
 
+// IMPORTANT: Replace these with your actual video paths in /public/videos/
 const videoSources: Record<AvatarAction, string> = {
   idle: '/videos/avatar-idle.mp4',       // Replace with your actual path
   talking: '/videos/avatar-talking.mp4', // Replace with your actual path
@@ -25,24 +26,25 @@ const AnimatedVideoAvatar: React.FC<AnimatedVideoAvatarProps> = ({ action, isVis
 
   useEffect(() => {
     const newSrc = videoSources[action] || videoSources.idle;
-    if (videoRef.current && videoRef.current.src.endsWith(newSrc)) {
-      // If current source is already the target, ensure it's playing if it should be.
-      if (videoRef.current.paused && (action === 'idle' || action === 'talking')) {
-        videoRef.current.play().catch(error => console.warn("Video play (re-play existing src) failed:", error, newSrc));
-      }
-    } else {
+    // Only change source if it's different to avoid reload flicker for same action
+    if (videoRef.current && videoRef.current.src && !videoRef.current.src.endsWith(newSrc)) {
+      setCurrentSrc(newSrc);
+    } else if (!videoRef.current?.src) { // If src is not set at all (initial load)
       setCurrentSrc(newSrc);
     }
   }, [action]);
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.src = currentSrc;
-      videoRef.current.load();
-      videoRef.current.play().catch(error => {
-        // Autoplay is often restricted until user interaction or if not muted
-        console.warn(`Video play failed for ${currentSrc}:`, error, "Ensure videos are muted for autoplay or user has interacted.");
-      });
+      videoRef.current.src = currentSrc; // Set src directly
+      videoRef.current.load(); // Important to load the new source
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          // Autoplay was prevented.
+          console.warn(`Video play failed for ${currentSrc}:`, error, "Ensure videos are muted for autoplay or user has interacted.");
+        });
+      }
     }
   }, [currentSrc]);
   
@@ -58,11 +60,11 @@ const AnimatedVideoAvatar: React.FC<AnimatedVideoAvatarProps> = ({ action, isVis
     )}>
       <video
         ref={videoRef}
-        key={currentSrc} 
-        loop={action === 'idle' || action === 'talking'}
+        key={currentSrc} // Using key to help React re-render if just src changes, though direct manipulation is also used.
+        loop={action === 'idle' || action === 'talking'} // Loop idle and talking animations
         autoPlay
         muted // Mute for autoplay to work reliably across browsers. Unmute programmatically if needed.
-        playsInline
+        playsInline // Important for iOS
         className="w-full h-full object-cover" // Use object-cover or object-contain based on your avatar aspect ratio
       >
         {/* Provide fallback content or a poster image if desired */}

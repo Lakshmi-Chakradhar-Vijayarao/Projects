@@ -1,3 +1,4 @@
+// src/components/chatbot/ChatbotInterface.tsx
 "use client";
 
 import React, { useEffect, useRef, type FormEvent } from 'react';
@@ -7,17 +8,18 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, User, X, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Re-exporting as ChatbotInterfaceMessage to avoid conflict if imported elsewhere
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'ai';
   text: string | React.ReactNode;
-  speakableTextOverride?: string; // For TTS, if different from display text
+  speakableTextOverride?: string;
 }
 
 export interface QuickReplyButtonProps {
   text: string;
-  action: string; // An identifier for the action this button triggers
-  icon?: React.ReactElement; // Optional icon for the button
+  action: string;
+  icon?: React.ReactElement;
 }
 
 interface ChatbotInterfaceProps {
@@ -29,8 +31,8 @@ interface ChatbotInterfaceProps {
   onSendMessage: (e: FormEvent<HTMLFormElement>) => void;
   isLoading: boolean;
   quickReplies?: QuickReplyButtonProps[];
-  onQuickReplyClick: (action: string) => void; // Changed from onQuickReplyAction
-  showTextInput?: boolean; // To conditionally show the text input field
+  onQuickReplyAction: (action: string) => void;
+  showTextInput?: boolean;
 }
 
 const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
@@ -42,13 +44,12 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   onSendMessage,
   isLoading,
   quickReplies,
-  onQuickReplyClick, // Changed from onQuickReplyAction
-  showTextInput = true, // Default to true if not provided
+  onQuickReplyAction,
+  showTextInput = true,
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const quickRepliesRef = useRef<HTMLDivElement>(null);
-
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,10 +62,10 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   }, [quickReplies]);
 
   useEffect(() => {
-    if (isOpen && showTextInput && !quickReplies?.length) { // Only focus if input is shown and no quick replies
+    if (isOpen && showTextInput && (!quickReplies || quickReplies.length === 0) && !isLoading) {
       inputRef.current?.focus();
     }
-  }, [isOpen, showTextInput, quickReplies]);
+  }, [isOpen, showTextInput, quickReplies, isLoading]);
 
 
   if (!isOpen) return null;
@@ -101,14 +102,14 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
         </ScrollArea>
 
         {quickReplies && quickReplies.length > 0 && (
-          <ScrollArea ref={quickRepliesRef} className="max-h-32 p-2 sm:p-3 border-t border-border">
+          <ScrollArea ref={quickRepliesRef} className="max-h-32 p-2 sm:p-3 border-t border-border"> {/* Ensure max-h allows visibility */}
             <div className="flex flex-col space-y-2">
               {quickReplies.map((reply) => (
                 <Button
-                  key={reply.action} // Use action as key if text isn't guaranteed unique
+                  key={reply.action} 
                   variant="outline"
                   className="w-full justify-start text-left h-auto py-2.5 px-3 sm:px-4 text-xs sm:text-sm"
-                  onClick={() => onQuickReplyClick(reply.action)}
+                  onClick={() => onQuickReplyAction(reply.action)}
                 >
                   {reply.icon && React.isValidElement(reply.icon) && React.cloneElement(reply.icon, { className: cn(reply.icon.props.className, "mr-2 h-4 w-4 flex-shrink-0") })}
                   {reply.text}
@@ -143,3 +144,4 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
 };
 
 export default ChatbotInterface;
+

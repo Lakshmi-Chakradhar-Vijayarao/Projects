@@ -12,14 +12,14 @@ export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
 interface TextToSpeechResponse {
   success: boolean;
-  audioUrl?: string;
+  audioUrl?: string; // Placeholder for where audio data/URL would go
   error?: string;
-  message?: string;
+  message?: string; // For success/error messages
 }
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 // You can get voice IDs from ElevenLabs dashboard or their /v1/voices API endpoint
-const DEFAULT_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"; // Example: A default voice
+const DEFAULT_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"; // Example: A default voice (Grace)
 
 export async function generateSpeechWithElevenLabs(input: TextToSpeechInput): Promise<TextToSpeechResponse> {
   if (!ELEVENLABS_API_KEY) {
@@ -38,40 +38,46 @@ export async function generateSpeechWithElevenLabs(input: TextToSpeechInput): Pr
   console.log(`ElevenLabs TTS: Requesting speech for text: "${text.substring(0,30)}..." with voiceId: ${effectiveVoiceId}`);
 
   try {
-    // In a real implementation, you would use the ElevenLabs SDK or fetch API:
-    // const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'audio/mpeg',
-    //     'Content-Type': 'application/json',
-    //     'xi-api-key': ELEVENLABS_API_KEY,
-    //   },
-    //   body: JSON.stringify({
-    //     text: text,
-    //     model_id: 'eleven_multilingual_v2', // Or your preferred model
-    //     voice_settings: { stability: 0.5, similarity_boost: 0.75 },
-    //   }),
-    // });
+    // TODO: Implement actual ElevenLabs API call here
+    // Example using fetch (ensure you handle ArrayBuffer response and convert to base64 if needed, or use SDK)
+    /*
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${effectiveVoiceId}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'audio/mpeg',
+        'Content-Type': 'application/json',
+        'xi-api-key': ELEVENLABS_API_KEY,
+      },
+      body: JSON.stringify({
+        text: text,
+        model_id: 'eleven_multilingual_v2', // Or your preferred model
+        voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+      }),
+    });
 
-    // if (!response.ok) {
-    //   const errorData = await response.json();
-    //   console.error("ElevenLabs API Error:", errorData);
-    //   return { success: false, error: `ElevenLabs API error: ${response.statusText}`, message: errorData.detail?.message || 'Unknown error' };
-    // }
+    if (!response.ok) {
+      const errorData = await response.json(); // Or response.text() if error isn't JSON
+      console.error("ElevenLabs API Error:", errorData);
+      return { success: false, error: `ElevenLabs API error: ${response.statusText}`, message: errorData.detail?.message || 'Unknown error' };
+    }
 
-    // const audioBlob = await response.blob();
-    // For this placeholder, we'll simulate a successful response with a fake URL
-    // In a real scenario, you'd upload the blob to Firebase Storage and get a public URL,
-    // or stream the audio directly if possible and your client supports it.
+    const audioBlob = await response.blob();
+    // To return as base64:
+    // const buffer = await audioBlob.arrayBuffer();
+    // const base64Audio = Buffer.from(buffer).toString('base64');
+    // return { success: true, audioUrl: `data:audio/mpeg;base64,${base64Audio}` };
+    
+    // For this placeholder, we'll simulate a successful response without an actual audio URL
+    // The client-side logic will need to know how to handle this (e.g., fallback to browser TTS)
+    */
     
     // ** THIS IS A PLACEHOLDER - YOU NEED TO IMPLEMENT ACTUAL ELEVENLABS CALL AND AUDIO HANDLING **
-    console.warn("ElevenLabs TTS: Using PLACEHOLDER audio. Implement actual API call.");
+    console.warn("ElevenLabs TTS: Using PLACEHOLDER. Implement actual API call to return audio data URL or direct URL.");
     // Simulate a delay
     await new Promise(resolve => setTimeout(resolve, 1000)); 
     
-    // For now, let's return a fake success and a known audio file for testing if you have one
-    // Or, just indicate success without an audioUrl if the client will use browser TTS as fallback
-    // return { success: true, audioUrl: "/placeholder-audio.mp3" }; // if you had a public/placeholder-audio.mp3
+    // Placeholder success: no audioUrl means fallback to browser TTS on client.
+    // If you implemented base64, it would be: return { success: true, audioUrl: `data:audio/mpeg;base64,${base64Audio}` };
      return { success: true, message: "Placeholder: TTS generated (no actual audio URL)." };
 
 
