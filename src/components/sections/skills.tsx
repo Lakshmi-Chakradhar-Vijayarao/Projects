@@ -1,7 +1,7 @@
 "use client";
 
 import { SectionWrapper } from '@/components/ui/section-wrapper';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { ReactNode } from 'react';
 import { Code2, Library, BrainCircuit, CloudCog, Database, Wrench, Users } from 'lucide-react';
@@ -12,6 +12,7 @@ interface SkillCategory {
   skills: string[];
 }
 
+// Updated to match user's resume structure
 const skillCategories: SkillCategory[] = [
   {
     name: "Programming Languages",
@@ -40,7 +41,7 @@ const skillCategories: SkillCategory[] = [
   },
   {
     name: "Tools & Practices",
-    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />, // Changed from Users for better representation of "Tools"
+    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />,
     skills: ["Git", "VS Code", "Eclipse", "Jupyter Notebook", "Agile development", "API design", "cross-functional collaboration"],
   },
 ];
@@ -48,9 +49,9 @@ const skillCategories: SkillCategory[] = [
 export default function Skills() {
   return (
     <SectionWrapper id="skills-section" title="Technical Skills">
-      <Card className="shadow-xl bg-card/80 backdrop-blur-sm border border-border/50">
+      <Card className="shadow-xl bg-card/90 backdrop-blur-sm border border-border/50">
         <CardContent className="p-6 md:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10"> {/* Updated to 2 columns on md+, adjusted gap */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
             {skillCategories.map((category) => (
               <div key={category.name}>
                 <h3 className="text-xl font-semibold text-primary mb-4 flex items-center">
@@ -61,8 +62,8 @@ export default function Skills() {
                   {category.skills.map((skill) => (
                     <Badge
                       key={skill}
-                      variant="outline"
-                      className="border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/60 text-sm px-3 py-1"
+                      variant="secondary" // Changed from outline to secondary
+                      className="text-xs sm:text-sm transition-colors" // Removed custom border/text/hover, rely on variant
                     >
                       {skill}
                     </Badge>
