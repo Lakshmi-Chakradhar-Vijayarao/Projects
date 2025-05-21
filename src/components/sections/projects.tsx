@@ -6,8 +6,9 @@ import { useInView } from 'react-intersection-observer';
 import ProjectCard from '@/components/project-card';
 import { SectionWrapper } from '@/components/ui/section-wrapper';
 import { Button } from '@/components/ui/button';
+import type { LucideIcon } from 'lucide-react';
 
-interface Project {
+export interface Project {
   title: string;
   date: string;
   description: string;
@@ -16,14 +17,17 @@ interface Project {
   imageHint: string;
   projectUrl: string;
   categories: string[];
+  icon?: LucideIcon | React.ElementType; // Optional icon for the project card (e.g. from lucide-react)
 }
 
+// This data is now local to this component.
+// If ResumeChatAssistant needs this, it should be sourced differently or passed as props.
 const projectsData: Project[] = [
   {
     title: "AI-Powered Smart Detection of Crops and Weeds",
-    date: "2023",
-    description: "Built a YOLO-based object detection model (90% accuracy) for classifying crop and weed species, reducing herbicide usage by 15%. Processed 10,000+ agricultural images and established scalable inference pipelines for real-time analysis.",
-    technologies: ["Python", "YOLO", "Object Detection", "TensorFlow"],
+    date: "Ongoing",
+    description: "Developed a deep learning solution achieving over 90% accuracy in distinguishing crops from weeds, optimizing herbicide usage and promoting sustainable agriculture.",
+    technologies: ["Python", "YOLO", "Object Detection", "TensorFlow", "OpenCV"],
     image: "https://source.unsplash.com/640x400/?agriculture,technology",
     imageHint: "agriculture technology",
     projectUrl: "#", 
@@ -31,19 +35,19 @@ const projectsData: Project[] = [
   },
   {
     title: "Search Engine for Movie Summaries",
-    date: "2022",
-    description: "Developed a distributed search engine leveraging TF-IDF and cosine similarity to improve query relevance by 10%. Deployed on Hadoop and Databricks to manage 100,000+ records efficiently.",
+    date: "2023",
+    description: "Built a scalable search engine using TF-IDF and cosine similarity on PySpark and Hadoop, efficiently querying over 100,000 movie records.",
     technologies: ["Python", "PySpark", "Databricks", "Hadoop", "Scala", "NLP"],
     image: "https://source.unsplash.com/640x400/?data,search,movie",
-    imageHint: "data search",
+    imageHint: "data search movie",
     projectUrl: "#", 
     categories: ["Big Data", "AI/ML"],
   },
   {
     title: "Facial Recognition Attendance System",
-    date: "2022",
-    description: "Designed a facial recognition system with 99% accuracy for 200+ users, reducing attendance tracking errors by 30%. Linked to cloud storage for real-time data syncing and secure logging.",
-    technologies: ["Python", "OpenCV", "Machine Learning", "Cloud"],
+    date: "2023",
+    description: "Designed a real-time facial recognition system with 99% accuracy for automated attendance, featuring cloud-synced data logging for over 200 users.",
+    technologies: ["Python", "OpenCV", "Machine Learning", "Cloud API"],
     image: "https://source.unsplash.com/640x400/?security,face,recognition",
     imageHint: "security face recognition",
     projectUrl: "#", 
@@ -51,28 +55,28 @@ const projectsData: Project[] = [
   },
   {
     title: "Mushroom Classification using Scikit-Learn",
-    date: "2021",
-    description: "Trained and evaluated ensemble models (Decision Tree, Random Forest, KNN), achieving 95% accuracy using cross-validation. Enhanced reliability through preprocessing techniques to address 20% missing data.",
-    technologies: ["Python", "Scikit-Learn", "DT Classifier", "RF Classifier", "KNN"],
+    date: "2022",
+    description: "Implemented ensemble machine learning models (Decision Tree, Random Forest, KNN) achieving 95% accuracy in classifying mushroom species from feature data.",
+    technologies: ["Python", "Scikit-Learn", "Decision Tree", "Random Forest", "KNN"],
     image: "https://source.unsplash.com/640x400/?nature,classification,mushroom",
-    imageHint: "nature classification",
+    imageHint: "nature classification mushroom",
     projectUrl: "#", 
     categories: ["AI/ML"],
   },
   {
     title: "Custom Process Scheduler Development",
-    date: "2021",
-    description: "Programmed custom priority and lottery schedulers in xv6/Linux kernel, reducing context switching overhead by 18%. Validated algorithm fairness and efficiency with synthetic workload simulations.",
+    date: "2022",
+    description: "Engineered custom priority and lottery-based schedulers for the xv6/Linux kernel, reducing context switching overhead by 18%.",
     technologies: ["Linux Kernel", "xv6", "C", "C++", "OS Development"],
     image: "https://source.unsplash.com/640x400/?computing,programming,kernel",
-    imageHint: "computing programming",
+    imageHint: "computing programming kernel",
     projectUrl: "#", 
     categories: ["Systems"],
   },
   {
     title: "Personal Portfolio Website",
     date: "2024",
-    description: "The very website you're looking at! Built with Next.js, React, TypeScript, Tailwind CSS, and Genkit, featuring a clean design and interactive elements.",
+    description: "The very website you're looking at! Built with Next.js, React, TypeScript, Tailwind CSS, and Genkit for AI features.",
     technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Genkit"],
     image: "https://source.unsplash.com/640x400/?web,design,portfolio",
     imageHint: "web design portfolio",
@@ -129,8 +133,3 @@ const Projects: React.FC = () => {
 };
 
 export default Projects;
-// Removed projectsData export from here to avoid circular dependencies
-// if other components were to import it directly for other purposes.
-// For the AI assistant, we'll need a different strategy to share this data if needed.
-// For now, assuming it's only used within this Projects section.
-// If chat assistant needs it, we should consider a shared data file or context.
