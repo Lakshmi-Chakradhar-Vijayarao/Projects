@@ -26,10 +26,8 @@ const AnimatedAvatar: React.FC = () => {
   const [lineStyles, setLineStyles] = useState<LineStyle[]>([]);
 
   useEffect(() => {
-    // Start main animation trigger
     const timer = setTimeout(() => setAnimate(true), 500);
 
-    // Generate styles for dots and lines client-side to avoid hydration mismatch
     const newDotStyles = Array.from({ length: 8 }).map((_, i) => ({
       width: `${Math.random() * 20 + 10}px`,
       height: `${Math.random() * 20 + 10}px`,
@@ -78,16 +76,16 @@ const AnimatedAvatar: React.FC = () => {
 
       {/* Avatar with animation */}
       <Avatar
-        className={`relative w-48 h-48 border-4 border-white shadow-lg transition-all duration-700 ease-in-out
+        className={`relative w-48 h-48 border-4 border-card shadow-lg transition-all duration-700 ease-in-out
           ${animate ? 'scale-100' : 'scale-95'}`}
       >
         <AvatarImage
-          src="https://placehold.co/200x200.png" 
+          src="/chakradhar-portrait.jpg" 
           alt="Lakshmi Chakradhar Vijayarao"
           data-ai-hint="professional avatar"
           className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`}
         />
-        <AvatarFallback className="bg-primary text-primary-foreground text-2xl">LC</AvatarFallback>
+        <AvatarFallback className="bg-primary text-primary-foreground text-2xl">CV</AvatarFallback>
       </Avatar>
 
       {/* Animated ring representing tech expertise */}
