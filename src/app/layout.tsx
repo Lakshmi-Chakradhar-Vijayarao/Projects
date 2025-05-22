@@ -5,7 +5,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-import IntegratedAssistantController from '@/components/ai/IntegratedAssistantController';
+import React from 'react';
 
 const geistSans = GeistSans({
   variable: '--font-geist-sans',
@@ -37,7 +37,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        <IntegratedAssistantController /> 
+        {/* AI Assistant features previously here are now removed */}
       </body>
     </html>
   );
