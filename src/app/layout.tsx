@@ -1,12 +1,11 @@
-
+// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter as GeistSans, Roboto_Mono as GeistMono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
-import ContentReader from '@/components/ai/ContentReader';
-import InteractiveChatbot from '@/components/chatbot/InteractiveChatbot';
+import IntegratedAssistantController from '@/components/ai/IntegratedAssistantController';
 
 const geistSans = GeistSans({
   variable: '--font-geist-sans',
@@ -38,8 +37,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        <ContentReader /> {/* Self-contained voice tour guide */}
-        <InteractiveChatbot /> {/* Self-contained Q&A chatbot */}
+        <IntegratedAssistantController /> 
       </body>
     </html>
   );
