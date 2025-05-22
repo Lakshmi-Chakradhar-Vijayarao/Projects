@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -7,24 +8,19 @@ import { cn } from '@/lib/utils';
 
 interface ChatbotBubbleProps {
   onClick: () => void;
-  isVisible: boolean;
 }
 
-const ChatbotBubble: React.FC<ChatbotBubbleProps> = ({ onClick, isVisible }) => {
-  if (!isVisible) {
-    return null;
-  }
-
+const ChatbotBubble: React.FC<ChatbotBubbleProps> = ({ onClick }) => {
   return (
     <Button
       onClick={onClick}
-      variant="outline" // Or your preferred variant
+      variant="outline" 
       size="icon"
       className={cn(
-        "fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9998]", // z-index slightly lower than chat interface
+        "fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9998]", 
         "rounded-full w-14 h-14 sm:w-16 sm:h-16",
-        "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg",
-        "animate-subtle-pulse" // Ensure this animation is defined in tailwind.config.ts
+        "bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl",
+        "animate-subtle-pulse" 
       )}
       aria-label="Toggle AI Assistant"
     >

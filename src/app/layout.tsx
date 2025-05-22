@@ -1,3 +1,4 @@
+
 // src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter as GeistSans, Roboto_Mono as GeistMono } from 'next/font/google';
@@ -6,6 +7,8 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import React from 'react';
+import InteractiveChatbot from '@/components/chatbot/InteractiveChatbot';
+
 
 const geistSans = GeistSans({
   variable: '--font-geist-sans',
@@ -37,7 +40,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
-        {/* AI Assistant features previously here are now removed */}
+        <InteractiveChatbot /> 
       </body>
     </html>
   );

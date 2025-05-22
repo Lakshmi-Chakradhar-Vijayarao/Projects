@@ -1,82 +1,82 @@
-// src/components/chatbot/InteractiveChatbot.tsx
+
 "use client";
-import React, { useState, useEffect, useCallback, FormEvent } from 'react';
-import ChatbotInterface, { 
-    type ChatMessage as ChatbotInterfaceMessage, // Renamed to avoid conflict
-    type QuickReplyButtonProps as ChatbotQuickReplyButtonProps 
-} from './ChatbotInterface';
-// Removed direct Genkit import, will be handled by controller
-// import { askAboutResume, type ResumeQAInput, type ResumeQAOutput } from '@/ai/flows/resume-qa-flow';
+import React, { useState, useCallback, FormEvent, ChangeEvent, useEffect } from 'react';
+import ChatbotBubble from './ChatbotBubble';
+import ChatbotInterface, { type ChatMessage } from './ChatbotInterface';
+import { askAboutResume, type ResumeQAInput, type ResumeQAOutput } from '@/ai/flows/resume-qa-flow';
+import { useToast } from "@/hooks/use-toast";
 
-export interface ChatMessage extends ChatbotInterfaceMessage {} // Use the renamed type
-export interface QuickReply extends ChatbotQuickReplyButtonProps {}
+const InteractiveChatbot: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentInput, setCurrentInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const messageIdCounterRef = React.useRef(0);
 
-type InteractiveChatbotMode =
-  | 'idle'
-  | 'greeting'
-  | 'voice_tour_active'
-  | 'project_selection'
-  | 'project_detail_spoken'
-  | 'qa'
-  | 'post_voice_tour_qa'
-  | 'tour_declined_pending_scroll'
-  | 'scrolled_to_end_greeting';
+  const toggleChat = useCallback(() => {
+    setIsOpen(prev => !prev);
+  }, []);
 
-interface InteractiveChatbotProps {
-  isOpen: boolean;
-  mode: InteractiveChatbotMode;
-  messages: ChatMessage[];
-  quickReplies: QuickReply[];
-  isLoading: boolean;
-  currentInput: string;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSendMessage: (e: FormEvent<HTMLFormElement>) => void; // Controller handles AI call
-  onClose: () => void;
-  onQuickReplyClick: (action: string) => void; // Controller handles action
-}
+  const addMessage = useCallback((sender: 'user' | 'ai', text: string | React.ReactNode) => {
+    messageIdCounterRef.current += 1;
+    const newMessage: ChatMessage = {
+      id: `${Date.now()}-${messageIdCounterRef.current}`,
+      sender,
+      text,
+    };
+    setMessages(prev => [...prev, newMessage]);
+  }, []);
 
-const InteractiveChatbot: React.FC<InteractiveChatbotProps> = ({
-  isOpen,
-  mode,
-  messages,
-  quickReplies: initialQuickReplies, // Renamed prop to avoid confusion
-  isLoading,
-  currentInput,
-  onInputChange,
-  onSendMessage,
-  onClose,
-  onQuickReplyClick,
-}) => {
-  // Internal state for quick replies to display, derived from props
-  const [displayQuickReplies, setDisplayQuickReplies] = useState<QuickReply[]>([]);
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setCurrentInput(e.target.value);
+  }, []);
 
-  useEffect(() => {
-    // Update displayed quick replies when the prop changes
-    setDisplayQuickReplies((initialQuickReplies || []).map(qr => ({ 
-        text: qr.text, 
-        action: qr.action, 
-        icon: qr.icon 
-    })));
-  }, [initialQuickReplies]);
+  const handleSendMessage = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!currentInput.trim()) return;
+
+    addMessage('user', currentInput);
+    const userQuestion = currentInput;
+    setCurrentInput('');
+    setIsLoading(true);
+
+    try {
+      const aiResponse: ResumeQAOutput = await askAboutResume({ question: userQuestion });
+      addMessage('ai', aiResponse.answer);
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      addMessage('ai', "Sorry, I couldn't get a response right now. Please try again later.");
+      toast({
+        title: "Error",
+        description: "Could not connect to the AI assistant.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentInput, addMessage, toast]);
   
-  // Determine if text input should be shown based on current mode and quick replies
-  const showTextInput = mode === 'qa' || mode === 'post_voice_tour_qa' || 
-                       (mode === 'project_detail_spoken' && (!displayQuickReplies || displayQuickReplies.length === 0));
-
+  // Initial greeting message when chat opens for the first time in a session
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      addMessage('ai', "Hi there! I'm Chakradhar's AI Resume Assistant. Ask me anything about his experience or skills!");
+    }
+  }, [isOpen, messages.length, addMessage]);
 
   return (
-    <ChatbotInterface
-      isOpen={isOpen}
-      onClose={onClose}
-      messages={messages}
-      currentInput={currentInput}
-      onInputChange={onInputChange}
-      onSendMessage={onSendMessage} // Passed directly to interface
-      isLoading={isLoading}
-      quickReplies={displayQuickReplies} // Use the state variable for display
-      onQuickReplyAction={onQuickReplyClick} // Passed directly to interface
-      showTextInput={showTextInput}
-    />
+    <>
+      {!isOpen && <ChatbotBubble onClick={toggleChat} />}
+      <ChatbotInterface
+        isOpen={isOpen}
+        onClose={toggleChat}
+        messages={messages}
+        currentInput={currentInput}
+        onInputChange={handleInputChange}
+        onSendMessage={handleSendMessage}
+        isLoading={isLoading}
+      />
+    </>
   );
 };
 

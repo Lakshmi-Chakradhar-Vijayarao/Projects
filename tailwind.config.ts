@@ -48,8 +48,8 @@ export default {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',
-  				'4': '200 70% 60%',
-  				'5': '320 70% 60%'
+  				'4': 'hsl(200 70% 60%)', // Kept as a distinct blue
+  				'5': 'hsl(320 70% 60%)'  // Kept as a distinct pink/magenta
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
@@ -93,14 +93,17 @@ export default {
           '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0px)' },
         },
-        // Removed 'subtle-pulse' animation if it's no longer used by other components
+        'subtle-pulse': { // Added for chatbot bubble
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.85', transform: 'scale(1.03)' },
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'bg-pan': 'bg-pan 15s ease infinite',
         'scale-up': 'scale-up 0.5s ease-out forwards',
-        // Removed 'subtle-pulse' animation
+        'subtle-pulse': 'subtle-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', // Added for chatbot bubble
   		}
   	}
   },

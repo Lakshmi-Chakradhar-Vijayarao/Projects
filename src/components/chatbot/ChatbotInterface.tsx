@@ -1,4 +1,4 @@
-// src/components/chatbot/ChatbotInterface.tsx
+
 "use client";
 
 import React, { useEffect, useRef, type FormEvent } from 'react';
@@ -8,18 +8,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, User, X, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Re-exporting as ChatbotInterfaceMessage to avoid conflict if imported elsewhere
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'ai';
   text: string | React.ReactNode;
-  speakableTextOverride?: string;
-}
-
-export interface QuickReplyButtonProps {
-  text: string;
-  action: string;
-  icon?: React.ReactElement;
 }
 
 interface ChatbotInterfaceProps {
@@ -30,9 +22,6 @@ interface ChatbotInterfaceProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSendMessage: (e: FormEvent<HTMLFormElement>) => void;
   isLoading: boolean;
-  quickReplies?: QuickReplyButtonProps[];
-  onQuickReplyAction: (action: string) => void;
-  showTextInput?: boolean;
 }
 
 const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
@@ -43,30 +32,19 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
   onInputChange,
   onSendMessage,
   isLoading,
-  quickReplies,
-  onQuickReplyAction,
-  showTextInput = true,
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const quickRepliesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-  
-  useEffect(() => {
-    if (quickRepliesRef.current) {
-        quickRepliesRef.current.scrollTop = quickRepliesRef.current.scrollHeight;
-    }
-  }, [quickReplies]);
 
   useEffect(() => {
-    if (isOpen && showTextInput && (!quickReplies || quickReplies.length === 0) && !isLoading) {
+    if (isOpen && !isLoading) {
       inputRef.current?.focus();
     }
-  }, [isOpen, showTextInput, quickReplies, isLoading]);
-
+  }, [isOpen, isLoading]);
 
   if (!isOpen) return null;
 
@@ -101,47 +79,26 @@ const ChatbotInterface: React.FC<ChatbotInterfaceProps> = ({
           <div ref={messageEndRef} />
         </ScrollArea>
 
-        {quickReplies && quickReplies.length > 0 && (
-          <ScrollArea ref={quickRepliesRef} className="max-h-32 p-2 sm:p-3 border-t border-border"> {/* Ensure max-h allows visibility */}
-            <div className="flex flex-col space-y-2">
-              {quickReplies.map((reply) => (
-                <Button
-                  key={reply.action} 
-                  variant="outline"
-                  className="w-full justify-start text-left h-auto py-2.5 px-3 sm:px-4 text-xs sm:text-sm"
-                  onClick={() => onQuickReplyAction(reply.action)}
-                >
-                  {reply.icon && React.isValidElement(reply.icon) && React.cloneElement(reply.icon, { className: cn(reply.icon.props.className, "mr-2 h-4 w-4 flex-shrink-0") })}
-                  {reply.text}
-                </Button>
-              ))}
-            </div>
-          </ScrollArea>
-        )}
-
-        {showTextInput && (
-          <form onSubmit={onSendMessage} className="p-3 sm:p-4 border-t border-border">
-            <div className="flex items-center gap-2">
-              <Input
-                ref={inputRef}
-                type="text"
-                placeholder="Ask about Chakradhar..."
-                value={currentInput}
-                onChange={onInputChange}
-                className="flex-grow text-xs sm:text-sm"
-                disabled={isLoading}
-              />
-              <Button type="submit" size="icon" disabled={isLoading || !currentInput.trim()} className="h-9 w-9 sm:h-10 sm:w-10">
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                <span className="sr-only">Send message</span>
-              </Button>
-            </div>
-          </form>
-        )}
+        <form onSubmit={onSendMessage} className="p-3 sm:p-4 border-t border-border">
+          <div className="flex items-center gap-2">
+            <Input
+              ref={inputRef}
+              type="text"
+              placeholder="Ask about Chakradhar..."
+              value={currentInput}
+              onChange={onInputChange}
+              className="flex-grow text-xs sm:text-sm"
+              disabled={isLoading}
+            />
+            <Button type="submit" size="icon" disabled={isLoading || !currentInput.trim()} className="h-9 w-9 sm:h-10 sm:w-10">
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              <span className="sr-only">Send message</span>
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
 export default ChatbotInterface;
-
