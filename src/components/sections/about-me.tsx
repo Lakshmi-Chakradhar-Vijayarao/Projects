@@ -1,34 +1,33 @@
 "use client";
 import { SectionWrapper } from '@/components/ui/section-wrapper';
-import AnimatedAvatar from '@/components/animated-avatar'; // Import AnimatedAvatar
+import AnimatedAvatar from '@/components/animated-avatar'; 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LockKeyhole, Zap, Cloud, Database, ScanEye, Leaf, Lightbulb } from 'lucide-react'; 
+import { Code2, Database, ScanEye, Zap, Cloud, Workflow } from 'lucide-react'; 
 
+// Updated Key Highlights
 const keyHighlights = [
-  { text: "OAuth2 & JWT Security", icon: <LockKeyhole className="h-5 w-5 text-primary" /> },
-  { text: "Real-time AI Inference", icon: <Zap className="h-5 w-5 text-primary" /> },
-  { text: "AWS & Databricks", icon: <Cloud className="h-5 w-5 text-primary" /> }, 
+  { text: "Python for ML & Data Engineering", icon: <Code2 className="h-5 w-5 text-primary" /> },
+  { text: "Big Data Tools (PySpark, Hadoop, Databricks)", icon: <Database className="h-5 w-5 text-primary" /> },
   { text: "Computer Vision (YOLO, OpenCV)", icon: <ScanEye className="h-5 w-5 text-primary" /> },
-  { text: "Sustainable AI Solutions", icon: <Leaf className="h-5 w-5 text-primary" /> },
-  { text: "Full-Stack Development", icon: <Lightbulb className="h-5 w-5 text-primary" /> }, 
+  { text: "Scalable ML Systems", icon: <Zap className="h-5 w-5 text-primary" /> }, // Or Workflow
+  { text: "AWS (EC2, S3, Lambda)", icon: <Cloud className="h-5 w-5 text-primary" /> },
 ];
 
 export default function AboutMe() {
   return (
     <SectionWrapper id="about" title="About Me">
-      <Card className="overflow-hidden shadow-xl bg-card/80 backdrop-blur-sm border border-border/50">
+      <Card className="overflow-hidden shadow-xl bg-card/90 backdrop-blur-sm border border-border/50">
         <div className="md:flex md:items-center">
           <div className="md:w-1/3 md:shrink-0 flex items-center justify-center p-6 md:p-8">
-            {/* Replace Image with AnimatedAvatar */}
             <AnimatedAvatar />
           </div>
           <div className="md:w-2/3 p-6 md:p-8">
-            <CardHeader className="pb-4 px-0">
+            <CardHeader className="pb-4 px-0 md:px-2">
               <CardTitle className="text-3xl font-semibold text-primary">
                 Lakshmi Chakradhar Vijayarao
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-0">
+            <CardContent className="px-0 md:px-2">
               <p className="mt-2 text-lg leading-relaxed text-foreground/90">
                 I’m a passionate software engineer and AI developer with experience building secure, scalable web applications, ML systems, and cloud-based pipelines. With hands-on industry experience, I specialize in full-stack development, object detection, and intelligent data processing.
               </p>
