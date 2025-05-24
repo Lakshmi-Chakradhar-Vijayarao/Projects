@@ -1,10 +1,10 @@
 "use client";
 
 import { SectionWrapper } from '@/components/ui/section-wrapper';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { ReactNode } from 'react';
-import { Code2, Library, BrainCircuit, CloudCog, Database, Wrench, Users } from 'lucide-react';
+import { Code2, Library, BrainCircuit, CloudCog, Database, Users, Wrench } from 'lucide-react'; // Added Wrench
 
 interface SkillCategory {
   name: string;
@@ -12,26 +12,27 @@ interface SkillCategory {
   skills: string[];
 }
 
+// Curated list of skills
 const skillCategoriesData: SkillCategory[] = [
   {
     name: "Programming Languages",
     icon: <Code2 className="h-5 w-5 mr-2 text-primary" />,
-    skills: ["Python", "Java", "JavaScript (ES6+)", "C++", "C", "C#"],
+    skills: ["Python", "Java", "JavaScript (ES6+)", "C++"],
   },
   {
     name: "Frameworks & Libraries",
     icon: <Library className="h-5 w-5 mr-2 text-primary" />,
-    skills: ["React.js", "Node.js", "Express.js", "Django", "Scikit-learn", "YOLO", "OpenCV", "NumPy", "Pandas"],
+    skills: ["React.js", "Node.js", "Django", "Scikit-learn", "YOLO", "OpenCV", "Pandas", "NumPy"],
   },
   {
     name: "Data & Machine Learning",
     icon: <BrainCircuit className="h-5 w-5 mr-2 text-primary" />,
-    skills: ["PySpark", "Hadoop", "Databricks", "ML algorithms: Decision Trees, Random Forest, KNN, YOLO", "Model evaluation, cross-validation", "data preprocessing"],
+    skills: ["PySpark", "Hadoop", "Databricks", "Object Detection", "Ensemble Models", "Data Preprocessing"],
   },
   {
     name: "Cloud & DevOps",
     icon: <CloudCog className="h-5 w-5 mr-2 text-primary" />,
-    skills: ["AWS (EC2, S3, Lambda – foundational)", "GitHub Actions", "CI/CD fundamentals", "Docker (familiar)", "REST API integration", "Linux"],
+    skills: ["AWS (EC2, S3, Lambda)", "Docker", "CI/CD Fundamentals", "REST APIs"],
   },
   {
     name: "Databases",
@@ -40,8 +41,8 @@ const skillCategoriesData: SkillCategory[] = [
   },
   {
     name: "Tools & Practices",
-    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />,
-    skills: ["Git", "VS Code", "Eclipse", "Jupyter Notebook", "Agile development", "API design", "cross-functional collaboration"],
+    icon: <Wrench className="h-5 w-5 mr-2 text-primary" />, // Changed icon to Wrench
+    skills: ["Git", "VS Code", "Agile Development", "API Design"],
   },
 ];
 
@@ -62,8 +63,8 @@ export default function Skills() {
                   {category.skills.map((skill) => (
                     <Badge
                       key={skill}
-                      variant="secondary"
-                      className="text-xs sm:text-sm bg-secondary/70 text-secondary-foreground hover:bg-secondary/80 transition-colors"
+                      variant="secondary" // Using secondary (Deep Purple with 70% opacity) for consistency
+                      className="text-xs sm:text-sm bg-secondary/70 text-secondary-foreground hover:bg-secondary/90 transition-colors"
                     >
                       {skill}
                     </Badge>
