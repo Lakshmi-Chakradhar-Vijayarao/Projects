@@ -1,5 +1,7 @@
+// src/components/animated-avatar.tsx
 "use client";
 
+import type { ReactNode } from 'react';
 import React, { useEffect, useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -81,10 +83,10 @@ const AnimatedAvatar: React.FC = () => {
           ${animate ? 'scale-100' : 'scale-95'}`}
       >
         <AvatarImage
-          src="/chakradhar-portrait.jpg"
+          src="/chakradhar-portrait.jpg" // User needs to edit this image file
           alt="Chakradhar Vijayarao"
           data-ai-hint="professional avatar"
-          className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`} // Removed object-contain
+          className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`} 
         />
         <AvatarFallback className="bg-primary text-primary-foreground text-2xl">CV</AvatarFallback>
       </Avatar>
