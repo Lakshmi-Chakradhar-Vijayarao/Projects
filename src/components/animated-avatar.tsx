@@ -82,9 +82,9 @@ const AnimatedAvatar: React.FC = () => {
       >
         <AvatarImage
           src="/chakradhar-portrait.jpg"
-          alt="Lakshmi Chakradhar Vijayarao"
+          alt="Chakradhar Vijayarao"
           data-ai-hint="professional avatar"
-          className={`transition-all duration-1000 object-contain ${animate ? 'brightness-105' : 'brightness-90'}`}
+          className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`} // Removed object-contain
         />
         <AvatarFallback className="bg-primary text-primary-foreground text-2xl">CV</AvatarFallback>
       </Avatar>
