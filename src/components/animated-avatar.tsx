@@ -1,8 +1,6 @@
-
 "use client";
 
-import React, { useEffect, useState }
-from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface DotStyle {
@@ -83,10 +81,10 @@ const AnimatedAvatar: React.FC = () => {
           ${animate ? 'scale-100' : 'scale-95'}`}
       >
         <AvatarImage
-          src="/chakradhar-portrait.jpg" // Updated to use your local image
+          src="/chakradhar-portrait.jpg"
           alt="Lakshmi Chakradhar Vijayarao"
-          data-ai-hint="professional avatar" // Updated hint
-          className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`}
+          data-ai-hint="professional avatar"
+          className={`transition-all duration-1000 object-contain ${animate ? 'brightness-105' : 'brightness-90'}`}
         />
         <AvatarFallback className="bg-primary text-primary-foreground text-2xl">CV</AvatarFallback>
       </Avatar>
