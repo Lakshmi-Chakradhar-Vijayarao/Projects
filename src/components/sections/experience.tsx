@@ -26,9 +26,9 @@ const experienceData = [
       'Integrated WebRTC for 1,000+ real-time users.',
       'Participated in Agile sprints with QA and product teams.',
     ],
-    companyLogoSrc: "/logos/zoho.png", // Reverted to local path
+    companyLogoSrc: "/logos/zoho.png", // Changed from Zoho.png to zoho.png
     companyLogoAlt: "Zoho Logo",
-    dataAiHint: "zoho brand",
+    dataAiHint: "zoho",
   },
 ];
 
