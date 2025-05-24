@@ -1,7 +1,8 @@
 
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState }
+from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface DotStyle {
@@ -26,8 +27,10 @@ const AnimatedAvatar: React.FC = () => {
   const [lineStyles, setLineStyles] = useState<LineStyle[]>([]);
 
   useEffect(() => {
+    // Start animation after component mounts
     const timer = setTimeout(() => setAnimate(true), 500);
 
+    // Generate random styles only on the client-side
     const newDotStyles = Array.from({ length: 8 }).map((_, i) => ({
       width: `${Math.random() * 20 + 10}px`,
       height: `${Math.random() * 20 + 10}px`,
@@ -80,9 +83,9 @@ const AnimatedAvatar: React.FC = () => {
           ${animate ? 'scale-100' : 'scale-95'}`}
       >
         <AvatarImage
-          src="/chakradhar-portrait.jpg" 
+          src="/chakradhar-portrait.jpg" // Updated to use your local image
           alt="Lakshmi Chakradhar Vijayarao"
-          data-ai-hint="professional avatar"
+          data-ai-hint="professional avatar" // Updated hint
           className={`transition-all duration-1000 ${animate ? 'brightness-105' : 'brightness-90'}`}
         />
         <AvatarFallback className="bg-primary text-primary-foreground text-2xl">CV</AvatarFallback>
