@@ -1,0 +1,51 @@
+/* Detection Summary title */
+h3 {
+    color: black !important;
+}
+
+/* Table background, border, and text */
+table {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid black !important;
+    border-radius: 10px;
+}
+
+/* Table header */
+thead th {
+    color: black !important;
+    border: 1px solid black !important;
+}
+
+/* Table cells and index column */
+tbody td {
+    color: black !important;
+    border: 1px solid black !important;
+}
+
+/* Index column (first column) */
+tbody th {
+    color: black !important;
+    border: 1px solid black !important;
+}
+/* Sidebar styling */
+section[data-testid="stSidebar"] {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 10px;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
+    color: white;
+    padding: 20px;
+    margin: 10px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Improve slider label visibility */
+div[data-testid="stSlider"] label {
+    color: white !important;
+}
+
+/* Optional: Improve sidebar header */
+section[data-testid="stSidebar"] h2 {
+    font-weight: bold;
+    color: white;
+}
+
