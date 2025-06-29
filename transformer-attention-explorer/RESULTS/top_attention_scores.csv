@@ -1,0 +1,6 @@
+Source → Target,Score
+the_3 → rain_5,0.05
+heavy_4 → rain_5,0.05
+the_3 → heavy_4,0.05
+rain_5 → flooded_13,0.04
+the_12 → flooded_13,0.04
