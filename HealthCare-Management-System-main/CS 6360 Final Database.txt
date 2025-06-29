@@ -1,0 +1,306 @@
+CREATE TABLE Treatment (
+    Treatment_ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Description VARCHAR(300),
+    Start_Date DATE,
+    End_Date DATE,
+    Outcome VARCHAR(20)
+);
+
+CREATE TABLE Schedule (
+    Schedule_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Day VARCHAR(10),
+    Opening_Time TIME,
+    Closing_Time TIME
+);
+
+CREATE TABLE Prescription (
+    Prescription_ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Dosage VARCHAR(100),
+    Refill_Information VARCHAR(100),
+    Prescription_Date DATE
+);
+
+CREATE TABLE Pharmacy (
+    Pharmacy_ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Pharmacy_Name VARCHAR(50),
+    Pharmacy_Address VARCHAR(200),
+    Business_Ph_no VARCHAR(10)
+);
+
+CREATE TABLE Person (
+    P_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Person_BDate DATE,
+    First VARCHAR(30),
+    Middle VARCHAR(30),
+    Last VARCHAR(30),
+    Street VARCHAR(100),
+    City VARCHAR(30),
+    State VARCHAR(50),
+    ZIP INT,
+    Person_Gender VARCHAR(30),
+    Age INT
+);
+
+CREATE TABLE Healthcare_Employee (
+    Healthcare_Employee_ID INT AUTO_INCREMENT,
+    P_ID INT,
+    Specialization VARCHAR(50),
+    Department VARCHAR(30),
+    Contact_Information VARCHAR(50),
+    Working_Hours DECIMAL(10,2),
+    Years_of_Experience DECIMAL(10,2),
+    PRIMARY KEY (Healthcare_Employee_ID, P_ID),
+    FOREIGN KEY (P_ID) REFERENCES Person(P_ID)
+);
+
+CREATE TABLE Patient (
+    Patient_ID INT AUTO_INCREMENT,
+    P_ID INT,
+    Contact_Number VARCHAR(100),
+    Email_ID VARCHAR(50),
+    PRIMARY KEY (Patient_ID, P_ID),
+    FOREIGN KEY (P_ID) REFERENCES Person(P_ID)
+);
+
+CREATE TABLE Billing_Information (
+    Billing_ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Date DATE,
+    Patient_ID INT,
+    Hospital_Stays VARCHAR(300),
+    Procedures VARCHAR(100),
+    Total_Cost DECIMAL(10,2),
+    Installment_Plans VARCHAR(100),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE Payment_Method (
+    Payment_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Billing_ID INT,
+    Insurance_ID INT,
+    Insurance_Company_Name VARCHAR(50),
+    Amount DECIMAL(10,2),
+    FOREIGN KEY (Billing_ID) REFERENCES Billing_Information(Billing_ID),
+    UNIQUE (Payment_ID, Billing_ID)
+);
+
+CREATE TABLE Student (
+    S1 INT AUTO_INCREMENT PRIMARY KEY
+);
+
+CREATE TABLE Instructor (
+    I1 INT AUTO_INCREMENT PRIMARY KEY
+);
+
+CREATE TABLE Nurses (
+    Healthcare_Employee_ID INT,
+    PRIMARY KEY (Healthcare_Employee_ID),
+    FOREIGN KEY (Healthcare_Employee_ID) REFERENCES Healthcare_Employee(Healthcare_Employee_ID)
+);
+
+CREATE TABLE Administrative_Staff (
+    Healthcare_Employee_ID INT,
+    PRIMARY KEY (Healthcare_Employee_ID),
+    FOREIGN KEY (Healthcare_Employee_ID) REFERENCES Healthcare_Employee(Healthcare_Employee_ID)
+);
+
+CREATE TABLE Doctor (
+    Healthcare_Employee_ID INT,
+    PRIMARY KEY (Healthcare_Employee_ID),
+    FOREIGN KEY (Healthcare_Employee_ID) REFERENCES Healthcare_Employee(Healthcare_Employee_ID)
+);
+
+CREATE TABLE Medical_Record (
+    Medical_Record_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Patient_ID INT,
+    Current_Medication VARCHAR(50),
+    Past_Diagnosis VARCHAR(50),
+    Treatment_History VARCHAR(500),
+    Lab_Results VARCHAR(50),
+    Allergies VARCHAR(50),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE Comments (
+    Comment_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Pharmacy_ID INT,
+    Patient_ID INT,
+    Comment_Contents VARCHAR(100),
+    Rating_Score INT,
+    FOREIGN KEY (Pharmacy_ID) REFERENCES Pharmacy(Pharmacy_ID),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE Inventory_System (
+    Inventory_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Pharmacy_ID INT,
+    Medication_Name VARCHAR(100),
+    Stock_Level INT,
+    Supplier_Information VARCHAR(100),
+    FOREIGN KEY (Pharmacy_ID) REFERENCES Pharmacy(Pharmacy_ID)
+);
+
+CREATE TABLE Medication (
+    Medication_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Pharmacy_ID INT,
+    Medication_Name VARCHAR(100),
+    FOREIGN KEY (Pharmacy_ID) REFERENCES Pharmacy(Pharmacy_ID)
+);
+
+CREATE TABLE Specifies (
+    Specifies_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prescription_ID INT,
+    Medication_ID INT,
+    FOREIGN KEY (Prescription_ID) REFERENCES Prescription(Prescription_ID),
+    FOREIGN KEY (Medication_ID) REFERENCES Medication(Medication_ID)
+);
+
+CREATE TABLE Sell (
+    Sell_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Medication_ID INT,
+    Pharmacy_ID INT,
+    Price DECIMAL(10,2),
+    FOREIGN KEY (Medication_ID) REFERENCES Medication(Medication_ID),
+    FOREIGN KEY (Pharmacy_ID) REFERENCES Pharmacy(Pharmacy_ID)
+);
+
+CREATE TABLE Provides (
+    Provides_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Healthcare_Employee_ID INT,
+    P_ID INT,
+    Treatment_ID INT,
+    FOREIGN KEY (Healthcare_Employee_ID, P_ID) REFERENCES Healthcare_Employee(Healthcare_Employee_ID, P_ID),
+    FOREIGN KEY (Treatment_ID) REFERENCES Treatment(Treatment_ID)
+);
+
+CREATE TABLE Gets (
+    Gets_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Patient_ID INT,
+    Treatment_ID INT,
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID),
+    FOREIGN KEY (Treatment_ID) REFERENCES Treatment(Treatment_ID)
+);
+
+CREATE TABLE HasBill (
+    HasBill_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Billing_ID INT,
+    Patient_ID INT,
+    FOREIGN KEY (Billing_ID) REFERENCES Billing_Information(Billing_ID),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE ModeofPayment (
+    ModeofPayment_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Billing_ID INT,
+    Payment_ID INT,
+    FOREIGN KEY (Billing_ID) REFERENCES Billing_Information(Billing_ID),
+    FOREIGN KEY (Payment_ID) REFERENCES Payment_Method(Payment_ID)
+);
+
+CREATE TABLE Appointment (
+    Appointment_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Patient_ID INT,
+    Healthcare_Employee_ID INT,
+    Date DATE,
+    Purpose VARCHAR(100),
+    Time TIME,
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID),
+    FOREIGN KEY (Healthcare_Employee_ID) REFERENCES Healthcare_Employee(Healthcare_Employee_ID)
+);
+
+CREATE TABLE Administers (
+    Administers_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Treatment_ID INT,
+    Prescription_ID INT,
+    FOREIGN KEY (Treatment_ID) REFERENCES Treatment(Treatment_ID),
+    FOREIGN KEY (Prescription_ID) REFERENCES Prescription(Prescription_ID)
+);
+
+CREATE TABLE Receives (
+    Receives_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Patient_ID INT,
+    Prescription_ID INT,
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID),
+    FOREIGN KEY (Prescription_ID) REFERENCES Prescription(Prescription_ID)
+);
+
+CREATE TABLE M1_Person (
+    M1_Person_ID INT AUTO_INCREMENT PRIMARY KEY,
+    P_ID INT,
+    P_Mobile_Number VARCHAR(15),
+    FOREIGN KEY (P_ID) REFERENCES Person(P_ID)
+);
+
+CREATE TABLE M1_Patient (
+    M1_Patient_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Patient_ID INT,
+    Contact_Number VARCHAR(100),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE M2_Patient (
+    M2_Patient_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Patient_ID INT,
+    Email_ID VARCHAR(50),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE M1_Billing_Information (
+    Billing_ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Date DATE,
+    Patient_ID INT,
+    Hospital_Stays VARCHAR(300),
+    Procedures VARCHAR(100),
+    Total_Cost DECIMAL(10,2),
+    Installment_Plans VARCHAR(100),
+    FOREIGN KEY (Patient_ID) REFERENCES Patient(Patient_ID)
+);
+
+CREATE TABLE M1_Medical_Record (
+    M1_Medical_Record_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Medical_Record_ID INT,
+    Lab_Results VARCHAR(50),
+    FOREIGN KEY (Medical_Record_ID) REFERENCES Medical_Record(Medical_Record_ID)
+);
+
+CREATE TABLE M2_Medical_Record (
+    M2_Medical_Record_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Medical_Record_ID INT,
+    Allergies VARCHAR(50),
+    FOREIGN KEY (Medical_Record_ID) REFERENCES Medical_Record(Medical_Record_ID)
+);
+
+CREATE TABLE Working_Hours (
+    Working_Hours_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Schedule_ID INT,
+    Healthcare_Employee_ID INT,
+    Pharmacy_ID INT,
+    FOREIGN KEY (Schedule_ID) REFERENCES Schedule(Schedule_ID),
+    FOREIGN KEY (Healthcare_Employee_ID) REFERENCES Healthcare_Employee(Healthcare_Employee_ID),
+    FOREIGN KEY (Pharmacy_ID) REFERENCES Pharmacy(Pharmacy_ID)
+);
+
+CREATE TABLE TrainingCenter (
+    Training_Center_ID INT AUTO_INCREMENT PRIMARY KEY
+);
+
+CREATE TABLE Courses (
+    Course_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Training_Center_ID INT,
+    FOREIGN KEY (Training_Center_ID) REFERENCES TrainingCenter(Training_Center_ID)
+);
+
+CREATE TABLE Enroll (
+    Enroll_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Course_ID INT,
+    Student_ID INT,
+    FOREIGN KEY (Course_ID) REFERENCES Cour	ses(Course_ID),
+    FOREIGN KEY (Student_ID) REFERENCES Student(S1)
+);
+
+CREATE TABLE Teaches (
+    Teaches_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Course_ID INT,
+    Instructor_ID INT,
+    FOREIGN KEY (Course_ID) REFERENCES Courses(Course_ID),
+    FOREIGN KEY (Instructor_ID) REFERENCES Instructor(I1)
+);

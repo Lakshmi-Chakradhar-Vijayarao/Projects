@@ -1,0 +1,452 @@
+[
+    {
+        "hotel_id": 11,
+        "hotel_name": "Hilton Houston Post Oak by the Galleria",
+        "city": "Houston",
+        "price": 250
+    },
+    {
+        "hotel_id": 12,
+        "hotel_name": "Embassy Suites by Hilton The Woodlands® at Hughes Landing",
+        "city": "Houston",
+        "price": 220
+    },
+    {
+        "hotel_id": 13,
+        "hotel_name": "Hyatt Place Houston- Northwest/ Cy-Fair",
+        "city": "Houston",
+        "price": 150
+    },
+    {
+        "hotel_id": 14,
+        "hotel_name": "Holiday Inn Express & Suites: Houston East - Beltway 8",
+        "city": "Houston",
+        "price": 125
+    },
+    {
+        "hotel_id": 15,
+        "hotel_name": "DoubleTree by Hilton Hotel Houston - Greenway Plaza",
+        "city": "Houston",
+        "price": 75
+    },
+    {
+        "hotel_id": 21,
+        "hotel_name": "Hyatt Regency San Antonio Riverwalkt",
+        "city": "San Antonio",
+        "price": 300
+    },
+    {
+        "hotel_id": 22,
+        "hotel_name": "Canopy by Hilton San Antonio Riverwalk",
+        "city": "San Antonio",
+        "price": 250
+    },
+    {
+        "hotel_id": 23,
+        "hotel_name": "San Antonio Marriott Northwest Medical Center",
+        "city": "San Antonio",
+        "price": 230
+    },
+    {
+        "hotel_id": 24,
+        "hotel_name": "Best Western Garden Inn",
+        "city": "San Antonio",
+        "price": 150
+    },
+    {
+        "hotel_id": 25,
+        "hotel_name": "Drury Plaza Hotel San Antonio North Stone Oak",
+        "city": "San Antonio",
+        "price": 85
+    },
+    {
+        "hotel_id": 31,
+        "hotel_name": "Canopy by Hilton Dallas Uptown",
+        "city": "Dallas",
+        "price": 289
+    },
+    {
+        "hotel_id": 32,
+        "hotel_name": "Hyatt Regency Frisco - Dallas",
+        "city": "Dallas",
+        "price": 179
+    },
+    {
+        "hotel_id": 33,
+        "hotel_name": "Hilton Anatole",
+        "city": "Dallas",
+        "price": 250
+    },
+    {
+        "hotel_id": 34,
+        "hotel_name": "Hyatt Place Dallas/Plano",
+        "city": "Dallas",
+        "price": 115
+    },
+    {
+        "hotel_id": 35,
+        "hotel_name": "Mountain Retreat",
+        "city": "Dallas",
+        "price": 89
+    },
+    {
+        "hotel_id": 41,
+        "hotel_name": "Downright Austin",
+        "city": "Austin",
+        "price": 120
+    },
+    {
+        "hotel_id": 42,
+        "hotel_name": "W Austin",
+        "city": "Austin",
+        "price": 110
+    },
+    {
+        "hotel_id": 43,
+        "hotel_name": "Hyatt Regency",
+        "city": "Austin",
+        "price": 220
+    },
+    {
+        "hotel_id": 44,
+        "hotel_name": "Hotel Indigo- Austin",
+        "city": "Austin",
+        "price": 160
+    },
+    {
+        "hotel_id": 45,
+        "hotel_name": "Hilton- Austin",
+        "city": "Austin",
+        "price": 155
+    },
+    {
+        "hotel_id": 51,
+        "hotel_name": "Aloft Dallas- South Arlington",
+        "city": "Arlington",
+        "price": 126
+    },
+    {
+        "hotel_id": 52,
+        "hotel_name": "Hall Arts Hotel",
+        "city": "Arlington",
+        "price": 160
+    },
+    {
+        "hotel_id": 53,
+        "hotel_name": "Embassy Suites By Hilton Dallas",
+        "city": "Arlington",
+        "price": 100
+    },
+    {
+        "hotel_id": 54,
+        "hotel_name": "Lorenzo Hotel",
+        "city": "Arlington",
+        "price": 189
+    },
+    {
+        "hotel_id": 55,
+        "hotel_name": "Virgin Hotel",
+        "city": "Arlington",
+        "price": 120
+    },
+    {
+        "hotel_id": 61,
+        "hotel_name": "Grand Galvez",
+        "city": "Galveston",
+        "price": 220
+    },
+    {
+        "hotel_id": 62,
+        "hotel_name": "Courtyard Galveston Island",
+        "city": "Galveston",
+        "price": 215
+    },
+    {
+        "hotel_id": 63,
+        "hotel_name": "Hampton Inn & Suites",
+        "city": "Galveston",
+        "price": 110
+    },
+    {
+        "hotel_id": 64,
+        "hotel_name": "Home2 Suites by Hilton",
+        "city": "Galveston",
+        "price": 115
+    },
+    {
+        "hotel_id": 65,
+        "hotel_name": "Comfort Inn & Suites",
+        "city": "Galveston",
+        "price": 105
+    },
+    {
+        "hotel_id": 71,
+        "hotel_name": "Hyatt Place Corpus Christi",
+        "city": "Corpus Christi",
+        "price": 270
+    },
+    {
+        "hotel_id": 72,
+        "hotel_name": "Omni Corpus Christi Hotel",
+        "city": "Corpus Christi",
+        "price": 265
+    },
+    {
+        "hotel_id": 73,
+        "hotel_name": "Best Western Corpus Christi",
+        "city": "Corpus Christi",
+        "price": 170
+    },
+    {
+        "hotel_id": 74,
+        "hotel_name": "Home2 Suites by Hilton Corpus Christi Southeast",
+        "city": "Corpus Christi",
+        "price": 185
+    },
+    {
+        "hotel_id": 75,
+        "hotel_name": "The Mayan Prince",
+        "city": "Corpus Christi",
+        "price": 172
+    },
+    {
+        "hotel_id": 81,
+        "hotel_name": "The Ritz-Carlton, Los Angeles",
+        "city": "Los Angeles",
+        "price": 238
+    },
+    {
+        "hotel_id": 82,
+        "hotel_name": "Conrad Los Angeles",
+        "city": "Los Angeles",
+        "price": 169
+    },
+    {
+        "hotel_id": 83,
+        "hotel_name": "Hilton Checkers Los Angeles",
+        "city": "Los Angeles",
+        "price": 178
+    },
+    {
+        "hotel_id": 84,
+        "hotel_name": "The Westin Long Beach",
+        "city": "Los Angeles",
+        "price": 258
+    },
+    {
+        "hotel_id": 85,
+        "hotel_name": "Pendry West Hollywood",
+        "city": "Los Angeles",
+        "price": 138
+    },
+    {
+        "hotel_id": 91,
+        "hotel_name": "Hotel Del Coronado",
+        "city": "San Diego",
+        "price": 190
+    },
+    {
+        "hotel_id": 92,
+        "hotel_name": "Marriot Marquis San Diego ",
+        "city": "San Diego",
+        "price": 290
+    },
+    {
+        "hotel_id": 93,
+        "hotel_name": "DoubleTree by Hilton Hotel,San Diego",
+        "city": "San Diego",
+        "price": 195
+    },
+    {
+        "hotel_id": 94,
+        "hotel_name": "Pendry San Diego",
+        "city": "San Diego",
+        "price": 180
+    },
+    {
+        "hotel_id": 95,
+        "hotel_name": "Grande Colonial",
+        "city": "San Diego",
+        "price": 175
+    },
+    {
+        "hotel_id": 101,
+        "hotel_name": "Grand Hyattt San Francisco",
+        "city": "San Francisco",
+        "price": 550
+    },
+    {
+        "hotel_id": 102,
+        "hotel_name": "Fairmont San Francisco",
+        "city": "San Francisco",
+        "price": 460
+    },
+    {
+        "hotel_id": 103,
+        "hotel_name": "The Clift Royal Sonesta San Francisco",
+        "city": "San Francisco",
+        "price": 369
+    },
+    {
+        "hotel_id": 104,
+        "hotel_name": "Four Seasons Hotel San Francisco",
+        "city": "San Francisco",
+        "price": 490
+    },
+    {
+        "hotel_id": 105,
+        "hotel_name": "LUMA San Francisco",
+        "city": "San Francisco",
+        "price": 150
+    },
+    {
+        "hotel_id": 111,
+        "hotel_name": "Hyatt Regency Santa Clara",
+        "city": "Sanjose",
+        "price": 290
+    },
+    {
+        "hotel_id": 112,
+        "hotel_name": "Fairmont San Jose",
+        "city": "Sanjose",
+        "price": 530
+    },
+    {
+        "hotel_id": 113,
+        "hotel_name": "Signia San Jose",
+        "city": "Sanjose",
+        "price": 420
+    },
+    {
+        "hotel_id": 114,
+        "hotel_name": "Tetra Hotel, Autograph Collection",
+        "city": "Sanjose",
+        "price": 329
+    },
+    {
+        "hotel_id": 115,
+        "hotel_name": "Best Western Inn of Los Gatos",
+        "city": "Sanjose",
+        "price": 320
+    },
+    {
+        "hotel_id": 121,
+        "hotel_name": "Embassy Suites by Hilton Sacramento",
+        "city": "Sacramento",
+        "price": 240
+    },
+    {
+        "hotel_id": 122,
+        "hotel_name": "Hilton Garden Inn Sacramento",
+        "city": "Sacramento",
+        "price": 440
+    },
+    {
+        "hotel_id": 123,
+        "hotel_name": "Hyatt Regency Sacramento",
+        "city": "Sacramento",
+        "price": 120
+    },
+    {
+        "hotel_id": 124,
+        "hotel_name": "Sacramento Marriott Rancho",
+        "city": "Sacramento",
+        "price": 260
+    },
+    {
+        "hotel_id": 125,
+        "hotel_name": "Hampton Inn & Suites, Sacramento",
+        "city": "Sacramento",
+        "price": 290
+    },
+    {
+        "hotel_id": 131,
+        "hotel_name": "Claremont Club & Spa- A Fairmont Hotel",
+        "city": "Berkeley",
+        "price": 350
+    },
+    {
+        "hotel_id": 132,
+        "hotel_name": "Waterfront Hotel-JDV by Hyatt",
+        "city": "Berkeley",
+        "price": 415
+    },
+    {
+        "hotel_id": 133,
+        "hotel_name": "Hotel Shattuck Plaza",
+        "city": "Berkeley",
+        "price": 310
+    },
+    {
+        "hotel_id": 134,
+        "hotel_name": "Berkeley City Club",
+        "city": "Berkeley",
+        "price": 219
+    },
+    {
+        "hotel_id": 135,
+        "hotel_name": "Nob Hill Hotel",
+        "city": "Berkeley",
+        "price": 211
+    },
+    {
+        "hotel_id": 141,
+        "hotel_name": "Kissel Uptown Hyatt",
+        "city": "Oakland",
+        "price": 235
+    },
+    {
+        "hotel_id": 142,
+        "hotel_name": "Moxy Oakland Downtown",
+        "city": "Oakland",
+        "price": 428
+    },
+    {
+        "hotel_id": 143,
+        "hotel_name": "Hampton Inn Oakland Downtown",
+        "city": "Oakland",
+        "price": 320
+    },
+    {
+        "hotel_id": 144,
+        "hotel_name": "Lafayette Park Hotel & Spa",
+        "city": "Oakland",
+        "price": 210
+    },   {
+        "hotel_id": 145,
+        "hotel_name": "MAnsion on Sutter",
+        "city": "Oakland",
+        "price": 225
+    },
+    {
+        "hotel_id": 151,
+        "hotel_name": "Hilton Palm Springs",
+        "city": "Palm Springs",
+        "price": 120
+    },
+    {
+        "hotel_id": 152,
+        "hotel_name": "Kimpton Rowan",
+        "city": "Palm Springs",
+        "price": 205
+    },
+    {
+        "hotel_id": 153,
+        "hotel_name": "The Velvet Rope",
+        "city": "Palm Springs",
+        "price": 300
+    },
+    {
+        "hotel_id": 154,
+        "hotel_name": "Villa Royale",
+        "city": "Palm Springs",
+        "price": 270
+    },
+    {
+        "hotel_id": 155,
+        "hotel_name": "Arrive Palm Springs",
+        "city": "Palm Springs",
+        "price": 250
+    }
+]
+

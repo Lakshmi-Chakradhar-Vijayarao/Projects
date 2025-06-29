@@ -1,0 +1,3 @@
+path /cs5348-xv6/jxm210003/P1/P1/ /usr/bin
+cd test & myls & pwd & uname
+exit
