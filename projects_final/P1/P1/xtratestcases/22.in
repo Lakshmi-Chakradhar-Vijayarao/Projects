@@ -1,3 +1,0 @@
-path /bin /cs5348-xv6/jxm210003/P1/P1
-cd test & myhello & myls
-exit
